@@ -1,7 +1,17 @@
 {
+  "FMS": {
+    "window": {
+      "visible": false
+    }
+  },
   "Keyboard 0 Settings": {
     "window": {
       "visible": true
+    }
+  },
+  "System Joysticks": {
+    "window": {
+      "visible": false
     }
   },
   "keyboardJoysticks": [
@@ -21,6 +31,7 @@
           "incKey": 82,
           "keyRate": 0.009999999776482582
         },
+        {},
         {
           "decKey": 75,
           "incKey": 76
