@@ -12,10 +12,11 @@ import com.pathplanner.lib.auto.AutoBuilder;
 // import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
-import ca.team4308.absolutelib.control.JoystickHelper;
-import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -80,6 +81,12 @@ public class RobotContainer {
 
     driver.Down.onTrue(Commands.runOnce(drivebase::setupPathPlanner));
     // TESTING ONLY FOR TUNING PATHPLANNER PIDS, DISABLE WHEN NOT TUNING
+
+    driver.A.whileTrue(drivebase.aimAtSpeaker(2));
+    driver.B.whileTrue(
+        Commands.deferredProxy(() -> drivebase.driveToPose(
+                            new Pose2d(new Translation2d(2, 5.5), Rotation2d.fromDegrees(0)))
+                        ));
   }
 
   public void configureNamedCommands() {

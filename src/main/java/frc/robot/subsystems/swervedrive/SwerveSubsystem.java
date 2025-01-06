@@ -31,6 +31,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -49,11 +51,12 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase{
+  StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("pose", Pose2d.struct).publish();
 
   private Vision vision;
   private final SwerveDrive swerveDrive;
   private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
   private boolean resetHeading = false;
 
   private LoggedTunableNumber angularVelocityCoeff = new LoggedTunableNumber(
@@ -143,6 +146,7 @@ public class SwerveSubsystem extends SubsystemBase{
     if (visionDriveTest) {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
+      publisher.set(getPose());
     }
 
     checkTunableValues();
@@ -208,10 +212,10 @@ public class SwerveSubsystem extends SubsystemBase{
         () -> {
           drive(ChassisSpeeds.fromFieldRelativeSpeeds(0,
               0,
-              controller.headingCalculate(getHeading().getRadians(),
+              controller.headingCalculate(getHeading().getRadians() + Math.PI,
                   getSpeakerYaw().getRadians()),
               getHeading()));
-        }).until(() -> Math.abs(getSpeakerYaw().minus(getHeading()).getDegrees()) < tolerance);
+        }).until(() -> Math.abs(getSpeakerYaw().minus(getHeading()).getDegrees() - 180) < tolerance);
   }
 
   // Aim robot at target of Photonvision camera
