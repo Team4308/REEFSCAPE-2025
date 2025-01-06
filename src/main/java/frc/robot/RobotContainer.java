@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.Controller;
+import frc.robot.commands.RollerCommand;
+import frc.robot.subsystems.RollerSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class RobotContainer {
@@ -32,8 +34,10 @@ public class RobotContainer {
 
   // Subsystems
   private final SwerveSubsystem drivebase;
+  private final RollerSubsystem m_rollerSubsystem;
 
   // Commands
+  private final RollerCommand rollerCommand;
 
   // Controllers
   private final XBoxWrapper driver = new XBoxWrapper(Constants.Mapping.Controllers.driver);
@@ -49,10 +53,15 @@ public class RobotContainer {
 
     // Subsystem Instantiations
     drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),"swerve"));
+    
+    m_rollerSubsystem = new RollerSubsystem();
+    subsystems.add(m_rollerSubsystem);
 
     configureNamedCommands();
     
     // Command Instantiations
+    rollerCommand = new RollerCommand(m_rollerSubsystem, () -> driver.getRightTrigger());
+    m_rollerSubsystem.setDefaultCommand(rollerCommand);
 
     autonomousChooser = AutoBuilder.buildAutoChooser();
 

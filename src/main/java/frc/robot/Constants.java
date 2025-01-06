@@ -75,6 +75,10 @@ public final class Constants {
     public static class Pigeon2 {
       public static final int gyro = 0;
     }
+
+    public static class Roller {
+      public static final int motor = 9;
+    }
   }
 
   public static class Generic {
