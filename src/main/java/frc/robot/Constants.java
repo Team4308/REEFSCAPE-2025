@@ -48,4 +48,11 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
   }
+
+  public static class Mapping {
+    public static class Controllers {
+      public static final int driver = 0;
+      public static final int operator = 1;
+    }
+  }
 }
