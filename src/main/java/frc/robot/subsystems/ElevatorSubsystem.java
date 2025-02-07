@@ -64,7 +64,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   // Returns pos of leading motor 
   public Pose3d getPosition() {
-    double currentPosition = rightMotorLeader.getPosition().getValueAsDouble() * gearRatio; // Adjust position by gear ratio
+    double currentPosition = rightMotorLeader.getPosition().getValueAsDouble() * gearRatio; 
     return new Pose3d(currentPosition, 0, 0, new Rotation3d());
   }
 
