@@ -16,7 +16,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX rightMotorLeader;
 
   // Constants for the elevator
-  public static final double gearRatio = 10.0; // Change to proper gear ratio please
+  public static final double gearRatio = 6.222222; // Change to proper gear ratio please
   public static final double maxHeight = Units.inchesToMeters(72.0);  // Not final! Please change later
 
   // Reef Zone 
