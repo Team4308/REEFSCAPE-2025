@@ -4,14 +4,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.Slapdown;
 
 public class SlapdownSubsystem extends SubsystemBase {
-
-    private final double PIVOT_TOP = 0.0; // The angle (in rotations) that the pivot motor should be at when the arm is at the top.
-    private final double PIVOT_BOTTOM = 0.2; // The angle (in rotations) that the pivot motor should be at when the arm is on the ground.
-    private final double INTAKE_SPEED = 0.8; // The speed (in rotations/sec) that the intake motor spins at. Higher values spin faster.
-    
     /*
      * Subsystem roughly works like this (not to scale):
      *        _
@@ -38,13 +33,17 @@ public class SlapdownSubsystem extends SubsystemBase {
 
     public void SetArmPosition(double position) {
         // 0.0 is all the way up, 1.0 is all the way down.
-        pivotMotor.setControl(new PositionVoltage(PIVOT_TOP + position * (PIVOT_TOP - PIVOT_BOTTOM)));
+        pivotMotor.setControl(
+            new PositionVoltage(
+                Slapdown.PIVOT_TOP_ANGLE + position * (Slapdown.PIVOT_TOP_ANGLE - Slapdown.PIVOT_BOTTOM_ANGLE)
+            )
+        );
     }
 
     // Starts the intake wheels. While it won't be very effective,
     // this will still work even if the arm is up. Try not to do that.
     public void StartIntake() {
-        intakeMotor.set(INTAKE_SPEED);
+        intakeMotor.set(Slapdown.INTAKE_SPEED);
     }
 
     // Stops the intake wheels.
