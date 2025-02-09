@@ -18,6 +18,26 @@ public class Constants {
         public static final PIDController ELEVATOR_PID = new PIDController(1.0, 0.0, 0.0);
         public static final SimpleMotorFeedforward ELEVATOR_FEEDFORWARD = new SimpleMotorFeedforward(1.0, 1.0);
 
+        // Device Ids
+        public static final int ELEVATOR_LEADER = 1;
+        public static final int ELEVATOR_FOLLOWER = 2;
+
+
+        // Elevator physical constants 
+        public static final double GEAR_RATIO = 6.2222222;
+        public static double MAX_HEIGHT = Units.inchesToMeters(72.0);
+        
+        // Reef Zone heights (arbitrary values do not use real inchs)
+        public static final double L1 = Units.inchesToMeters(0.0);
+        public static final double L2 = Units.inchesToMeters(24.0);
+        public static final double L3 = Units.inchesToMeters(48.0);
+        public static double L4 = Units.inchesToMeters(72.0);
+
+        // Calibration 
+        public static final double CALIBRATION_VOLTAGE_DOWN = -0.5;
+        public static final double CALIBRATION_VOLTAGE_UP = 1.0;
+        public static final double CURRENT_THRESHOLD = 20.0;
+
         static {
             ELEVATOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
