@@ -25,13 +25,13 @@ public class Constants {
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;
-        public static final double MAX_HEIGHT = Units.inchesToMeters(72.0);
+        public static double MAX_HEIGHT = Units.inchesToMeters(72.0);
         
         // Reef Zone heights (arbitrary value)
         public static final double L1 = Units.inchesToMeters(0.0);
         public static final double L2 = Units.inchesToMeters(24.0);
         public static final double L3 = Units.inchesToMeters(48.0);
-        public static final double L4 = Units.inchesToMeters(72.0);
+        public static double L4 = Units.inchesToMeters(72.0);
 
         public static final double MAX_SPEED = 2.0;  // Max 
         public static final double NORMAL_SPEED = 1.0;  // Normal 
@@ -40,6 +40,11 @@ public class Constants {
         public static final double MAX_MOTOR_RPS = MAX_SPEED * GEAR_RATIO;
         public static final double NORMAL_MOTOR_RPS = NORMAL_SPEED * GEAR_RATIO;
         public static final double SLOW_MOTOR_RPS = SLOW_SPEED * GEAR_RATIO;
+
+        // Calibration constants
+        public static final double CALIBRATION_VOLTAGE_DOWN = -0.5;  // Slow downward voltage for calibration
+        public static final double CALIBRATION_VOLTAGE_UP = 0.75;    // Slow upward voltage for calibration
+        public static final double CURRENT_THRESHOLD = 20.0;         // Current spike threshold for detecting limits
 
         static {
             ELEVATOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;

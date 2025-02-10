@@ -118,5 +118,72 @@ public double getPosition() {
     // Nothin
   }
 
+  public Command homeElevator() {
+    return new Command() {
+      enum HomingState { // For Leds and debugging purposes
+        FINDING_BOTTOM,
+        MOVING_UP,
+        COMPLETE
+      }
+      
+      private HomingState currentState = HomingState.FINDING_BOTTOM;
+      private double foundMaxHeight = 0.0;
+      
+      @Override
+      public void initialize() {
+        System.out.println("Starting elevator homing sequence...");
+        currentState = HomingState.FINDING_BOTTOM;
+        setSlowSpeed(); // Use slow speed for safety
+      }
+
+      @Override
+      public void execute() {
+        switch (currentState) {
+          case FINDING_BOTTOM:
+            rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_DOWN);
+            leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
+            if (rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD) {
+              stopControllers();
+              resetSensorPosition(0.0);
+              currentState = HomingState.MOVING_UP;
+              System.out.println("Found bottom, moving up...");
+            }
+            break;
+
+          case MOVING_UP:
+            rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_UP);
+            leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
+            if (rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD) {
+              stopControllers();
+              foundMaxHeight = getPosition();
+              currentState = HomingState.COMPLETE;
+              System.out.println("Found top at height: " + foundMaxHeight);
+            }
+            break;
+
+          case COMPLETE:
+            break;
+        }
+      }
+
+      @Override
+      public void end(boolean interrupted) {
+        stopControllers();
+        setNormalSpeed(); // Restore normal speed
+        if (!interrupted && currentState == HomingState.COMPLETE) {
+          constElevator.MAX_HEIGHT = foundMaxHeight;
+          System.out.println("Homing complete. New max height: " + foundMaxHeight);
+        } else {
+          System.out.println("Homing sequence interrupted!");
+        }
+      }
+
+      @Override
+      public boolean isFinished() {
+        return currentState == HomingState.COMPLETE;
+      }
+    };
+  }
+
 }
 
