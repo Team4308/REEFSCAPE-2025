@@ -88,12 +88,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setCustomSpeed(double speedMetersPerSecond) {
     currentVelocityLimit = speedMetersPerSecond * constElevator.GEAR_RATIO;
   }
-
-  // Optional: Modified position commands with speed control
-  public Command goToL1WithSpeed(double speed) {
-    return this.runOnce(() -> setPosition(constElevator.L1, speed * constElevator.GEAR_RATIO));
-  }
-
 public double getPosition() {
     double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
     return motorRotations / constElevator.GEAR_RATIO;  
