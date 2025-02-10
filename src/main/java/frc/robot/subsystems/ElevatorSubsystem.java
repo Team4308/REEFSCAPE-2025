@@ -12,8 +12,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
-
-  private double calibratedMaxHeight = 0.0; // Zero as default change later to proper one 
+  private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
   public ElevatorSubsystem() {
     leftMotorFollower = new TalonFX(constElevator.ELEVATOR_LEADER); 
@@ -35,6 +34,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
   
   public void setPosition(double setpointMeters) {
+    setPosition(setpointMeters, currentVelocityLimit);
+  }
+
+  public void setPosition(double setpointMeters, double velocityRPS) {
     if (setpointMeters < 0 || setpointMeters > constElevator.MAX_HEIGHT) {
         throw new IllegalArgumentException("Setpoint out of range");
     }
@@ -47,11 +50,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         constElevator.MAX_HEIGHT * constElevator.GEAR_RATIO
     );
 
-    rightMotorLeader.setControl(new PositionVoltage(motorRotations));
+    var positionVoltage = new PositionVoltage(motorRotations).withVelocity(velocityRPS);
+    rightMotorLeader.setControl(positionVoltage);
     leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
   }
 
-  // position commands
+  // Preset position commands
   public Command goToL1() {
     return this.runOnce(() -> setPosition(constElevator.L1));
   }
@@ -68,10 +72,40 @@ public class ElevatorSubsystem extends SubsystemBase {
     return this.runOnce(() -> setPosition(constElevator.L4));
   }
 
+  // Speed control
+  public void setNormalSpeed() {
+    currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
+  }
+
+  public void setSlowSpeed() {
+    currentVelocityLimit = constElevator.SLOW_MOTOR_RPS;
+  }
+
+  public void setMaxSpeed() {
+    currentVelocityLimit = constElevator.MAX_MOTOR_RPS;
+  }
+
+  public void setCustomSpeed(double speedMetersPerSecond) {
+    currentVelocityLimit = speedMetersPerSecond * constElevator.GEAR_RATIO;
+  }
+
+  // Optional: Modified position commands with speed control
+  public Command goToL1WithSpeed(double speed) {
+    return this.runOnce(() -> setPosition(constElevator.L1, speed * constElevator.GEAR_RATIO));
+  }
+
 public double getPosition() {
     double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
     return motorRotations / constElevator.GEAR_RATIO;  
 }
+
+  public double getHeight() {
+    return getPosition();  // Already returns in meters
+  }
+
+  public double getMaxHeight() {
+    return constElevator.MAX_HEIGHT;
+  }
 
   // Stop the controllers
   public void stopControllers() {
@@ -83,75 +117,6 @@ public double getPosition() {
   public void resetSensorPosition(double setpoint) { 
     rightMotorLeader.setPosition(setpoint);
     leftMotorFollower.setPosition(setpoint);
-  }
-
-  public Command calibrate() {
-    return new Command() {
-      @Override
-      public void initialize() {
-        System.out.println("Starting elevator calibration...");
-      }
-
-      @Override
-      public void execute() {
-        // Current state will be tracked by command
-        if (getCalibrationState() == CalibrationState.FINDING_BOTTOM) {
-          rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_DOWN);
-          leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-        } else if (getCalibrationState() == CalibrationState.FINDING_TOP) {
-          rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_UP);
-          leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-        }
-      }
-
-      @Override
-      public void end(boolean interrupted) {
-        stopControllers();
-        if (!interrupted) {
-          System.out.println("Calibration complete. Max height: " + calibratedMaxHeight);
-          constElevator.MAX_HEIGHT = calibratedMaxHeight;
-
-        }
-      }
-
-      @Override
-      public boolean isFinished() {
-        switch (getCalibrationState()) {
-          case FINDING_BOTTOM:
-            if (rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD) {
-              stopControllers();
-              resetSensorPosition(0.0);
-              return false; // Continue to next state
-            }
-            break;
-          case FINDING_TOP:
-            if (rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD) {
-              calibratedMaxHeight = getPosition();
-              return true; // Calibration complete
-            }
-            break;
-        }
-        return false;
-      }
-    };
-  }
-
-  private enum CalibrationState {
-    FINDING_BOTTOM,
-    FINDING_TOP
-  }
-
-  private CalibrationState calibrationState = CalibrationState.FINDING_BOTTOM;
-
-  private CalibrationState getCalibrationState() {
-    if (getPosition() == 0.0) {
-      return CalibrationState.FINDING_TOP;
-    }
-    return CalibrationState.FINDING_BOTTOM;
-  }
-
-  public double getCalibratedMaxHeight() {
-    return calibratedMaxHeight;
   }
 
   @Override
