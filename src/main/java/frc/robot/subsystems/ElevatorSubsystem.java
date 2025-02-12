@@ -45,7 +45,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     var positionVoltage = new PositionVoltage(motorRotations).withVelocity(velocityRPS);
     rightMotorLeader.setControl(positionVoltage);
     leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-    m_ledSystem.setLedState("Teleop");  // Show progress during movement
   }
 
   // Preset position commands
