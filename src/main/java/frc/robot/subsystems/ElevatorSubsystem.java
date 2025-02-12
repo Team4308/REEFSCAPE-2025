@@ -7,38 +7,30 @@ import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constElevator;
-
+import frc.robot.subsystems.LEDSystem;
 public class ElevatorSubsystem extends SubsystemBase {
 
+  private final LEDSystem m_ledSystem;
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
   private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
-  public ElevatorSubsystem() {
+  public ElevatorSubsystem(LEDSystem ledSystem) {
+    m_ledSystem = ledSystem;
     leftMotorFollower = new TalonFX(constElevator.ELEVATOR_LEADER); 
     rightMotorLeader = new TalonFX(constElevator.ELEVATOR_FOLLOWER); 
-
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
   }
     
-  public Command zero() { //  Zeroing to Home the elevator
-    return this.run(() -> rightMotorLeader.setVoltage(-1.0))
-      .until(() -> rightMotorLeader.getStatorCurrent().getValueAsDouble() > 20.0)
-      .finallyDo(
-        (interrupted) -> {
-          rightMotorLeader.setVoltage(0.0);
-          if (!interrupted) rightMotorLeader.setPosition(0.0);
-        }
-      );
-  }
-  
+
   public void setPosition(double setpointMeters) {
     setPosition(setpointMeters, currentVelocityLimit);
   }
 
   public void setPosition(double setpointMeters, double velocityRPS) {
     if (setpointMeters < 0 || setpointMeters > constElevator.MAX_HEIGHT) {
+        m_ledSystem.setLedState("Fault");
         throw new IllegalArgumentException("Setpoint out of range");
     }
 
@@ -53,6 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     var positionVoltage = new PositionVoltage(motorRotations).withVelocity(velocityRPS);
     rightMotorLeader.setControl(positionVoltage);
     leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
+    m_ledSystem.setLedState("Teleop");  // Show progress during movement
   }
 
   // Preset position commands
@@ -105,6 +98,7 @@ public double getPosition() {
   public void stopControllers() {
     rightMotorLeader.set(0.0);
     leftMotorFollower.set(0.0);
+    m_ledSystem.setLedState("Idle");
   }
 
   // Reset the sensor position of the elevator
@@ -119,70 +113,48 @@ public double getPosition() {
   }
 
   public Command homeElevator() {
-    return new Command() {
-      enum HomingState { // For Leds and debugging purposes
-        FINDING_BOTTOM,
-        MOVING_UP,
-        COMPLETE
-      }
-      
-      private HomingState currentState = HomingState.FINDING_BOTTOM;
-      private double foundMaxHeight = 0.0;
-      
-      @Override
-      public void initialize() {
-        System.out.println("Starting elevator homing sequence...");
-        currentState = HomingState.FINDING_BOTTOM;
-        setSlowSpeed(); // Use slow speed for safety
-      }
+    String previousLedState = m_ledSystem.getLedState();
+    m_ledSystem.setLedState("Zeroing");
 
-      @Override
-      public void execute() {
-        switch (currentState) {
-          case FINDING_BOTTOM:
-            rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_DOWN);
-            leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-            if (rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD) {
-              stopControllers();
-              resetSensorPosition(0.0);
-              currentState = HomingState.MOVING_UP;
-              System.out.println("Found bottom, moving up...");
-            }
-            break;
+    return run(() -> {
+      // Go down until bottom limit
+      rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_DOWN);
+      leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
+    })
+    .until(() -> rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD)
+    .beforeStarting(() -> {
+      setSlowSpeed();
+      m_ledSystem.setLedState("Zeroing");
+      System.out.println("Starting elevator homing sequence...");
+    })
+    .andThen(() -> {
+      stopControllers();
+      resetSensorPosition(0.0);
+      System.out.println("Found bottom, moving up...");
+    })
+    .andThen(
+      run(() -> {
+        // Go up until top limit
+        rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_UP);
+        leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
+      })
+      .until(() -> rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD)
+    )
+    .finallyDo((interrupted) -> {
+      stopControllers();
+      setNormalSpeed();
+      if (!interrupted) {
+        double foundMaxHeight = getPosition();
+        constElevator.MAX_HEIGHT = foundMaxHeight;
+        System.out.println("Homing complete. New max height: " + foundMaxHeight);
+        m_ledSystem.setLedState(previousLedState);
 
-          case MOVING_UP:
-            rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_UP);
-            leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-            if (rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD) {
-              stopControllers();
-              foundMaxHeight = getPosition();
-              currentState = HomingState.COMPLETE;
-              System.out.println("Found top at height: " + foundMaxHeight);
-            }
-            break;
+      } else {
+        m_ledSystem.setLedState("Fault");
+        System.out.println("Homing sequence interrupted!");
 
-          case COMPLETE:
-            break;
-        }
       }
-
-      @Override
-      public void end(boolean interrupted) {
-        stopControllers();
-        setNormalSpeed(); // Restore normal speed
-        if (!interrupted && currentState == HomingState.COMPLETE) {
-          constElevator.MAX_HEIGHT = foundMaxHeight;
-          System.out.println("Homing complete. New max height: " + foundMaxHeight);
-        } else {
-          System.out.println("Homing sequence interrupted!");
-        }
-      }
-
-      @Override
-      public boolean isFinished() {
-        return currentState == HomingState.COMPLETE;
-      }
-    };
+    });
   }
 
 }

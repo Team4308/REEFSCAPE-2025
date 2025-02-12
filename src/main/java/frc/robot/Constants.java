@@ -13,6 +13,12 @@ public class Constants {
         public static boolean tuningMode = false;
     }
 
+    public static class constLED {
+        public static final int LED_PORT = 5;
+        public static final int LED_LENGTH = 120;
+        public static final double SIM_UPDATE_RATE = 0.02;  
+    }
+
     public static class constElevator {
         public static TalonFXConfiguration ELEVATOR_CONFIG = new TalonFXConfiguration();
         public static final PIDController ELEVATOR_PID = new PIDController(1.0, 0.0, 0.0);
@@ -29,9 +35,9 @@ public class Constants {
         
         // Reef Zone heights (arbitrary value)
         public static final double L1 = Units.inchesToMeters(0.0);
-        public static final double L2 = Units.inchesToMeters(24.0);
-        public static final double L3 = Units.inchesToMeters(48.0);
-        public static double L4 = Units.inchesToMeters(72.0);
+        public static final double L2 = Units.inchesToMeters(10.0);
+        public static final double L3 = Units.inchesToMeters(20.0);
+        public static double L4 = Units.inchesToMeters(30.0);
 
         public static final double MAX_SPEED = 2.0;  // Max 
         public static final double NORMAL_SPEED = 1.0;  // Normal 
