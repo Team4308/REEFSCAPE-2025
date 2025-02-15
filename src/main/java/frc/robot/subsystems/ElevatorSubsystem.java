@@ -49,21 +49,22 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   // Preset position commands
-  public Command goToL1() {
-    return this.runOnce(() -> setPosition(constElevator.L1));
+
+  public Command goToLevel(String lvl) {
+    switch (lvl) {
+      case "L1":
+        return  this.runOnce(() -> setPosition(constElevator.L1));
+      case "L2":
+        return  this.runOnce(() -> setPosition(constElevator.L1));
+      case "L3":
+        return  this.runOnce(() -> setPosition(constElevator.L1));
+      case "L4":
+        return  this.runOnce(() -> setPosition(constElevator.L1));
+      default:
+        return null;
+    }
   }
 
-  public Command goToL2() {
-    return this.runOnce(() -> setPosition(constElevator.L2));
-  }
-
-  public Command goToL3() {
-    return this.runOnce(() -> setPosition(constElevator.L3));
-  }
-
-  public Command goToL4() {
-    return this.runOnce(() -> setPosition(constElevator.L4));
-  }
 
   // Speed control
   public void setNormalSpeed() {
@@ -87,7 +88,7 @@ public double getPosition() {
 }
 
   public double getHeight() {
-    return getPosition();  // Already returns in meters
+    return getPosition();  
   }
 
   public double getMaxHeight() {
