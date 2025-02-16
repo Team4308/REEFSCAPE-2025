@@ -20,6 +20,8 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,6 +29,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -37,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import ca.team4308.absolutelib.wrapper.LoggedTunableNumber;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -57,12 +61,20 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase {
+  private static final LoggedTunableNumber kReefP = new LoggedTunableNumber("Swerve/ReefHeadingAlign/kP",
+      Constants.Swerve.ReefHeadingAlign.kP);
+  private static final LoggedTunableNumber kReefI = new LoggedTunableNumber("Swerve/ReefHeadingAlign/kI",
+      Constants.Swerve.ReefHeadingAlign.kI);
+  private static final LoggedTunableNumber kReefD = new LoggedTunableNumber("Swerve/ReefHeadingAlign/kD",
+      Constants.Swerve.ReefHeadingAlign.kD);
 
   private final SwerveDrive swerveDrive;
   private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
   private final boolean visionDriveTest = false;
   private Vision vision;
+
+  private PIDController reefHeadingAlignController = new PIDController(kReefP.get(), kReefI.get(), kReefD.get());
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
@@ -83,8 +95,6 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setAngularVelocityCompensation(true,true,0.1); 
     // Resync absolute encoders and motor encoders periodically when they are not moving.
     swerveDrive.setModuleEncoderAutoSynchronize(false,1); 
-    // Set the absolute encoder to be used over the internal encoder and push the offsets onto it.
-    // swerveDrive.pushOffsetsToEncoders(); 
     if (visionDriveTest) {
       setupPhotonVision();
       // Stop the odometry thread while running vision to synchronize updates better.
@@ -112,11 +122,23 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
+    checkTunableValues();
   }
 
   @Override
   public void simulationPeriodic() {
   }
+
+  public void checkTunableValues() {
+        if (!Constants.LoggedDashboard.tuningMode) {
+            return;
+        }
+        // Only update LoggedTunableNumbers when enabled
+        if (DriverStation.isEnabled()) {
+            LoggedTunableNumber.ifChanged(hashCode(), 
+            () -> reefHeadingAlignController.setPID(kReefP.get(), kReefI.get(), kReefD.get()), kReefP, kReefI, kReefD);
+        }
+    }
 
   // Setup AutoBuilder for PathPlanner.
   public void setupPathPlanner() {
@@ -175,8 +197,36 @@ public class SwerveSubsystem extends SubsystemBase {
     PathfindingCommand.warmupCommand().schedule();
   }
 
-  public Command aimAtTarget(Cameras camera) {
+  public Pose3d getReefCenterPose() {
+    if (isRedAlliance()) {
+      return Constants.GamePieces.kReefCenterRed;
+    } else {
+      return Constants.GamePieces.kReefCenterBlue;
+    }
+  }
 
+  public double getDistanceToReef() {
+    Pose3d reefCenterPose = getReefCenterPose();
+    return getPose().getTranslation().getDistance(reefCenterPose.toPose2d().getTranslation());
+  }
+
+  public Rotation2d getYawToReef() {
+    Pose3d reefCenterPose = getReefCenterPose();
+    Translation2d relativeTrl = reefCenterPose.toPose2d().relativeTo(getPose()).getTranslation();
+    return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getOdometryHeading());
+  }
+
+  public Command aimAtReef(double tolerance) {
+    return run(
+        () -> {
+          drive(ChassisSpeeds.fromFieldRelativeSpeeds(0,0,
+              reefHeadingAlignController.calculate(getHeading().getRadians(),
+              getYawToReef().getRadians()),
+              getHeading()));
+        }).until(() -> Math.abs(getYawToReef().minus(getHeading()).getDegrees()) < tolerance);
+  }
+
+  public Command aimAtTarget(Cameras camera) {
     return run(() -> {
       Optional<PhotonPipelineResult> resultO = camera.getBestResult();
       if (resultO.isPresent()) {
@@ -429,70 +479,38 @@ public class SwerveSubsystem extends SubsystemBase {
         Constants.MAX_SPEED);
   }
 
-  /**
-   * Gets the current field-relative velocity (x, y and omega) of the robot
-   *
-   * @return A ChassisSpeeds object of the current field-relative velocity
-   */
+  // Gets the current field-relative velocity (x, y and omega) of the robot
   public ChassisSpeeds getFieldVelocity() {
     return swerveDrive.getFieldVelocity();
   }
 
-  /**
-   * Gets the current velocity (x, y and omega) of the robot
-   *
-   * @return A {@link ChassisSpeeds} object of the current velocity
-   */
+  // Gets the current velocity (x, y and omega) of the robot
   public ChassisSpeeds getRobotVelocity() {
     return swerveDrive.getRobotVelocity();
   }
 
-  /**
-   * Get the {@link SwerveController} in the swerve drive.
-   *
-   * @return {@link SwerveController} from the {@link SwerveDrive}.
-   */
   public SwerveController getSwerveController() {
     return swerveDrive.swerveController;
   }
 
-  /**
-   * Get the {@link SwerveDriveConfiguration} object.
-   *
-   * @return The {@link SwerveDriveConfiguration} fpr the current drive.
-   */
   public SwerveDriveConfiguration getSwerveDriveConfiguration() {
     return swerveDrive.swerveDriveConfiguration;
   }
 
-  /**
-   * Lock the swerve drive to prevent it from moving.
-   */
+  // Lock the swerve drive to prevent it from moving.
   public void lock() {
     swerveDrive.lockPose();
   }
 
-  /**
-   * Gets the current pitch angle of the robot, as reported by the imu.
-   *
-   * @return The heading as a {@link Rotation2d} angle
-   */
+  // Gets the current pitch angle of the robot, as reported by the imu.
   public Rotation2d getPitch() {
     return swerveDrive.getPitch();
   }
 
-  /**
-   * Add a fake vision reading for testing purposes.
-   */
   public void addFakeVisionReading() {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
 
-  /**
-   * Gets the swerve drive object.
-   *
-   * @return {@link SwerveDrive}
-   */
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
   }

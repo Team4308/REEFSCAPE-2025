@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,19 +42,13 @@ import frc.robot.Robot;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
 
-/**
- * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken
- * from
- * https://gitlab.com/ironclad_code/ironclad-2024/-/blob/master/src/main/java/frc/robot/vision/Vision.java?ref_type=heads
- */
 public class Vision {
 
   public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   // Ambiguity defined as a value between (0,1). Could be used in filtering poses
   private final double maximumAmbiguity = 0.25;
+  // Vision simulation instance.
   public VisionSystemSim visionSim;
-  // Count of times that the odom thinks we're more than 10meters away from the april tag.
-  private double longDistangePoseEstimationCount = 0;
   // Current pose from the pose estimator using wheel odometry.
   private Supplier<Pose2d> currentPose;
   private Field2d field2d;
@@ -78,8 +71,6 @@ public class Vision {
       for (Cameras c : Cameras.values()) {
         c.addToVisionSim(visionSim);
       }
-
-      openSimCameraViews();
     }
   }
 
@@ -161,46 +152,6 @@ public class Vision {
   }
 
   /**
-   * Filter pose via the ambiguity and find best estimate between all of the
-   * camera's throwing out distances more than
-   * 10m for a short amount of time.
-   *
-   * @param pose Estimated robot pose.
-   * @return Could be empty if there isn't a good reading.
-   */
-  @Deprecated(since = "2024", forRemoval = true)
-  private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose) {
-    if (pose.isPresent()) {
-      double bestTargetAmbiguity = 1; // 1 is max ambiguity
-      for (PhotonTrackedTarget target : pose.get().targetsUsed) {
-        double ambiguity = target.getPoseAmbiguity();
-        if (ambiguity != -1 && ambiguity < bestTargetAmbiguity) {
-          bestTargetAmbiguity = ambiguity;
-        }
-      }
-      // ambiguity to high dont use estimate
-      if (bestTargetAmbiguity > maximumAmbiguity) {
-        return Optional.empty();
-      }
-
-      // est pose is very far from recorded robot pose
-      if (PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d()) > 1) {
-        longDistangePoseEstimationCount++;
-
-        // if it calculates that were 10 meter away for more than 10 times in a row its
-        // probably right
-        if (longDistangePoseEstimationCount < 10) {
-          return Optional.empty();
-        }
-      } else {
-        longDistangePoseEstimationCount = 0;
-      }
-      return pose;
-    }
-    return Optional.empty();
-  }
-
-  /**
    * Get distance of the robot from the AprilTag pose.
    *
    * @param id AprilTag ID
@@ -240,24 +191,6 @@ public class Vision {
    */
   public VisionSystemSim getVisionSim() {
     return visionSim;
-  }
-
-  /**
-   * Open up the photon vision camera streams on the localhost, assumes running
-   * photon vision on localhost.
-   */
-  private void openSimCameraViews() {
-    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-      // try
-      // {
-      // Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
-      // Desktop.getDesktop().browse(new URI("http://localhost:1184/"));
-      // Desktop.getDesktop().browse(new URI("http://localhost:1186/"));
-      // } catch (IOException | URISyntaxException e)
-      // {
-      // e.printStackTrace();
-      // }
-    }
   }
 
   /**
@@ -309,51 +242,27 @@ public class Vision {
             Units.inchesToMeters(8.453)),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
-    /**
-     * Latency alert to use when high latency is detected.
-     */
+    // Latency alert to use when high latency is detected.
     public final Alert latencyAlert;
-    /**
-     * Camera instance for comms.
-     */
+    // Camera instance for comms.
     public final PhotonCamera camera;
-    /**
-     * Pose estimator for camera.
-     */
+    // Pose estimator for camera
     public final PhotonPoseEstimator poseEstimator;
-    /**
-     * Standard Deviation for single tag readings for pose estimation.
-     */
+    // Standard Deviation for single tag readings for pose estimation.
     private final Matrix<N3, N1> singleTagStdDevs;
-    /**
-     * Standard deviation for multi-tag readings for pose estimation.
-     */
+    // Standard deviation for multi-tag readings for pose estimation.
     private final Matrix<N3, N1> multiTagStdDevs;
-    /**
-     * Transform of the camera rotation and translation relative to the center of
-     * the robot
-     */
+    // Transform of the camera rotation and translation relative to the center of the robot
     private final Transform3d robotToCamTransform;
-    /**
-     * Current standard deviations used.
-     */
+    // Current standard deviations used.
     public Matrix<N3, N1> curStdDevs;
-    /**
-     * Estimated robot pose.
-     */
-    public Optional<EstimatedRobotPose> estimatedRobotPose;
-    /**
-     * Simulated camera instance which only exists during simulations.
-     */
+    // Estimated robot pose from the camera.
+    public Optional<EstimatedRobotPose> estimatedRobotPose = Optional.empty();
+    // Simulated camera instance which only exists during simulations.
     public PhotonCameraSim cameraSim;
-    /**
-     * Results list to be updated periodically and cached to avoid unnecessary
-     * queries.
-     */
+    // Results list to be updated periodically and cached to avoid unnecessary queries.
     public List<PhotonPipelineResult> resultsList = new ArrayList<>();
-    /**
-     * Last read from the camera timestamp to prevent lag due to slow data fetches.
-     */
+    // Last read from the camera timestamp to prevent lag due to slow data fetches.
     private double lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
 
     /**
