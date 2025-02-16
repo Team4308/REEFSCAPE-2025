@@ -21,6 +21,22 @@ public class Constants {
 
     public static class constElevator {
         public static TalonFXConfiguration ELEVATOR_CONFIG = new TalonFXConfiguration();
+        static {
+            ELEVATOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+            ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // Check
+            ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Units.rotationsToRadians(3); // Fake values
+            ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+            ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Units.rotationsToRadians(0); // Fake values
+            ELEVATOR_CONFIG.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+            ELEVATOR_CONFIG.Slot0.kG = 0.3;
+            ELEVATOR_CONFIG.Slot0.kS = 0.4;
+            ELEVATOR_CONFIG.Slot0.kV = 0.0;
+            ELEVATOR_CONFIG.Slot0.kA = 0.0;
+            ELEVATOR_CONFIG.Slot0.kP = 1.0;
+            ELEVATOR_CONFIG.Slot0.kI = 0.0;
+            ELEVATOR_CONFIG.Slot0.kD = 0.0;
+        }
         public static final PIDController ELEVATOR_PID = new PIDController(1.0, 0.0, 0.0);
         public static final SimpleMotorFeedforward ELEVATOR_FEEDFORWARD = new SimpleMotorFeedforward(1.0, 1.0);
 
