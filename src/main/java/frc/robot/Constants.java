@@ -4,6 +4,8 @@ public class Constants {
     public static class LoggedDashboard {
         public static boolean tuningMode = false;
     }
+    
+    public static boolean enableTunableValues = true;
 
     public static class Mapping {
         public static class Index {
@@ -31,5 +33,9 @@ public class Constants {
             public static final double kI = 0;
             public static final double kD = 0.0001;
           }
+    }
+    public static final class ArmConstants {
+        public static double[] armSGV = new double[] { 0.01, 0.0425, 0.0 };
+        public static double[] armPID = new double[] { 2, 1, 0f };
     }
 }
