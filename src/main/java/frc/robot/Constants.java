@@ -37,5 +37,9 @@ public class Constants {
     public static final class ArmConstants {
         public static double[] armSGV = new double[] { 0.01, 0.0425, 0.0 };
         public static double[] armPID = new double[] { 2, 1, 0f };
+
+        public static final int leaderID = 21;
+        public static final int followerID = 22;
+        public static final int encoderID = 0;
     }
 }

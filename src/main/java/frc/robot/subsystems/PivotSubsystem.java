@@ -14,32 +14,36 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 public class PivotSubsystem extends LogSubsystem {
-
+    private final TalonFX leader = new TalonFX(Constants.ArmConstants.leaderID);
+    private final TalonFX follower = new TalonFX(Constants.ArmConstants.followerID);
     public final TalonFX motor;
     public final PIDController pidController;
     private final CANcoder canCoder; 
+
+// ok arav you're cooked
+
+    public Rotation2d encoderPosition = new Rotation2d();
+
     
+
     private final PIDController pid = new PIDController(Constants.ArmConstants.armPID[0],
         Constants.ArmConstants.armPID[1],
         Constants.ArmConstants.armPID[2]);
     private ArmFeedforward ffModel = new ArmFeedforward(
-        Constants.ArmConstants.armSGV[0],
-        Constants.ArmConstants.armSGV[1],
-        Constants.ArmConstants.armSGV[2]);
+        Constants.ArmConstants.armPID[0],
+        Constants.ArmConstants.armPID[1],
+        Constants.ArmConstants.armPID[2],
+        Constants.ArmConstants.armSGV[1]);
 
-        public Rotation2d encoderPosition = new Rotation2d();
-    
+    private Rotation2d setpoint = new Rotation2d();
+    private Rotation2d velocity = new Rotation2d();
 
     private LoggedTunableNumber armP = new LoggedTunableNumber("armP", Constants.ArmConstants.armPID[0]);
     private LoggedTunableNumber armI = new LoggedTunableNumber("armI", Constants.ArmConstants.armPID[1]);
     private LoggedTunableNumber armD = new LoggedTunableNumber("armD", Constants.ArmConstants.armPID[2]);
-    private LoggedTunableNumber armS = new LoggedTunableNumber("armS", Constants.ArmConstants.armSGV[0]);
     private LoggedTunableNumber armG = new LoggedTunableNumber("armG", Constants.ArmConstants.armSGV[1]);
-    private LoggedTunableNumber armV = new LoggedTunableNumber("armV", Constants.ArmConstants.armSGV[2]);
 
-    private Rotation2d setpoint = new Rotation2d();
-    private Rotation2d velocity = new Rotation2d();
-    private Rotation2d goal = new Rotation2d();
+    
 
     public PivotSubsystem() {
         motor = new TalonFX(Constants.Mapping.Shooter.motor);
@@ -79,34 +83,40 @@ public class PivotSubsystem extends LogSubsystem {
         setMotorOutput(motorOutput);
     }
 
-      public void checkTunableValues() {
-        if (!Constants.enableTunableValues)
-        return;
-        // IDK about the ID's, if you know better, change them
-    if (armP.hasChanged(0) || armI.hasChanged(0) || armD.hasChanged(0)) {
-      pid.setPID(armP.get(), armI.get(), armD.get());
-    }
-    if (armS.hasChanged(0) || armG.hasChanged(0) || armV.hasChanged(0)) {
-      ffModel = new ArmFeedforward(armS.get(), armG.get(), armV.get());
-    }
-  }
-
         public void stopControllers() {
         motor.set(0.0);
+    }
+
+    public Rotation2d getSetpoint() {
+        return setpoint;
+    }
+    
+    public Rotation2d getVelovity() {
+        return velocity;
     }
 
     public Sendable log() {
         return this;
     }
 
-    @Override
-    public void periodic() {
-        checkTunableValues();
+      @Override
+  public void periodic() {
+    encoderPosition = Rotation2d.fromDegrees(canCoder.getAbsolutePosition());
+
+    var ffOutput = ffModel.calculate(setpoint.getRadians(), velocity.getRadians());
+    var pidOutput = pid.calculate(getEncoderPosition().getRadians(), setpoint.getRadians());
+
+    SmartDashboard.putNumber("ffoutput arm", ffOutput);
+
+    leader.set(ffOutput + pidOutput);
+    follower.set(ffOutput + pidOutput);
+  }
+
+  public interface ArmEncoder {
+    public Rotation2d getAbsolutePosition();
   
-        var ffOutput = ffModel.calculate(setpoint.getRadians(), velocity.getRadians());
-        var pidOutput = pid.calculate(getEncoderPosition().getRadians(), setpoint.getRadians());
-  
-        SmartDashboard.putNumber("ffoutput arm", ffOutput);
-    }
+    public void setOffset(Rotation2d offset);
+  }
+
 }
 
