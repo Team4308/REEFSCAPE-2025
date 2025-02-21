@@ -19,7 +19,7 @@ public class RobotContainer {
     public final XBoxWrapper stick1 = new XBoxWrapper(Constants.Mapping.Controllers.kStick1);
     public RobotContainer() {
         m_ledSystem = new LEDSystem();
-        m_elevator = new ElevatorSubsystem(m_ledSystem);
+        m_elevator = new ElevatorSubsystem();
         m_ledSystem.setElevator(m_elevator);
 
         CommandScheduler.getInstance().registerSubsystem(m_ledSystem);
@@ -29,8 +29,12 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-            stick.A.onTrue(new InstantCommand(() -> m_elevator.goToLevel(1)));
-            stick.A.onFalse(new InstantCommand(() -> m_elevator.goToLevel(0)));
+            stick.A.onTrue(new InstantCommand(() -> m_elevator.homeElevator()));
+            stick.Up.onTrue(new InstantCommand(() -> m_elevator.goToLevel(1)));
+            stick.Up.onFalse(new InstantCommand(() -> m_elevator.goToLevel(0)));
+            stick.Right.onTrue(new InstantCommand(() -> m_elevator.goToLevel(2)));
+            stick.Right.onFalse(new InstantCommand(() -> m_elevator.goToLevel(0)));
+
     }
 
     public Command getAutonomousCommand() {

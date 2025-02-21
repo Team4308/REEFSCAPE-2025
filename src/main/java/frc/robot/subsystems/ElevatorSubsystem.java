@@ -8,15 +8,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constElevator;
 public class ElevatorSubsystem extends SubsystemBase {
 
-  public static double MAX_HEIGHT = Units.inchesToMeters(80.0); // Do not move this value does change after homing (CHANGE VALUE TO REAL)
+  public static double MAX_HEIGHT = Units.inchesToMeters(50.0); // Do not move this value does change after homing (CHANGE VALUE TO REAL)
 
-  private final LEDSystem m_ledSystem;
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
   private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
-  public ElevatorSubsystem(LEDSystem ledSystem) {
-    m_ledSystem = ledSystem;
+  public ElevatorSubsystem() {
     leftMotorFollower = new TalonFX(constElevator.ELEVATOR_LEADER); 
     rightMotorLeader = new TalonFX(constElevator.ELEVATOR_FOLLOWER); 
 
@@ -96,7 +94,6 @@ public void setPosition(double motorRotations, double velocityRPS) {
   public void stopControllers() {
     rightMotorLeader.set(0.0);
     leftMotorFollower.set(0.0);
-    m_ledSystem.setLedState("Idle");
   }
 
   // Reset the sensor position of the elevator
@@ -112,8 +109,7 @@ public void setPosition(double motorRotations, double velocityRPS) {
   }
 
   public Command homeElevator() {
-    String previousLedState = m_ledSystem.getLedState();
-    m_ledSystem.setLedState("Zeroing");
+ 
 
     return run(() -> {
       // Go down until bottom limit
@@ -123,7 +119,6 @@ public void setPosition(double motorRotations, double velocityRPS) {
     .until(() -> rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD)
     .beforeStarting(() -> {
       setSlowSpeed();
-      m_ledSystem.setLedState("Zeroing");
       System.out.println("Starting elevator homing sequence...");
     })
     .andThen(() -> {
@@ -146,10 +141,8 @@ public void setPosition(double motorRotations, double velocityRPS) {
         double foundMaxHeight = getPositionInMeters();
         MAX_HEIGHT = foundMaxHeight;
         System.out.println("Homing done. New max height: " + foundMaxHeight);
-        m_ledSystem.setLedState(previousLedState);
 
       } else {
-        m_ledSystem.setLedState("Fault");
         System.out.println("Homing sequence failed!");
 
       }
