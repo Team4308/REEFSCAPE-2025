@@ -71,14 +71,14 @@ public class LEDSystem extends SubsystemBase {
       case "Auto":
         currentColor = Color.kOrangeRed;
         pattern = LEDPattern.progressMaskLayer(() -> {
-          patternValue = m_elevator.getHeight() / m_elevator.getMaxHeight();
+          patternValue = m_elevator.getPositionInMeters() / m_elevator.getMaxHeight();
           return patternValue;
         });
         pattern.blink(Units.Seconds.of(1));
         runPattern(pattern);
         break;
       case "Teleop":
-        runPattern(LEDPattern.progressMaskLayer(() -> m_elevator.getHeight() / m_elevator.getMaxHeight()));
+        runPattern(LEDPattern.progressMaskLayer(() -> m_elevator.getPosition() / m_elevator.getMaxHeight()));
         break;
       case "Test":
         runPattern(LEDPattern.solid(Color.kYellow));
@@ -97,7 +97,7 @@ public class LEDSystem extends SubsystemBase {
         break;
       default:
         // Idk if this works 
-        runPattern(LEDPattern.progressMaskLayer(() -> m_elevator.getHeight() / m_elevator.getMaxHeight()));
+        runPattern(LEDPattern.progressMaskLayer(() -> m_elevator.getPosition() / m_elevator.getMaxHeight()));
         break;
     }
     
@@ -116,7 +116,7 @@ public class LEDSystem extends SubsystemBase {
     if (Robot.isSimulation()) {
         // Update pattern value for progress indicators
         if (ledState.equals("Auto") || ledState.equals("Teleop")) {
-            patternValue = m_elevator.getHeight() / m_elevator.getMaxHeight();
+            patternValue = m_elevator.getPosition() / m_elevator.getMaxHeight();
             SmartDashboard.putNumber("LED Pattern Value", patternValue);
         }
         

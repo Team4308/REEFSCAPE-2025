@@ -1,14 +1,14 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-
-import ca.team4308.absolutelib.math.DoubleUtils;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constElevator;
-import frc.robot.subsystems.LEDSystem;
 public class ElevatorSubsystem extends SubsystemBase {
+
+  public static double MAX_HEIGHT = Units.inchesToMeters(80.0); // Do not move this value does change after homing (CHANGE VALUE TO REAL)
 
   private final LEDSystem m_ledSystem;
   private TalonFX leftMotorFollower;
@@ -19,46 +19,40 @@ public class ElevatorSubsystem extends SubsystemBase {
     m_ledSystem = ledSystem;
     leftMotorFollower = new TalonFX(constElevator.ELEVATOR_LEADER); 
     rightMotorLeader = new TalonFX(constElevator.ELEVATOR_FOLLOWER); 
+
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
   }
     
 
-  public void setPosition(double setpointMeters) {
-    setPosition(setpointMeters, currentVelocityLimit);
-  }
+  public void setPosition(double setpointMeters) { // Set pos in meters 
+    double setpointRotations = setpointMeters / (Math.PI * constElevator.SPOOL_RADIUS);
+    double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
+    setPosition(motorRotations, currentVelocityLimit);
+}
 
-  public void setPosition(double setpointMeters, double velocityRPS) {
-    if (setpointMeters < 0 || setpointMeters > constElevator.MAX_HEIGHT) {
-        m_ledSystem.setLedState("Fault");
-        throw new IllegalArgumentException("Setpoint out of range");
-    }
-
-    double motorRotations = DoubleUtils.mapRange(
-        setpointMeters,
-        0,
-        constElevator.MAX_HEIGHT,
-        0,
-        constElevator.MAX_HEIGHT * constElevator.GEAR_RATIO
-    );
-
-    var positionVoltage = new PositionVoltage(motorRotations).withVelocity(velocityRPS);
-    rightMotorLeader.setControl(positionVoltage);
+public void setPosition(double motorRotations, double velocityRPS) {
+    double currentMotorRotations = getPosition();
+    double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
+    double feedforwardVoltage = constElevator.feedforward.calculate(velocityRPS);
+    double totalVoltage = pidOutput + feedforwardVoltage;
+    rightMotorLeader.setVoltage(totalVoltage);
     leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-  }
-
+}
   // Preset position commands
 
-  public Command goToLevel(String lvl) {
+  public Command goToLevel(int lvl) {
     switch (lvl) {
-      case "L1":
+      case 0:
+        return  this.runOnce(() -> setPosition(0.0));
+      case 1:
         return  this.runOnce(() -> setPosition(constElevator.L1));
-      case "L2":
-        return  this.runOnce(() -> setPosition(constElevator.L1));
-      case "L3":
-        return  this.runOnce(() -> setPosition(constElevator.L1));
-      case "L4":
-        return  this.runOnce(() -> setPosition(constElevator.L1));
+      case 2:
+        return  this.runOnce(() -> setPosition(constElevator.L2));
+      case 3:
+        return  this.runOnce(() -> setPosition(constElevator.L3));
+      case 4:
+        return  this.runOnce(() -> setPosition(constElevator.L4));
       default:
         return null;
     }
@@ -81,18 +75,22 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void setCustomSpeed(double speedMetersPerSecond) {
     currentVelocityLimit = speedMetersPerSecond * constElevator.GEAR_RATIO;
   }
-public double getPosition() {
+
+
+  // Elevator data
+  public double getPosition() {
     double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
     return motorRotations / constElevator.GEAR_RATIO;  
-}
+  }
 
-  public double getHeight() {
-    return getPosition();  
+  public double getPositionInMeters() {
+    return getPosition() * (Math.PI * constElevator.SPOOL_RADIUS);
   }
 
   public double getMaxHeight() {
-    return constElevator.MAX_HEIGHT;
+    return MAX_HEIGHT;
   }
+
 
   // Stop the controllers
   public void stopControllers() {
@@ -109,7 +107,8 @@ public double getPosition() {
 
   @Override
   public void periodic() {
-    // Nothin
+    SmartDashboard.putNumber("Elevator Position " , getPositionInMeters());
+    SmartDashboard.putNumber("Elevator Max Height " , getMaxHeight());
   }
 
   public Command homeElevator() {
@@ -144,14 +143,14 @@ public double getPosition() {
       stopControllers();
       setNormalSpeed();
       if (!interrupted) {
-        double foundMaxHeight = getPosition();
-        constElevator.MAX_HEIGHT = foundMaxHeight;
-        System.out.println("Homing complete. New max height: " + foundMaxHeight);
+        double foundMaxHeight = getPositionInMeters();
+        MAX_HEIGHT = foundMaxHeight;
+        System.out.println("Homing done. New max height: " + foundMaxHeight);
         m_ledSystem.setLedState(previousLedState);
 
       } else {
         m_ledSystem.setLedState("Fault");
-        System.out.println("Homing sequence interrupted!");
+        System.out.println("Homing sequence failed!");
 
       }
     });
