@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.constElevator;
 public class ElevatorSubsystem extends SubsystemBase {
 
-  public static double MAX_HEIGHT = Units.inchesToMeters(50.0); // Do not move this value does change after homing (CHANGE VALUE TO REAL)
+  public static double MAX_HEIGHT = Units.inchesToMeters(50.0); //  (CHANGE VALUE TO REAL)
 
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
@@ -29,7 +29,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     setPosition(motorRotations, currentVelocityLimit);
 }
 
-public void setPosition(double motorRotations, double velocityRPS) {
+public void setPosition(double motorRotations, double velocityRPS) { // Default setPos in encoder units
     double currentMotorRotations = getPosition();
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
     double feedforwardVoltage = constElevator.feedforward.calculate(velocityRPS);
@@ -40,6 +40,7 @@ public void setPosition(double motorRotations, double velocityRPS) {
   // Preset position commands
 
   public Command goToLevel(int lvl) {
+    System.out.println("Settings level to: " + lvl);
     switch (lvl) {
       case 0:
         return  this.runOnce(() -> setPosition(0.0));
@@ -106,6 +107,8 @@ public void setPosition(double motorRotations, double velocityRPS) {
   public void periodic() {
     SmartDashboard.putNumber("Elevator Position " , getPositionInMeters());
     SmartDashboard.putNumber("Elevator Max Height " , getMaxHeight());
+    SmartDashboard.putNumber("Elevator Current " , rightMotorLeader.getStatorCurrent().getValueAsDouble());
+    
   }
 
   public Command homeElevator() {

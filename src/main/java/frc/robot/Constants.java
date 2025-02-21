@@ -51,12 +51,12 @@ public class Constants {
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;
         public static final double SPOOL_RADIUS = 1.76; // INCHES ( CHANGE )
-        public static final double floorToEvevatorHeight = 8.0; // INCHES (CHANGE )
+        public static final double floorToEvevatorHeight = 10.0; // INCHES (CHANGE )
         // Reef Zone heights inches
         public static final double L1 = Units.inchesToMeters(18.0 - floorToEvevatorHeight); ;
         public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight);
         public static final double L3 = Units.inchesToMeters(47.652 - floorToEvevatorHeight);
-        public static double L4 = Units.inchesToMeters(72 - floorToEvevatorHeight);
+        public static double L4 = Units.inchesToMeters(60 - floorToEvevatorHeight);
 
         public static final double MAX_SPEED = 2.0;  // Max 
         public static final double NORMAL_SPEED = 1.0;  // Normal 

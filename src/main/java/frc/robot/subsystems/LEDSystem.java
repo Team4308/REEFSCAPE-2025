@@ -103,9 +103,6 @@ public class LEDSystem extends SubsystemBase {
     
     if (Robot.isSimulation()) {
         SmartDashboard.putString("LED State", ledState);
-        SmartDashboard.putNumber("LED R", currentColor.red);
-        SmartDashboard.putNumber("LED G", currentColor.green);
-        SmartDashboard.putNumber("LED B", currentColor.blue);
     }
   }
 
