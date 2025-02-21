@@ -37,7 +37,7 @@ public void setPosition(double motorRotations, double velocityRPS) {
     double feedforwardVoltage = constElevator.feedforward.calculate(velocityRPS);
     double totalVoltage = pidOutput + feedforwardVoltage;
     rightMotorLeader.setVoltage(totalVoltage);
-    leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
+    leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), false));
 }
   // Preset position commands
 
