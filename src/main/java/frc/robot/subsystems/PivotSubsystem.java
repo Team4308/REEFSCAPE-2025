@@ -101,6 +101,7 @@ public class PivotSubsystem extends LogSubsystem {
 
       @Override
   public void periodic() {
+    // thing to make recommit
     encoderPosition = Rotation2d.fromDegrees(canCoder.getAbsolutePosition().getValueAsDouble());
 
     var ffOutput = ffModel.calculate(setpoint.getRadians(), velocity.getRadians());
