@@ -1,14 +1,24 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.revrobotics.sim.SparkMaxSim;
+
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.constElevator;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
+
 public class ElevatorSubsystem extends SubsystemBase {
 
-  public static double MAX_HEIGHT = Units.inchesToMeters(50.0); //  (CHANGE VALUE TO REAL)
+  public double MAX_HEIGHT = Units.inchesToMeters(50.0); //  (CHANGE VALUE TO REAL)
 
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
@@ -21,19 +31,24 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
   }
-    
+
+
+
 
   public void setPosition(double setpointMeters) { // Set pos in meters 
     double setpointRotations = setpointMeters / (Math.PI * constElevator.SPOOL_RADIUS);
     double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
     setPosition(motorRotations, currentVelocityLimit);
+
 }
 
 public void setPosition(double motorRotations, double velocityRPS) { // Default setPos in encoder units
+  
     double currentMotorRotations = getPosition();
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
     double feedforwardVoltage = constElevator.feedforward.calculate(velocityRPS);
     double totalVoltage = pidOutput + feedforwardVoltage;
+    if (getPosition() ==  motorRotations) return; // (? Not needed? )
     rightMotorLeader.setVoltage(totalVoltage);
     leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), false));
 }
@@ -110,10 +125,18 @@ public void setPosition(double motorRotations, double velocityRPS) { // Default 
     SmartDashboard.putNumber("Elevator Current " , rightMotorLeader.getStatorCurrent().getValueAsDouble());
     
   }
+  public void simulationPeriodic()
+  {
+    if (Robot.isSimulation()) {
+      TalonFXSimState talonFXSimRight = rightMotorLeader.getSimState();
+      TalonFXSimState talonFXSimLeft = leftMotorFollower.getSimState();
+      talonFXSimRight.setSupplyVoltage(RobotController.getBatteryVoltage());
+      talonFXSimLeft.setSupplyVoltage(RobotController.getBatteryVoltage());
+    }
+  }
 
   public Command homeElevator() {
- 
-
+    
     return run(() -> {
       // Go down until bottom limit
       rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_DOWN);

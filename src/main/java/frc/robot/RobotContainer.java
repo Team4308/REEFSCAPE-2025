@@ -30,10 +30,18 @@ public class RobotContainer {
 
     private void configureBindings() {
             stick.A.onTrue(new InstantCommand(() -> m_elevator.homeElevator()));
+            
             stick.Up.onTrue(new InstantCommand(() -> m_elevator.goToLevel(1)));
             stick.Up.onFalse(new InstantCommand(() -> m_elevator.goToLevel(0)));
+
             stick.Right.onTrue(new InstantCommand(() -> m_elevator.goToLevel(2)));
             stick.Right.onFalse(new InstantCommand(() -> m_elevator.goToLevel(0)));
+
+            stick.Down.onTrue(new InstantCommand(() -> m_elevator.goToLevel(3)));
+            stick.Down.onFalse(new InstantCommand(() -> m_elevator.goToLevel(0)));
+
+            stick.Left.onTrue(new InstantCommand(() -> m_elevator.goToLevel(4)));
+            stick.Left.onFalse(new InstantCommand(() -> m_elevator.goToLevel(0)));
 
     }
 
