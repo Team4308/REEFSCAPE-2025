@@ -11,7 +11,7 @@ import frc.robot.Constants.constElevator;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
-  public static double MAX_HEIGHT = Units.inchesToMeters(50.0);
+ 
   private static final double POSITION_TOLERANCE = 0.01; // meters
   private double targetPosition = 0.0;
 
@@ -132,7 +132,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 * @return      Double
 */
   public double getMaxHeight() {
-    return MAX_HEIGHT;
+    return constElevator.MAX_HEIGHT;
   }
 
 
@@ -195,7 +195,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       setNormalSpeed();
       if (!interrupted) {
         double foundMaxHeight = getPositionInMeters();
-        MAX_HEIGHT = foundMaxHeight;
+        ///MAX_HEIGHT = foundMaxHeight;
         System.out.println("Homing done. New max height: " + foundMaxHeight);
 
       } else {
