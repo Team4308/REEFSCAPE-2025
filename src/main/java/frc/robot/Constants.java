@@ -61,9 +61,9 @@ public class Constants {
         public static double L4 = Units.inchesToMeters(55 -  floorToEvevatorHeight);
 
         // Speed constants (in meters per second)
-        public static final double MAX_SPEED = 0.5;    // Maximum safe speed: 0.5 m/s
-        public static final double NORMAL_SPEED = 0.3;  // Normal operation: 0.3 m/s
-        public static final double SLOW_SPEED = 0.1;    // Precise movement: 0.1 m/s
+        public static final double MAX_SPEED = 0.2;    // Maximum safe speed: 0.5 m/s
+        public static final double NORMAL_SPEED = 0.1;  // Normal operation: 0.3 m/s
+        public static final double SLOW_SPEED = 0.05;    // Precise movement: 0.1 m/s
         
         // Convert speeds to motor RPS using spool circumference
         public static final double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_RADIUS * 0.0254; 
@@ -72,8 +72,8 @@ public class Constants {
         public static final double SLOW_MOTOR_RPS = (SLOW_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
 
         // Calibration constants - also slowed down
-        public static final double CALIBRATION_VOLTAGE_DOWN = -0.3;  // Reduced from -0.5
-        public static final double CALIBRATION_VOLTAGE_UP = 0.4;     // Reduced from 0.75
+        public static final double CALIBRATION_VOLTAGE_DOWN = -0.3;  
+        public static final double CALIBRATION_VOLTAGE_UP = 0.4;     
 
         // Calibration constants
         public static final double CURRENT_THRESHOLD = 20.0;         // Current spike threshold for detecting limits
