@@ -60,17 +60,22 @@ public class Constants {
         public static final double L3 = Units.inchesToMeters(47.652 - floorToEvevatorHeight);
         public static double L4 = Units.inchesToMeters(60 - floorToEvevatorHeight);
 
-        public static final double MAX_SPEED = 2.0;  // Max 
-        public static final double NORMAL_SPEED = 1.0;  // Normal 
-        public static final double SLOW_SPEED = 0.5;   // Slow 
+        // Speed constants (in meters per second)
+        public static final double MAX_SPEED = 0.5;    // Maximum safe speed: 0.5 m/s
+        public static final double NORMAL_SPEED = 0.3;  // Normal operation: 0.3 m/s
+        public static final double SLOW_SPEED = 0.1;    // Precise movement: 0.1 m/s
         
-        public static final double MAX_MOTOR_RPS = MAX_SPEED * GEAR_RATIO;
-        public static final double NORMAL_MOTOR_RPS = NORMAL_SPEED * GEAR_RATIO;
-        public static final double SLOW_MOTOR_RPS = SLOW_SPEED * GEAR_RATIO;
+        // Convert speeds to motor RPS using spool circumference
+        public static final double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_RADIUS * 0.0254; 
+        public static final double MAX_MOTOR_RPS = (MAX_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
+        public static final double NORMAL_MOTOR_RPS = (NORMAL_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
+        public static final double SLOW_MOTOR_RPS = (SLOW_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
+
+        // Calibration constants - also slowed down
+        public static final double CALIBRATION_VOLTAGE_DOWN = -0.3;  // Reduced from -0.5
+        public static final double CALIBRATION_VOLTAGE_UP = 0.4;     // Reduced from 0.75
 
         // Calibration constants
-        public static final double CALIBRATION_VOLTAGE_DOWN = -0.5;  // Slow downward voltage for calibration
-        public static final double CALIBRATION_VOLTAGE_UP = 0.75;    // Slow upward voltage for calibration
         public static final double CURRENT_THRESHOLD = 20.0;         // Current spike threshold for detecting limits
 
     }

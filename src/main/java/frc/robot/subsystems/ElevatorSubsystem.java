@@ -34,24 +34,28 @@ public class ElevatorSubsystem extends SubsystemBase {
 */
   public Command setPositionCommand(double setpointMeters) {
     return run(() -> {
-
       targetPosition = DoubleUtils.clamp(setpointMeters, constElevator.MIN_HEIGHT, constElevator.MAX_HEIGHT);
 
-      // Postion in meters converted to the rotations 
       double setpointRotations = targetPosition / (Math.PI * constElevator.SPOOL_RADIUS);
       double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
-
-      // Position in rotations
       double currentMotorRotations = getPosition();
 
-      // Pid and feedforward 
       double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
-      double feedforwardVoltage = constElevator.feedforward.calculate(currentVelocityLimit);
+      
+      double requestedVelocity = DoubleUtils.clamp(
+          currentVelocityLimit,
+          -constElevator.MAX_MOTOR_RPS,
+          constElevator.MAX_MOTOR_RPS
+      );
+      
+      double feedforwardVoltage = constElevator.feedforward.calculate(requestedVelocity);
 
-      // Total voltage
-      double totalVoltage = pidOutput + feedforwardVoltage;
+      double totalVoltage = DoubleUtils.clamp(
+          pidOutput + feedforwardVoltage,
+          -6.0,   
+          6.0
+      );
 
-      // Move
       rightMotorLeader.setVoltage(totalVoltage);
       leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), false));
     })
