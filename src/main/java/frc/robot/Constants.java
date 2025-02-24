@@ -58,7 +58,7 @@ public class Constants {
         public static final double L1 = Units.inchesToMeters(18.0 - floorToEvevatorHeight); ;
         public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight);
         public static final double L3 = Units.inchesToMeters(47.652 - floorToEvevatorHeight);
-        public static double L4 = Units.inchesToMeters(60 - floorToEvevatorHeight);
+        public static double L4 = Units.inchesToMeters(55 -  floorToEvevatorHeight);
 
         // Speed constants (in meters per second)
         public static final double MAX_SPEED = 0.5;    // Maximum safe speed: 0.5 m/s
