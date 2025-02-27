@@ -29,7 +29,7 @@ public class Constants {
         public static TalonFXConfiguration ELEVATOR_CONFIG = new TalonFXConfiguration();
         static {
             ELEVATOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-            ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+            ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
             ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
             ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Units.radiansPerSecondToRotationsPerMinute(20);
             ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -64,9 +64,9 @@ public class Constants {
         public static double L4 = Units.inchesToMeters(55 -  floorToEvevatorHeight);
 
         // Speed constants (in meters per second)
-        public static final double MAX_SPEED = 0.2;    // Maximum safe speed: 0.5 m/s
-        public static final double NORMAL_SPEED = 0.1;  // Normal operation: 0.3 m/s
-        public static final double SLOW_SPEED = 0.05;    // Precise movement: 0.1 m/s
+        public static final double MAX_SPEED = 0.02;    // Maximum safe speed: 0.05 m/s
+        public static final double NORMAL_SPEED = 0.01;  // Normal operation: 0.03 m/s
+        public static final double SLOW_SPEED = 0.005;    // Precise movement: 0.01 m/s
         
         // Convert speeds to motor RPS using spool circumference
         public static final double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_RADIUS * 0.0254; 
