@@ -19,7 +19,7 @@ public class CoralRollerSubsystem extends MotoredSubsystem {
     final TalonFXConfiguration config = new TalonFXConfiguration();
 
     public CoralRollerSubsystem() {
-        motor = new TalonFX(Constants.Mapping.CoralRollerMotor);
+        motor = new TalonFX(Constants.Mapping.coralRollerMotor);
         motor.setNeutralMode(NeutralModeValue.Brake);
 
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
