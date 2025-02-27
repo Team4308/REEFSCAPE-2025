@@ -44,6 +44,9 @@ public class Constants {
         // Device Ids
         public static final int ELEVATOR_LEADER = 1;
         public static final int ELEVATOR_FOLLOWER = 2;
+
+        public static final int top_Limit = 3; 
+        public static final int bottem_Limit = 4; 
         // Tunin
         public static final PIDController pidController = new PIDController(0.1, 0.0, 0.00);
         public static final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(1, 1, 0);
