@@ -4,9 +4,11 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.databind.introspect.DefaultAccessorNamingStrategy;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
+import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -15,12 +17,16 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
+
+import frc.robot.subsystems.EndEffectorSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
   // Controllers
@@ -70,6 +76,9 @@ public class RobotContainer {
               (Math.PI *
                   2))
       .headingWhile(true);
+
+  ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem();
+  EndEffectorSubsystem m_EndEffectorSubsystem = new EndEffectorSubsystem();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -121,7 +130,6 @@ public class RobotContainer {
       driver.LB.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driver.RB.onTrue(Commands.none());
     }
-
   }
 
   /**
@@ -134,7 +142,48 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("New Auto");
   }
 
+  public void periodic() {
+    shooterControl();
+    elevatorControl();
+    algaeControl();
+  }
+
+  public void algaeControl() {
+    double algaeJoystick = deadzone(operator.getRightY());
+    algaeJoystick = DoubleUtils.mapRangeNew(algaeJoystick, -1, 1, -50, 50);
+    m_EndEffectorSubsystem.setArmOutput(algaeJoystick);
+  }
+
+  public void shooterControl() {
+    double rollerJoystickPos = deadzone(operator.getRightTrigger());
+    double rollerJoystickNeg = deadzone(operator.getLeftTrigger());
+    double rollerJoystick = 0;
+    if (rollerJoystickPos >= 0) {
+      rollerJoystick = rollerJoystickPos;
+    } else if (rollerJoystickNeg >= 0) {
+      rollerJoystick = -rollerJoystickNeg;
+    }
+    rollerJoystick = DoubleUtils.mapRangeNew(rollerJoystick, -1, 1, -50, 50);
+    m_EndEffectorSubsystem.setArmOutput(rollerJoystick);
+  }
+
+  public void elevatorControl() {
+    double elevatorJoystick = deadzone(operator.getLeftY());
+    elevatorJoystick = DoubleUtils.mapRangeNew(elevatorJoystick, -1, 1, -50, 50);
+    if (elevatorJoystick == 0) {
+      elevatorJoystick = 1;
+    }
+    m_ElevatorSubsystem.setMotorSpeed(elevatorJoystick);
+  }
+
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
+  }
+
+  public static double deadzone(double integer) {
+    if (0.06 >= integer && integer >= -0.06) {
+      integer = 0;
+    }
+    return integer;
   }
 }
