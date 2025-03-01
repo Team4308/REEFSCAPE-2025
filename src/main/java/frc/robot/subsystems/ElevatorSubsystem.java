@@ -48,7 +48,7 @@ public class ElevatorSubsystem extends LogSubsystem {
         if (topBeamBreak.get() && velocity < 0) {
             velocity = 0;
         }
-
+        
         motor1.setControl(rollerVelocity.withVelocity(-velocity));
         motor2.setControl(rollerVelocity.withVelocity(-velocity));
     }

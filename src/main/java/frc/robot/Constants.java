@@ -59,15 +59,16 @@ public final class Constants {
         }
 
         public static class EndEffector {
-            public static final int roller = 2;
-            public static final int algae = 1;
+            public static final int roller = 3;
+            public static final int algae = 4;
+            public static final int beamBreak = 2;
         }
 
         public static class Elevator {
-            public static final int motor1 = 3;
-            public static final int motor2 = 4;
-            public static final int topBeamBreak = 8;
-            public static final int botBeamBreak = 9;
+            public static final int motor1 = 2;
+            public static final int motor2 = 1;
+            public static final int topBeamBreak = 0;
+            public static final int botBeamBreak = 1;
         }
     }
 }

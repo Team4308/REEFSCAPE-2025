@@ -130,6 +130,8 @@ public class RobotContainer {
       driver.LB.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driver.RB.onTrue(Commands.none());
     }
+
+    operator.A.whileTrue(new InstantCommand(() -> m_EndEffectorSubsystem.runBeamBreak()));
   }
 
   /**
@@ -151,27 +153,28 @@ public class RobotContainer {
   public void algaeControl() {
     double algaeJoystick = deadzone(operator.getRightY());
     algaeJoystick = DoubleUtils.mapRangeNew(algaeJoystick, -1, 1, -50, 50);
-    m_EndEffectorSubsystem.setArmOutput(algaeJoystick);
+    m_EndEffectorSubsystem.setArmOutput(-algaeJoystick);
   }
 
   public void shooterControl() {
     double rollerJoystickPos = deadzone(operator.getRightTrigger());
     double rollerJoystickNeg = deadzone(operator.getLeftTrigger());
+    
     double rollerJoystick = 0;
-    if (rollerJoystickPos >= 0) {
+    if (rollerJoystickPos > 0) {
       rollerJoystick = rollerJoystickPos;
-    } else if (rollerJoystickNeg >= 0) {
+    } else if (rollerJoystickNeg > 0) {
       rollerJoystick = -rollerJoystickNeg;
     }
-    rollerJoystick = DoubleUtils.mapRangeNew(rollerJoystick, -1, 1, -50, 50);
-    m_EndEffectorSubsystem.setArmOutput(rollerJoystick);
+    rollerJoystick = DoubleUtils.mapRangeNew(rollerJoystick, -1, 1, -25, 25);
+    m_EndEffectorSubsystem.setRollerOutput(rollerJoystick);
   }
 
   public void elevatorControl() {
     double elevatorJoystick = deadzone(operator.getLeftY());
     elevatorJoystick = DoubleUtils.mapRangeNew(elevatorJoystick, -1, 1, -50, 50);
     if (elevatorJoystick == 0) {
-      elevatorJoystick = 1;
+      elevatorJoystick = -1;
     }
     m_ElevatorSubsystem.setMotorSpeed(elevatorJoystick);
   }

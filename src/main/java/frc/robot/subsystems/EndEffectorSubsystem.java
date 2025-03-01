@@ -7,7 +7,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import edu.wpi.first.util.sendable.Sendable;
-
+import edu.wpi.first.wpilibj.DigitalInput;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import frc.robot.Constants;
 
@@ -18,6 +18,8 @@ public class EndEffectorSubsystem extends LogSubsystem {
 
     VelocityVoltage rollerVelocity = new VelocityVoltage(0);
     VelocityVoltage algaeVelocity = new VelocityVoltage(0);
+
+    DigitalInput beamBreak = new DigitalInput(Constants.Mapping.EndEffector.beamBreak);
 
     public EndEffectorSubsystem() {
         var config = new Slot0Configs();
@@ -39,7 +41,14 @@ public class EndEffectorSubsystem extends LogSubsystem {
     }
 
     public void setRollerOutput(double velocity){
-        algaeMotor.setControl(rollerVelocity.withVelocity(velocity));
+
+        rollerMotor.setControl(rollerVelocity.withVelocity(velocity));
+    }
+
+    public void runBeamBreak() {
+        if (!beamBreak.get()) {
+            rollerMotor.setControl(algaeVelocity.withVelocity(5));
+        }
     }
 
     public void setArmOutput(double velocity){
