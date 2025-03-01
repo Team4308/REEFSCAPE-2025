@@ -32,10 +32,13 @@ public class Ports {
     public static final int ELEVATOR_FOLLOWER = 0;
     public static final int LIMIT_SWITCH_TOP = 0;
     public static final int LIMIT_SWITCH_BOTTOM = 0;
+    public static final int ELEVATOR_CANCODER = 0;
 
     // End effector
-    public static final int END_EFFECTOR = 0;
+    public static final int CORAL_MOTOR = 0;
     public static final int INDEX_BEAM_BREAK = 0;
+    public static final int ALGAE_MOTOR = 0;
+    public static final int ALGAE_CANCODER = 0;
     
     // Algae Slapdown
     public static final int ALGAE_PIVOT = 0;
