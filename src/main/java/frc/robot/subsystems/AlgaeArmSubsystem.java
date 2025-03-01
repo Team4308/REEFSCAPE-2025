@@ -53,12 +53,11 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         // 0 Degrees is always parallel to the ground
         double currentAngle = getAlgaePosition();
 
-        double motorVelocity = algaepidController.calculate(currentAngle, targetAngle);
-        motorVelocity = DoubleUtils.clamp(motorVelocity, -Constants.EndEffector.speeds.maxAlgaeVelocity, Constants.EndEffector.speeds.maxAlgaeVelocity);
-        double motorVoltage = motorVelocity/50;
+        double motorVoltage = algaepidController.calculate(currentAngle, targetAngle);
+        motorVoltage = DoubleUtils.clamp(motorVoltage, -Constants.EndEffector.speeds.maxAlgaeVelocity, Constants.EndEffector.speeds.maxAlgaeVelocity);
 
-        double feedforwardOutput = algaeFeedForward.calculate(currentAngle, motorVelocity);
-            
+        double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle), Constants.EndEffector.speeds.maxAlgaeVelocity);
+
         algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
     }
 
