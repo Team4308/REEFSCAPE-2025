@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import swervelib.math.Matter;
@@ -80,7 +81,7 @@ public final class Constants {
       
         // Tunin
         public static final PIDController pidController = new PIDController(0.1, 0.0, 0.00);
-        public static final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(1, 1, 0);
+        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(1, 0.05, 18.05, 0.01);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;
@@ -144,9 +145,9 @@ public final class Constants {
 
         //FeedForward
         public static class FeedForward {
-            public static final double kS = 0.0;
-            public static final double kG = 0.0;
-            public static final double kV = 0.0;
+            public static final double kS = 1;
+            public static final double kG = 0.27;
+            public static final double kV = 0.18;
             public static final double kA = 0.0;
         }
     }

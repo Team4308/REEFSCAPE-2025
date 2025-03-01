@@ -56,7 +56,6 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double motorVelocity = algaepidController.calculate(currentAngle, targetAngle);
         motorVelocity = DoubleUtils.clamp(motorVelocity, -Constants.EndEffector.speeds.maxAlgaeVelocity, Constants.EndEffector.speeds.maxAlgaeVelocity);
         double motorVoltage = motorVelocity/50;
-        motorVoltage = DoubleUtils.clamp(motorVoltage, -12, 12);
 
         double feedforwardOutput = algaeFeedForward.calculate(currentAngle, motorVelocity);
             
