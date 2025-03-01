@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -10,16 +11,17 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import frc.robot.Constants;
+import frc.robot.Ports;
 
 public class EndEffectorSubsystem extends LogSubsystem {
 
-    private final TalonFX rollerMotor = new TalonFX(Constants.Mapping.EndEffector.roller);
-    private final TalonFX algaeMotor = new TalonFX(Constants.Mapping.EndEffector.algae);
+    private final TalonFX rollerMotor = new TalonFX(Ports.EndEffector.CORAL_MOTOR);
+    private final TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
 
     VelocityVoltage rollerVelocity = new VelocityVoltage(0);
     VelocityVoltage algaeVelocity = new VelocityVoltage(0);
 
-    DigitalInput beamBreak = new DigitalInput(Constants.Mapping.EndEffector.beamBreak);
+    DigitalInput beamBreak = new DigitalInput(Ports.EndEffector.INDEX_BEAM_BREAK);
 
     public EndEffectorSubsystem() {
         var config = new Slot0Configs();

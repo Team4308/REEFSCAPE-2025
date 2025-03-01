@@ -27,14 +27,22 @@ import swervelib.SwerveInputStream;
 
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.LEDSystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
+
   // Controllers
-  private final XBoxWrapper driver = new XBoxWrapper(Constants.Mapping.Controllers.driver);
-  private final XBoxWrapper operator = new XBoxWrapper(Constants.Mapping.Controllers.operator);
+  private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER );
+  private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
       "swerve"));
+  private final LEDSystem m_ledSystem;
+  private final ElevatorSubsystem m_elevator;
+  private final EndEffectorSubsystem m_EndEffectorSubsystem;
 
   // Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
@@ -77,20 +85,30 @@ public class RobotContainer {
                   2))
       .headingWhile(true);
 
-  ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem();
-  EndEffectorSubsystem m_EndEffectorSubsystem = new EndEffectorSubsystem();
-
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    m_ledSystem = new LEDSystem();
+    m_elevator = new ElevatorSubsystem();
+    m_ledSystem.setElevator(m_elevator);
+    m_EndEffectorSubsystem = new EndEffectorSubsystem();
+
+    CommandScheduler.getInstance().registerSubsystem(m_ledSystem);
+    CommandScheduler.getInstance().registerSubsystem(m_elevator);
+
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
   }
-
+  
   private void configureBindings() {
+    configureDriverBindings();
+    configureOperatorBindings();
+  }
+
+  public void configureDriverBindings() {
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
@@ -131,7 +149,26 @@ public class RobotContainer {
       driver.RB.onTrue(Commands.none());
     }
 
+  }
+
+  public void configureOperatorBindings() {
+    //Coral Indexer
     operator.A.whileTrue(new InstantCommand(() -> m_EndEffectorSubsystem.runBeamBreak()));
+    
+    //Elevator
+    operator.povUp.onTrue(new InstantCommand(() -> m_elevator.goToLevel(1)));
+    operator.povRight.onTrue(new InstantCommand(() -> m_elevator.goToLevel(2)));
+    operator.povDown.onTrue(new InstantCommand(() -> m_elevator.goToLevel(3)));
+    operator.povLeft.onTrue(new InstantCommand(() -> m_elevator.goToLevel(4)));
+    operator.RB.onTrue(new InstantCommand(() -> m_elevator.goToLevel(0)));
+  }
+
+  public LEDSystem getLEDSystem() {
+    return m_ledSystem;
+  }
+
+  public ElevatorSubsystem getElevator() {
+    return m_elevator;
   }
 
   /**
@@ -144,46 +181,13 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("New Auto");
   }
 
-  public void periodic() {
-    shooterControl();
-    elevatorControl();
-    algaeControl();
-  }
-
-  public void algaeControl() {
-    double algaeJoystick = deadzone(operator.getRightY());
-    algaeJoystick = DoubleUtils.mapRangeNew(algaeJoystick, -1, 1, -50, 50);
-    m_EndEffectorSubsystem.setArmOutput(-algaeJoystick);
-  }
-
-  public void shooterControl() {
-    double rollerJoystickPos = deadzone(operator.getRightTrigger());
-    double rollerJoystickNeg = deadzone(operator.getLeftTrigger());
-    
-    double rollerJoystick = 0;
-    if (rollerJoystickPos > 0) {
-      rollerJoystick = rollerJoystickPos;
-    } else if (rollerJoystickNeg > 0) {
-      rollerJoystick = -rollerJoystickNeg;
-    }
-    rollerJoystick = DoubleUtils.mapRangeNew(rollerJoystick, -1, 1, -25, 25);
-    m_EndEffectorSubsystem.setRollerOutput(rollerJoystick);
-  }
-
-  public void elevatorControl() {
-    double elevatorJoystick = deadzone(operator.getLeftY());
-    elevatorJoystick = DoubleUtils.mapRangeNew(elevatorJoystick, -1, 1, -50, 50);
-    if (elevatorJoystick == 0) {
-      elevatorJoystick = -1;
-    }
-    m_ElevatorSubsystem.setMotorSpeed(elevatorJoystick);
-  }
+  public void periodic() {}
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
   }
 
-  public static double deadzone(double integer) {
+  public static double deadZone(double integer) {
     if (0.06 >= integer && integer >= -0.06) {
       integer = 0;
     }
