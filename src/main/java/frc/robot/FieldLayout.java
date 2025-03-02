@@ -1,29 +1,29 @@
 package frc.robot;
 
+import java.util.List;
 import java.util.Map;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 
 public class FieldLayout {
     /**
      * Origin is the bottom left corner of the field image (Close right corner from
      * blue driver station POV)
      */
-    private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-
+    
     //Everything in Meters
-    public static final double kFieldLength = 17.5482504;
-    public static final double kFieldWidth = 8.0519016;
+    public static final double kFieldLength = Units.inchesToMeters(690.875);
+    public static final double kFieldWidth = Units.inchesToMeters(317.0);
     public static final double kTapeWidth = Units.inchesToMeters(2.0);
 
     public static class Reef {
+        // REEF SCORING POSES
         public static final Pose2d A = new Pose2d(Units.inchesToMeters(126.900515), Units.inchesToMeters(169.573852), Rotation2d.fromDegrees(0));
         public static final Pose2d B = new Pose2d(Units.inchesToMeters(126.741216), Units.inchesToMeters(157.074867), Rotation2d.fromDegrees(0));
         public static final Pose2d C = new Pose2d(Units.inchesToMeters(142.199234), Units.inchesToMeters(121.144440), Rotation2d.fromDegrees(60));
@@ -36,9 +36,45 @@ public class FieldLayout {
         public static final Pose2d J = new Pose2d(Units.inchesToMeters(200.303248), Units.inchesToMeters(202.979677), Rotation2d.fromDegrees(-120));
         public static final Pose2d K = new Pose2d(Units.inchesToMeters(161.688832), Units.inchesToMeters(207.179848), Rotation2d.fromDegrees(-60));
         public static final Pose2d L = new Pose2d(Units.inchesToMeters(150.348580), Units.inchesToMeters(201.073852), Rotation2d.fromDegrees(-60));
+
+        private static final List<Pose2d> BLUE_REEF_POSES = List.of(A, B, C, D, E, F, G, H, I, J, K, L);
+        private static final List<Pose2d> RED_REEF_POSES = getRedReefPoses();
+
+        // CORAL STATION POSES
+        public static final Pose2d LEFT_CORAL_STATION_FAR = new Pose2d(0, 0, Rotation2d.fromDegrees(-54.5)); // or 36?? idek
+        public static final Pose2d LEFT_CORAL_STATION_NEAR = new Pose2d(0, 0, Rotation2d.fromDegrees(-54.5));
+        public static final Pose2d RIGHT_CORAL_STATION_FAR = new Pose2d(0, 0, Rotation2d.fromDegrees(55));
+        public static final Pose2d RIGHT_CORAL_STATION_NEAR = new Pose2d(0, 0, Rotation2d.fromDegrees(55));
+
+        private static final List<Pose2d> BLUE_CORAL_STATION_POSES = List.of(LEFT_CORAL_STATION_FAR, LEFT_CORAL_STATION_NEAR, 
+                                                                            RIGHT_CORAL_STATION_FAR, RIGHT_CORAL_STATION_NEAR);
+        private static final List<Pose2d> RED_CORAL_STATION_POSES = getRedCoralStationPoses();
+    }
+
+    public static Pose2d getRedAlliancePose(Pose2d bluePose) {
+        return new Pose2d(kFieldLength - bluePose.getX(),
+            kFieldWidth - bluePose.getY(),
+            bluePose.getRotation().plus(Rotation2d.fromDegrees(180)));
+      }
+
+    public static List<Pose2d> getRedReefPoses() {
+        Pose2d[] RED_REEF_POSES = new Pose2d[Reef.BLUE_REEF_POSES.size()];
+        for (int i = 0; i < Reef.BLUE_REEF_POSES.size(); i++) {
+            RED_REEF_POSES[i] = getRedAlliancePose(Reef.BLUE_REEF_POSES.get(i));
+        }
+        return List.of(RED_REEF_POSES);
+    }
+
+    public static List<Pose2d> getRedCoralStationPoses() {
+        Pose2d[] RED_CORAL_STATION_POSES = new Pose2d[Reef.BLUE_CORAL_STATION_POSES.size()];
+        for (int i = 0; i < Reef.BLUE_CORAL_STATION_POSES.size(); i++) {
+            RED_CORAL_STATION_POSES[i] = getRedAlliancePose(Reef.BLUE_CORAL_STATION_POSES.get(i));
+        }
+        return List.of(RED_CORAL_STATION_POSES);
     }
 
     // AprilTag locations
+    /*
     public static final Map<Integer, Pose3d> aprilTags = Map.ofEntries(
         Map.entry(1, // Put location here
             new Pose3d(
@@ -173,5 +209,6 @@ public class FieldLayout {
                     Units.inchesToMeters(0),
                     new Rotation3d(0.0, 0.0, 0.0)))
             );
+        */
                 
 }
