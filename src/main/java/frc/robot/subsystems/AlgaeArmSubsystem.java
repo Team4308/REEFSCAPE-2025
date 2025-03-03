@@ -20,8 +20,6 @@ import frc.robot.Ports;
 
 public class AlgaeArmSubsystem extends LogSubsystem {
     private final TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
-
-    DigitalInput beamBreak = new DigitalInput(Ports.EndEffector.INDEX_BEAM_BREAK);
     
     PIDController algaepidController = new PIDController(Constants.EndEffector.PID.kP, Constants.EndEffector.PID.kI, Constants.EndEffector.PID.kD);
     ArmFeedforward algaeFeedForward = new ArmFeedforward(Constants.EndEffector.FeedForward.kS, Constants.EndEffector.FeedForward.kG, Constants.EndEffector.FeedForward.kV, Constants.EndEffector.FeedForward.kA);

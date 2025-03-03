@@ -38,12 +38,11 @@ import frc.robot.subsystems.LEDSystem;
 public class RobotContainer {
 
   // Controllers
-  private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER );
+  private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
   private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
 
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-      "swerve"));
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   private final LEDSystem m_ledSubsystem;
   private final ElevatorSubsystem m_ElevatorSubsystem;
   private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
@@ -51,7 +50,6 @@ public class RobotContainer {
 
   //for testing purposes
   private final ManualControlAlgae manualAlgaeCommand;
-  private final ManualControlRoller manualRollerCommand;
   private final ManualControlElevator manualElevatorCommand;
 
   // Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -75,7 +73,7 @@ public class RobotContainer {
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> -driver.getLeftY(),
       () -> -driver.getLeftX())
-      .withControllerRotationAxis(() -> driver.getLeftTrigger())
+      .withControllerRotationAxis(() -> driver.getRightX())
       .deadband(Operator.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -102,12 +100,10 @@ public class RobotContainer {
     m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
     m_CoralRollerSubsystem = new CoralRollerSubsystem();
 
-    manualAlgaeCommand = new ManualControlAlgae(() -> null, m_AlgaeArmSubsystem);
-    manualRollerCommand = new ManualControlRoller(() -> null, m_CoralRollerSubsystem);
-    manualElevatorCommand = new ManualControlElevator(null, m_ElevatorSubsystem);
+    manualAlgaeCommand = new ManualControlAlgae(() -> getManualAlgaeControl(), m_AlgaeArmSubsystem);
+    manualElevatorCommand = new ManualControlElevator(() -> getManualElevatorControl(), m_ElevatorSubsystem);
 
     m_AlgaeArmSubsystem.setDefaultCommand(manualAlgaeCommand);
-    m_CoralRollerSubsystem.setDefaultCommand(manualRollerCommand);
     m_ElevatorSubsystem.setDefaultCommand(manualElevatorCommand);
 
     CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
@@ -135,13 +131,13 @@ public class RobotContainer {
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
     if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
     } else {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
 
     if (Robot.isSimulation()) {
-      driver.Start.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      driver.Y.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
       driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
 
     }
@@ -195,6 +191,15 @@ public class RobotContainer {
     return m_ElevatorSubsystem;
   }
 
+  public double getManualElevatorControl() {
+    return operator.getRightY();
+  }
+
+  public double getManualAlgaeControl() {
+    return operator.getLeftY();
+  }
+
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -209,12 +214,5 @@ public class RobotContainer {
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
-  }
-
-  public static double deadZone(double integer) {
-    if (0.06 >= integer && integer >= -0.06) {
-      integer = 0;
-    }
-    return integer;
   }
 }
