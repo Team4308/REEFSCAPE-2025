@@ -5,6 +5,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
@@ -45,18 +46,18 @@ public class Constants {
         public static final int ELEVATOR_LEADER = 1;
         public static final int ELEVATOR_FOLLOWER = 2;
 
-        public static final int top_Limit = 3; 
-        public static final int bottem_Limit = 4; 
+        public static final int top_Limit = 1; 
+        public static final int bottem_Limit = 0; 
         // Tunin
         public static final PIDController pidController = new PIDController(0.1, 0.0, 0.00);
-        public static final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(1, 1, 0);
+        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(1, 0.18, 5.32,0.02);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;
         public static final double SPOOL_RADIUS = 1.76; // INCHES ( CHANGE )
         public static final double floorToEvevatorHeight = 10.0; // INCHES (CHANGE )
         public static double MAX_HEIGHT = Units.inchesToMeters(50.0);
-        public static double MIN_HEIGHT = Units.inchesToMeters(0.1);
+        public static double MIN_HEIGHT = 0.031241;
         // Reef Zone heights inches
         public static final double L1 = Units.inchesToMeters(18.0 - floorToEvevatorHeight); ;
         public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight);

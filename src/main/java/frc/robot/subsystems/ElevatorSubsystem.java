@@ -45,7 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       double setpointRotations = targetPosition / (Math.PI * constElevator.SPOOL_RADIUS);
       double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
       double currentMotorRotations = getPosition();
-
+      
       double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
       
       double requestedVelocity = DoubleUtils.clamp(
@@ -61,8 +61,10 @@ public class ElevatorSubsystem extends SubsystemBase {
           -6.0,   
           6.0
       );
-
+     
       rightMotorLeader.setVoltage(totalVoltage);
+      System.out.println(totalVoltage);
+      
       leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), false));
     })
     .until(() -> isAtPosition())
@@ -172,6 +174,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (bottemLimitSwitch.get()) {
       foundBottemHeight = getPositionInMeters();
     }
+
 
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
     SmartDashboard.putNumber("Elevator Target", targetPosition);
