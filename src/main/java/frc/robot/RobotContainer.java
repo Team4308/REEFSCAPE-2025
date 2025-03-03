@@ -52,7 +52,7 @@ public class RobotContainer {
   private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
   private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
-  // for testing purposes
+  // Failsafe commands
   private final SimpleRoller SimpleRollerCommand;
   private final ManualAlgae ManualAlgaeCommand;
   private final ManualElevator ManualElevatorCommand;
@@ -121,17 +121,13 @@ public class RobotContainer {
     CommandScheduler.getInstance().registerSubsystem(m_AlgaeArmSubsystem);
     CommandScheduler.getInstance().registerSubsystem(m_CoralRollerSubsystem);
 
-    configureBindings();
+    configureDriverBindings();
+    configureOperatorBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
   }
 
-  private void configureBindings() {
-    configureDriverBindings();
-    configureOperatorBindings();
-  }
-
-  public void configureDriverBindings() {
+  private void configureDriverBindings() {
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
     Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
@@ -174,7 +170,7 @@ public class RobotContainer {
 
   }
 
-  public void configureOperatorBindings() {
+  private void configureOperatorBindings() {
     // Automatic Scoring
     operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
     operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
@@ -224,14 +220,6 @@ public class RobotContainer {
     return m_ElevatorSubsystem;
   }
 
-  public double getManualElevatorControl() {
-    return operator.getRightY();
-  }
-
-  public double getManualAlgaeControl() {
-    return operator.getLeftY();
-  }
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -245,15 +233,15 @@ public class RobotContainer {
   public void periodic() {
   }
 
-  public double joystickAlgaeArm() {
+  private double joystickAlgaeArm() {
     return deadZone(operator.getLeftY()) * 5;
   }
 
-  public double joystickElevatorControl() {
+  private double joystickElevatorControl() {
     return deadZone(operator.getRightY()) / 20;
   }
 
-  public double triggerRollerControl() {
+  private double triggerRollerControl() {
     double isPos = deadZone(operator.getRightTrigger());
     double isNeg = deadZone(operator.getLeftTrigger());
     if (isPos > 0) {
@@ -267,7 +255,7 @@ public class RobotContainer {
     drivebase.setMotorBrake(brake);
   }
 
-  public static double deadZone(double integer) {
+  private static double deadZone(double integer) {
     if (0.09 >= integer && integer >= -0.09) {
       integer = 0;
     }
