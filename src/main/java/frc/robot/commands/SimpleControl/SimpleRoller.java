@@ -1,16 +1,16 @@
 
-package frc.robot.commands;
+package frc.robot.commands.SimpleControl;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
-public class ManualControlRoller extends Command {
+public class SimpleRoller extends Command {
     private final Supplier<Double> control;
     private final CoralRollerSubsystem subsystem;
 
-    public ManualControlRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
+    public SimpleRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
         this.control = control; 
         this.subsystem = rollerSubsystem;
         addRequirements(rollerSubsystem);
@@ -33,7 +33,7 @@ public class ManualControlRoller extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return !subsystem.getBeamBreak();
     }
     
 }

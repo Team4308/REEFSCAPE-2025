@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,7 +13,6 @@ import frc.robot.Ports;
 
 public class ElevatorSubsystem extends SubsystemBase {
 
- 
   private static final double POSITION_TOLERANCE = 0.01; // meters
   private double targetPosition = 0.0;
   private Double foundMaxHeight =  null;
@@ -22,6 +21,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX rightMotorLeader;
   private DigitalInput topLimitSwitch; 
   private DigitalInput bottemLimitSwitch; 
+  private CANcoder cancoder;
 
   private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
@@ -32,15 +32,23 @@ public class ElevatorSubsystem extends SubsystemBase {
     bottemLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_BOTTOM);
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
+    cancoder = new CANcoder(Ports.Elevator.ELEVATOR_CANCODER);
+
+    cancoder.setPosition(0);
   }
     
 /**
 * Sets the elevators position to the desired setpoint
 * @param  double  The Desired position in meters
+* @param  velocity  The desired target velosity(default is the currentVelocityLimit)
 * @return      Null
 */
-  public Command setPositionCommand(double setpointMeters) {
+  public Command setPositionCommand(double setpointMeters, double... velocitys) {
     return run(() -> {
+      assert velocitys.length <= 1;
+      double velocity = currentVelocityLimit;
+      velocity = velocitys.length > 0 ? velocitys[0] : 0.0;
+
       targetPosition = DoubleUtils.clamp(setpointMeters, (!Double.isNaN(foundBottemHeight) ) ? foundBottemHeight : constElevator.MIN_HEIGHT /* One Liner thats scuffed !? */, (!Double.isNaN(foundMaxHeight) ) ? foundMaxHeight : constElevator.MAX_HEIGHT);
 
       double setpointRotations = targetPosition / (Math.PI * constElevator.SPOOL_RADIUS);
@@ -50,7 +58,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
       
       double requestedVelocity = DoubleUtils.clamp(
-          currentVelocityLimit,
+          velocity,
           -constElevator.MAX_MOTOR_RPS,
           constElevator.MAX_MOTOR_RPS
       );
@@ -74,7 +82,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 * Checks if the elevator is at the desired position
 * @return      Boolean
 */
-  private boolean isAtPosition() {
+  public boolean isAtPosition() {
     return Math.abs(getPositionInMeters() - targetPosition) < POSITION_TOLERANCE;
   }
 
@@ -128,8 +136,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 * @return  Double
 */
   public double getPosition() {
-    double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
-    return motorRotations / constElevator.GEAR_RATIO;  
+    //double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
+    //return motorRotations / constElevator.GEAR_RATIO;
+    double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
+    return encoder / constElevator.GEAR_RATIO * 4;//needs to be changed
   }
 /**
 * Gets the elevators position in meters
@@ -169,6 +179,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
       foundMaxHeight = getPositionInMeters();
+      
     }
     if (bottemLimitSwitch.get()) {
       foundBottemHeight = getPositionInMeters();

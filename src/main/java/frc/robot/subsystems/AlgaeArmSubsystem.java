@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -11,10 +10,7 @@ import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.MotorSafety;
 import frc.robot.Constants;
 import frc.robot.Ports;
 
@@ -26,7 +22,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     CANcoder canCoder = new CANcoder(Ports.EndEffector.ALGAE_CANCODER);
 
-    double targetAngle = Constants.EndEffector.algaePositions.minPosition;
+    double targetAngle = Constants.EndEffector.algaePositions.restPosition;
 
     public AlgaeArmSubsystem() {
         var config = new Slot0Configs();
@@ -61,6 +57,10 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     public void setAlgaePosition(double degree) {
         targetAngle = DoubleUtils.clamp(degree, Constants.EndEffector.algaePositions.minPosition, Constants.EndEffector.algaePositions.maxPosition);
+    }
+
+    public boolean isAtPosition() {
+        return Math.abs(getAlgaePosition() - targetAngle) < Constants.EndEffector.algaeArmTolerance;
     }
 
 

@@ -7,11 +7,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import swervelib.math.Matter;
 
 
@@ -90,12 +88,15 @@ public final class Constants {
         public static double MAX_HEIGHT = Units.inchesToMeters(50.0);
         public static double MIN_HEIGHT = Units.inchesToMeters(0.1);
         // Reef Zone heights inches
-        public static final double L1 = Units.inchesToMeters(18.0 - floorToEvevatorHeight); ;
-        public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight);
-        public static final double L3 = Units.inchesToMeters(47.652 - floorToEvevatorHeight);
-        public static double L4 = Units.inchesToMeters(55 -  floorToEvevatorHeight);
+        public static final double L1 = Units.inchesToMeters(18.0 - floorToEvevatorHeight + 2);
+        public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight + 2);
+        public static final double L3 = Units.inchesToMeters(47.652 - floorToEvevatorHeight + 2);
+        public static double L4 = Units.inchesToMeters(MAX_HEIGHT);
+        public static double ALGAE1 =  Units.inchesToMeters(1); // idk bro
+        public static double ALGAE2 =  Units.inchesToMeters(1); // idk bro
 
         // Speed constants (in meters per second)
+        public static final double L1Velocity = 1;    //Custom speed for L1
         public static final double MAX_SPEED = 0.02;    // Maximum safe speed: 0.05 m/s
         public static final double NORMAL_SPEED = 0.01;  // Normal operation: 0.03 m/s
         public static final double SLOW_SPEED = 0.005;    // Precise movement: 0.01 m/s
@@ -114,10 +115,6 @@ public final class Constants {
         public static final double CURRENT_THRESHOLD = 20.0;         // Current spike threshold for detecting limits
     }
 
-    public static class Mapping {
-        public static final int controllerPort = 1; //xbox controller port, change if needed
-    }
-
     public static class EndEffector {
         public static final double algaeDeadZone = 3;
 
@@ -125,15 +122,21 @@ public final class Constants {
         public static class algaePositions {
             public static final double minPosition = -90.0;
             public static final double maxPosition = 90;
+            public static final double restPosition = -90;
             public static final double removeAlgaePosition = -45;
         }
 
+        public static final double algaeArmTolerance = 3;
+
         public static class speeds {
-            //divided by 5 for safety @owen
-            public static final double coralRollerSpeedL23 = 0.2;
-            public static final double coralRollerSpeedL4 = 0.4;
+            //arbitray values
+            public static final double L1 = 5;
+            public static final double L23 = 50;
+            public static final double L4 = 25;
 
             public static final double maxAlgaeVelocity = 15;
+            public static final double intake = 10;
+            public static final double removeAlgae = -50;
         }
 
         //PID

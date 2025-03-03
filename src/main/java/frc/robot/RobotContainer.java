@@ -5,13 +5,10 @@
 package frc.robot;
 
 import java.io.File;
-import java.time.Instant;
 
-import com.fasterxml.jackson.databind.introspect.DefaultAccessorNamingStrategy;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
-import ca.team4308.absolutelib.math.DoubleUtils;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,9 +23,16 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import swervelib.SwerveInputStream;
 
 import frc.robot.Constants.Operator;
-import frc.robot.commands.ManualControlAlgae;
-import frc.robot.commands.ManualControlElevator;
-import frc.robot.commands.ManualControlRoller;
+import frc.robot.commands.Intake;
+import frc.robot.commands.AlgaeRemoval.RemoveL1;
+import frc.robot.commands.AlgaeRemoval.RemoveL2;
+import frc.robot.commands.CoralScoring.FastL1;
+import frc.robot.commands.CoralScoring.FastL2;
+import frc.robot.commands.CoralScoring.FastL3;
+import frc.robot.commands.CoralScoring.FastL4;
+import frc.robot.commands.SimpleControl.SimpleAlgae;
+import frc.robot.commands.SimpleControl.SimpleElevator;
+import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
@@ -48,11 +52,13 @@ public class RobotContainer {
   private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
   private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
-  //for testing purposes
-  private final ManualControlAlgae manualAlgaeCommand;
-  private final ManualControlElevator manualElevatorCommand;
+  // for testing purposes
+  private final SimpleAlgae manualAlgaeCommand;
+  private final SimpleRoller manualRollerCommand;
+  private final SimpleElevator manualElevatorCommand;
 
-  // Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
+  // Converts driver input into a field-relative ChassisSpeeds that is controlled
+  // by angular velocity.
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> driver.getLeftY() * -1,
       () -> driver.getLeftX() * -1)
@@ -60,13 +66,15 @@ public class RobotContainer {
       .deadband(Operator.DEADBAND)
       .scaleTranslation(1.0)
       .allianceRelativeControl(true);
-      
-  // Clone's the angular velocity input stream and converts it to a fieldRelative input stream.
+
+  // Clone's the angular velocity input stream and converts it to a fieldRelative
+  // input stream.
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driver::getRightX,
       driver::getRightY)
       .headingWhile(true);
 
-   // Clone's the angular velocity input stream and converts it to a roboRelative input stream.
+  // Clone's the angular velocity input stream and converts it to a roboRelative
+  // input stream.
   SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
       .allianceRelativeControl(false);
 
@@ -100,8 +108,9 @@ public class RobotContainer {
     m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
     m_CoralRollerSubsystem = new CoralRollerSubsystem();
 
-    manualAlgaeCommand = new ManualControlAlgae(() -> getManualAlgaeControl(), m_AlgaeArmSubsystem);
-    manualElevatorCommand = new ManualControlElevator(() -> getManualElevatorControl(), m_ElevatorSubsystem);
+    manualAlgaeCommand = new SimpleAlgae(() -> null, m_AlgaeArmSubsystem);
+    manualRollerCommand = new SimpleRoller(() -> null, m_CoralRollerSubsystem);
+    manualElevatorCommand = new SimpleElevator(null, m_ElevatorSubsystem);
 
     m_AlgaeArmSubsystem.setDefaultCommand(manualAlgaeCommand);
     m_ElevatorSubsystem.setDefaultCommand(manualElevatorCommand);
@@ -115,7 +124,7 @@ public class RobotContainer {
     DriverStation.silenceJoystickConnectionWarning(true);
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
   }
-  
+
   private void configureBindings() {
     configureDriverBindings();
     configureOperatorBindings();
@@ -165,22 +174,35 @@ public class RobotContainer {
   }
 
   public void configureOperatorBindings() {
-    //Coral
-    operator.A.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.runIndexer())).onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
-    operator.B.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15))).onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
+    // Coral
+    operator.Start.onTrue(new Intake(m_CoralRollerSubsystem));
+    operator.Back.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
+        .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
 
-    //Algae
-    operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));
+    // Algae
+    operator.RB.onTrue(new InstantCommand(
+        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));
     operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));
-    operator.RB.onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition))));
+    operator.RB.onFalse((new InstantCommand(
+        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition))));
     operator.RB.onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
-    
-    //Elevator
+
+    // Elevator
     operator.povUp.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(1)));
     operator.povRight.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(2)));
     operator.povDown.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(3)));
     operator.povLeft.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(4)));
-    operator.RB.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(0)));
+    operator.LB.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(0)));
+
+    // Automatic Scoring
+    operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.X.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+
+    // Automatic Algae Removal
+    operator.LeftStickButton.onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.RightStickButton.onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
   }
 
   public LEDSystem getLEDSystem() {
@@ -210,7 +232,8 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("New Auto");
   }
 
-  public void periodic() {}
+  public void periodic() {
+  }
 
   public void setMotorBrake(boolean brake) {
     drivebase.setMotorBrake(brake);
