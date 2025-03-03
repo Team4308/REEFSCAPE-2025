@@ -4,7 +4,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,6 +21,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX rightMotorLeader;
   private DigitalInput topLimitSwitch; 
   private DigitalInput bottemLimitSwitch; 
+  private CANcoder cancoder;
 
   private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
@@ -32,6 +32,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     bottemLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_BOTTOM);
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
+    cancoder = new CANcoder(Ports.Elevator.ELEVATOR_CANCODER);
+
+    cancoder.setPosition(0);
   }
     
 /**
@@ -133,8 +136,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 * @return  Double
 */
   public double getPosition() {
-    double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
-    return motorRotations / constElevator.GEAR_RATIO;  
+    //double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
+    //return motorRotations / constElevator.GEAR_RATIO;
+    double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
+    return encoder / constElevator.GEAR_RATIO * 4;//needs to be changed
   }
 /**
 * Gets the elevators position in meters

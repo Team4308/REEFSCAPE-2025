@@ -1,8 +1,6 @@
 
 package frc.robot.commands.AlgaeRemoval;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.CoralRollerSubsystem;
