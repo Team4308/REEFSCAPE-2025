@@ -87,4 +87,12 @@ public class XBoxWrapper {
     public double getRightTrigger() {
         return joystick.getRawAxis(3);
     }
+
+    public boolean getLeftTriggerAsBoolean() {
+        return (joystick.getRawAxis(2) > 0.5);
+    }
+
+    public boolean getRightTriggerAsBoolean() {
+        return (joystick.getRawAxis(3) > 0.5);
+    }
 }

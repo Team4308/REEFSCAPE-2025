@@ -100,6 +100,7 @@ public final class Constants {
         public static final double MAX_SPEED = 0.02;    // Maximum safe speed: 0.05 m/s
         public static final double NORMAL_SPEED = 0.01;  // Normal operation: 0.03 m/s
         public static final double SLOW_SPEED = 0.005;    // Precise movement: 0.01 m/s
+        public static final double ALGAE_REMOVAL_SPEED = 1;
         
         // Convert speeds to motor RPS using spool circumference
         public static final double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_RADIUS * 0.0254; 
@@ -121,9 +122,11 @@ public final class Constants {
         //Positions
         public static class algaePositions {
             public static final double minPosition = -90.0;
-            public static final double maxPosition = 90;
+            public static final double maxPosition = 120;
             public static final double restPosition = -90;
             public static final double removeAlgaePosition = -45;
+            public static final double holdBargePosition = 110;
+            public static final double removeBargePosition = 45;
         }
 
         public static final double algaeArmTolerance = 3;

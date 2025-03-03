@@ -63,6 +63,10 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         return Math.abs(getAlgaePosition() - targetAngle) < Constants.EndEffector.algaeArmTolerance;
     }
 
+    public void editAlgaePosition(double difference) {
+        targetAngle += difference;
+    }
+
 
     @Override
     public void periodic() {

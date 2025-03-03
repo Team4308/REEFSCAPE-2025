@@ -1,15 +1,14 @@
-package frc.robot.commands.SimpleControl;
+package frc.robot.commands.ManualControl;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 
-public class SimpleAlgae extends Command {
+public class ManualAlgae extends Command {
     private final Supplier<Double> angle;
     private final AlgaeArmSubsystem subsystem;
-
-    public SimpleAlgae(Supplier<Double> angle, AlgaeArmSubsystem algaePivotSubsystem) {
+    public ManualAlgae(Supplier<Double> angle, AlgaeArmSubsystem algaePivotSubsystem) {
         this.angle = angle; 
         this.subsystem = algaePivotSubsystem;
         addRequirements(algaePivotSubsystem);
@@ -22,7 +21,7 @@ public class SimpleAlgae extends Command {
 
     @Override
     public void execute() {
-        subsystem.setAlgaePosition(angle.get());
+        subsystem.editAlgaePosition(angle.get());
     }
 
     @Override

@@ -7,9 +7,11 @@ import frc.robot.subsystems.CoralRollerSubsystem;
 
 public class AlgaeRoller extends Command {
     private final CoralRollerSubsystem subsystem;
+    private final boolean reversed;
 
-    public AlgaeRoller(CoralRollerSubsystem rollerSubsystem) {
+    public AlgaeRoller(boolean reversed, CoralRollerSubsystem rollerSubsystem) {
         this.subsystem = rollerSubsystem;
+        this.reversed = reversed;
         addRequirements(rollerSubsystem);
     }
 
@@ -20,7 +22,11 @@ public class AlgaeRoller extends Command {
 
     @Override
     public void execute() {
-        subsystem.setRollerOutput(-Constants.EndEffector.speeds.removeAlgae);
+        double speed = -Constants.EndEffector.speeds.removeAlgae;
+        if (reversed) {
+            speed *= -1;
+        }
+        subsystem.setRollerOutput(speed);
     }
 
     @Override

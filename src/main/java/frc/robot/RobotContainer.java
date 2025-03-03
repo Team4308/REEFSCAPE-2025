@@ -9,6 +9,7 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
+import ca.team4308.absolutelib.control.JoystickHelper;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -30,6 +31,8 @@ import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.CoralScoring.FastL4;
+import frc.robot.commands.ManualControl.ManualAlgae;
+import frc.robot.commands.ManualControl.ManualElevator;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.commands.SimpleControl.SimpleRoller;
@@ -54,9 +57,9 @@ public class RobotContainer {
   private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
   // for testing purposes
-  private final SimpleAlgae manualAlgaeCommand;
-  private final SimpleRoller manualRollerCommand;
-  private final SimpleElevator manualElevatorCommand;
+  private final SimpleRoller SimpleRollerCommand;
+  private final ManualAlgae ManualAlgaeCommand;
+  private final ManualElevator ManualElevatorCommand;
 
   // Converts driver input into a field-relative ChassisSpeeds that is controlled
   // by angular velocity.
@@ -109,13 +112,13 @@ public class RobotContainer {
     m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
     m_CoralRollerSubsystem = new CoralRollerSubsystem();
 
-    manualAlgaeCommand = new SimpleAlgae(() -> null, m_AlgaeArmSubsystem);
-    manualRollerCommand = new SimpleRoller(() -> null, m_CoralRollerSubsystem);
-    manualElevatorCommand = new SimpleElevator(null, m_ElevatorSubsystem);
+    SimpleRollerCommand = new SimpleRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
+    ManualAlgaeCommand = new ManualAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
+    ManualElevatorCommand = new ManualElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
 
-    m_AlgaeArmSubsystem.setDefaultCommand(manualAlgaeCommand);
-    m_CoralRollerSubsystem.setDefaultCommand(manualRollerCommand);
-    m_ElevatorSubsystem.setDefaultCommand(manualElevatorCommand);
+    m_AlgaeArmSubsystem.setDefaultCommand(ManualAlgaeCommand);
+    m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
+    m_ElevatorSubsystem.setDefaultCommand(ManualElevatorCommand);
 
     CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
     CommandScheduler.getInstance().registerSubsystem(m_ElevatorSubsystem);
@@ -176,15 +179,29 @@ public class RobotContainer {
   }
 
   public void configureOperatorBindings() {
+    // Automatic Scoring
+    operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.X.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+
+    // Automatic Algae Removal
+    operator.LeftStickButton.onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.RightStickButton.onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+
+    // Automatic Barge Removal & Scoring
+    //I need more buttons
+
+    // *** These are failsafes, that should be already covered by the previous commands ***
     // Coral
-    operator.Start.onTrue(new Intake(m_CoralRollerSubsystem));
+    operator.Start.onTrue(new Intake(m_CoralRollerSubsystem)); // INTAKING
     operator.Back.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
-        .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
+        .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));   //SHOOTING
 
     // Algae
     operator.RB.onTrue(new InstantCommand(
-        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));
-    operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));
+        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));// Set position to remove algae
+    operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));//Spins Rollers to remove algae
     operator.RB.onFalse((new InstantCommand(
         () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition))));
     operator.RB.onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
@@ -195,16 +212,6 @@ public class RobotContainer {
     operator.povDown.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(3)));
     operator.povLeft.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(4)));
     operator.LB.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(0)));
-
-    // Automatic Scoring
-    operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.X.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-
-    // Automatic Algae Removal
-    operator.LeftStickButton.onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.RightStickButton.onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
   }
 
   public LEDSystem getLEDSystem() {
@@ -225,7 +232,24 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("New Auto");
   }
 
-  public void periodic() {
+  public void periodic() {}
+
+  public double joystickAlgaeArm() {
+    return deadZone(operator.getLeftY()) * 5;
+  }
+
+  public double joystickElevatorControl() {
+    return deadZone(operator.getRightY())/20;
+  }
+
+  public double triggerRollerControl() {
+    double isPos = deadZone(operator.getRightTrigger());
+    double isNeg = deadZone(operator.getLeftTrigger());
+    if (isPos > 0) {
+      return isPos;
+    } else {
+      return isNeg;
+    }
   }
 
   public void setMotorBrake(boolean brake) {
@@ -233,7 +257,7 @@ public class RobotContainer {
   }
 
   public static double deadZone(double integer) {
-    if (0.06 >= integer && integer >= -0.06) {
+    if (0.09 >= integer && integer >= -0.09) {
       integer = 0;
     }
     return integer;
