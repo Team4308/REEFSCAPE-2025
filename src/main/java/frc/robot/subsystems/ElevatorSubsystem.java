@@ -16,12 +16,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   private static final double POSITION_TOLERANCE = 0.01; // meters
   private double targetPosition = 0.0;
-  private Double foundMaxHeight = null;
-  private Double foundBottemHeight = null;
+  private Double maxHeight = constElevator.MAX_HEIGHT;
+  private Double botHeight = constElevator.MIN_HEIGHT;
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
   private DigitalInput topLimitSwitch;
-  private DigitalInput bottemLimitSwitch;
+  private DigitalInput bottomLimitSwitch;
   private CANcoder cancoder;
 
   private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
@@ -30,7 +30,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotorFollower = new TalonFX(Ports.Elevator.ELEVATOR_FOLLOWER);
     rightMotorLeader = new TalonFX(Ports.Elevator.ELEVATOR_MASTER);
     topLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_TOP);
-    bottemLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_BOTTOM);
+    bottomLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_BOTTOM);
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     cancoder = new CANcoder(Ports.Elevator.ELEVATOR_CANCODER);
@@ -41,45 +41,39 @@ public class ElevatorSubsystem extends SubsystemBase {
   /**
    * Sets the elevators position to the desired setpoint
    * 
-   * @param double   The Desired position in meters
-   * @param velocity The desired target velosity(default is the
-   *                 currentVelocityLimit)
+   * @param double The Desired position in meters
    * @return Null
    */
-  public Command setPositionCommand(double setpointMeters, double... velocitys) {
-    return run(() -> {
-      assert velocitys.length <= 1;
-      double velocity = currentVelocityLimit;
-      velocity = velocitys.length > 0 ? velocitys[0] : 0.0;
+  public void setPosition(double setpointMeters) {
+    targetPosition = setpointMeters;
+  }
 
-      targetPosition = DoubleUtils.clamp(setpointMeters,
-          (!Double.isNaN(foundBottemHeight)) ? foundBottemHeight
-              : constElevator.MIN_HEIGHT /* One Liner thats scuffed !? */,
-          (!Double.isNaN(foundMaxHeight)) ? foundMaxHeight : constElevator.MAX_HEIGHT);
+  private double calculateVoltage() {
+    targetPosition = DoubleUtils.clamp(targetPosition,
+        botHeight, maxHeight);
 
-      double setpointRotations = targetPosition / (Math.PI * constElevator.SPOOL_RADIUS);
-      double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
-      double currentMotorRotations = getPosition();
+    double setpointRotations = targetPosition / (Math.PI *
+        constElevator.SPOOL_RADIUS);
+    double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
+    double currentMotorRotations = getPosition();
 
-      double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
+    double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
+    System.out.print("pid output: ");
+    System.out.println(pidOutput);
+    double requestedVelocity = DoubleUtils.clamp(
+        currentVelocityLimit,
+        -constElevator.MAX_MOTOR_RPS,
+        constElevator.MAX_MOTOR_RPS);
 
-      double requestedVelocity = DoubleUtils.clamp(
-          velocity,
-          -constElevator.MAX_MOTOR_RPS,
-          constElevator.MAX_MOTOR_RPS);
+    double feedforwardVoltage = constElevator.feedforward.calculate(requestedVelocity);
+    System.out.print("feedforward output: ");
+    System.out.println(feedforwardVoltage);
+    double totalVoltage = DoubleUtils.clamp(
+        pidOutput + feedforwardVoltage,
+        -6.0,
+        6.0);
 
-      double feedforwardVoltage = constElevator.feedforward.calculate(requestedVelocity);
-
-      double totalVoltage = DoubleUtils.clamp(
-          pidOutput + feedforwardVoltage,
-          -6.0,
-          6.0);
-
-      rightMotorLeader.setVoltage(totalVoltage);
-      leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), false));
-    })
-        .until(() -> isAtPosition())
-        .withName("SetPosition " + setpointMeters);
+    return totalVoltage;
   }
 
   /**
@@ -99,21 +93,29 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Null
    */
   public Command goToLevel(int lvl) {
-    System.out.println("Setting level to: " + lvl);
-    switch (lvl) {
-      case 0:
-        return setPositionCommand(0.0);
-      case 1:
-        return setPositionCommand(constElevator.L1);
-      case 2:
-        return setPositionCommand(constElevator.L2);
-      case 3:
-        return setPositionCommand(constElevator.L3);
-      case 4:
-        return setPositionCommand(constElevator.L4);
-      default:
-        return null;
-    }
+    return runOnce(() -> {
+      System.out.println("Setting level to: " + lvl);
+      switch (lvl) {
+        case 0:
+          setPosition(0.0);
+          break;
+        case 1:
+          setPosition(constElevator.L1);
+          break;
+        case 2:
+          setPosition(constElevator.L2);
+          break;
+        case 3:
+          setPosition(constElevator.L3);
+          break;
+        case 4:
+          setPosition(constElevator.L4);
+          break;
+        default:
+          setPosition(0.0);
+          break;
+      }
+    });
   }
 
   // Speed control
@@ -132,6 +134,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public void setCustomSpeed(double speedMetersPerSecond) {
     currentVelocityLimit = speedMetersPerSecond * constElevator.GEAR_RATIO;
+  }
+
+  public double getCurrentSpeed() {
+    return currentVelocityLimit;
   }
 
   // Elevator data
@@ -153,7 +159,8 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPositionInMeters() {
-    return getPosition() * (Math.PI * constElevator.SPOOL_RADIUS);
+
+    return getPosition() * constElevator.SPOOL_CIRCUMFERENCE;
   }
 
   /**
@@ -184,14 +191,18 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (!isAtPosition()) {
+      double voltage = calculateVoltage();
+      rightMotorLeader.setVoltage(voltage);
+      leftMotorFollower.setVoltage(voltage);
+    }
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      foundMaxHeight = getPositionInMeters();
-
+      maxHeight = getPositionInMeters();
     }
-    if (bottemLimitSwitch.get()) {
-      foundBottemHeight = getPositionInMeters();
+    if (bottomLimitSwitch.get()) {
+      botHeight = getPositionInMeters();
     }
 
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());

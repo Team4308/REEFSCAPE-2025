@@ -89,7 +89,7 @@ public final class Constants {
         public static final double SPOOL_RADIUS = 1.76; // INCHES ( CHANGE )
         public static final double floorToEvevatorHeight = 10.0; // INCHES (CHANGE )
         public static double MAX_HEIGHT = Units.inchesToMeters(50.0);
-        public static double MIN_HEIGHT = Units.inchesToMeters(0.1);
+        public static double MIN_HEIGHT = 0.031241;
         // Reef Zone heights inches
         public static final double L1 = Units.inchesToMeters(18.0 - floorToEvevatorHeight + 2);
         public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight + 2);

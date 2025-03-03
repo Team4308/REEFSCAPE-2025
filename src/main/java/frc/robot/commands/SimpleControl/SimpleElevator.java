@@ -23,7 +23,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public void execute() {
-        subsystem.setPositionCommand(control.get());
+        subsystem.setPosition(control.get());
     }
 
     @Override
