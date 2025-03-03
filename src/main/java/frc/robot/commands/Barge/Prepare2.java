@@ -14,7 +14,7 @@ import frc.robot.subsystems.CoralRollerSubsystem;
 public class Prepare2 extends SequentialCommandGroup {
     public Prepare2(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem, AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
-            new SimpleAlgae(() -> Constants.EndEffector.algaePositions.restPosition, algaeArmSubsystem),
+            new SimpleAlgae(() -> Constants.EndEffector.algaePositions.removeBargePosition, algaeArmSubsystem),
             new SimpleElevator(() -> Constants.constElevator.ALGAE2 - 0.5, elevatorSubsystem),
             new ParallelDeadlineGroup(
                 new ElevatorwithVelocity(() -> Constants.constElevator.ALGAE2, () -> Constants.constElevator.ALGAE_REMOVAL_SPEED, elevatorSubsystem),
