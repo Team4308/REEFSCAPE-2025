@@ -13,11 +13,11 @@ import frc.robot.Ports;
 
 public class CoralRollerSubsystem extends LogSubsystem {
 
-    private final TalonFX rollerMotor = new TalonFX(Ports.EndEffector.CORAL_MOTOR);
+    private TalonFX rollerMotor = new TalonFX(Ports.EndEffector.CORAL_MOTOR);
 
-    VelocityVoltage rollerVelocity = new VelocityVoltage(0);
+    private VelocityVoltage rollerVelocity = new VelocityVoltage(0);
 
-    DigitalInput beamBreak = new DigitalInput(Ports.EndEffector.INDEX_BEAM_BREAK);
+    private DigitalInput beamBreak = new DigitalInput(Ports.EndEffector.INDEX_BEAM_BREAK);
 
     public CoralRollerSubsystem() {
         var config = new Slot0Configs();

@@ -15,17 +15,18 @@ import frc.robot.Constants;
 import frc.robot.Ports;
 
 public class AlgaeArmSubsystem extends LogSubsystem {
-    private final TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
+    private TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
 
-    PIDController algaepidController = new PIDController(Constants.EndEffector.PID.kP, Constants.EndEffector.PID.kI,
+    private PIDController algaepidController = new PIDController(Constants.EndEffector.PID.kP,
+            Constants.EndEffector.PID.kI,
             Constants.EndEffector.PID.kD);
-    ArmFeedforward algaeFeedForward = new ArmFeedforward(Constants.EndEffector.FeedForward.kS,
+    private ArmFeedforward algaeFeedForward = new ArmFeedforward(Constants.EndEffector.FeedForward.kS,
             Constants.EndEffector.FeedForward.kG, Constants.EndEffector.FeedForward.kV,
             Constants.EndEffector.FeedForward.kA);
 
-    CANcoder canCoder = new CANcoder(Ports.EndEffector.ALGAE_CANCODER);
+    private CANcoder canCoder = new CANcoder(Ports.EndEffector.ALGAE_CANCODER);
 
-    double targetAngle = Constants.EndEffector.algaePositions.restPosition;
+    private double targetAngle = Constants.EndEffector.algaePositions.restPosition;
 
     public AlgaeArmSubsystem() {
         var config = new Slot0Configs();
@@ -71,6 +72,10 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     public void editAlgaePosition(double difference) {
         targetAngle += difference;
+    }
+
+    public double getCurrentTarget() {
+        return targetAngle;
     }
 
     @Override
