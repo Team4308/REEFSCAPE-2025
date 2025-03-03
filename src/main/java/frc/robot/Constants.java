@@ -94,6 +94,8 @@ public final class Constants {
         public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight + 2);
         public static final double L3 = Units.inchesToMeters(47.652 - floorToEvevatorHeight + 2);
         public static double L4 = Units.inchesToMeters(MAX_HEIGHT);
+        public static double ALGAE1 =  Units.inchesToMeters(1); // idk bro
+        public static double ALGAE2 =  Units.inchesToMeters(1); // idk bro
 
         // Speed constants (in meters per second)
         public static final double L1Velocity = 1;    //Custom speed for L1
@@ -135,6 +137,8 @@ public final class Constants {
             public static final double L4 = 25;
 
             public static final double maxAlgaeVelocity = 15;
+            public static final double intake = 10;
+            public static final double removeAlgae = -50;
         }
 
         //PID

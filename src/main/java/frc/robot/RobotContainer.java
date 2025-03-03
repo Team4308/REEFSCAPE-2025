@@ -26,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import swervelib.SwerveInputStream;
 
 import frc.robot.Constants.Operator;
+import frc.robot.commands.Intake;
+import frc.robot.commands.AlgaeRemoval.RemoveL1;
+import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
@@ -177,8 +180,7 @@ public class RobotContainer {
 
   public void configureOperatorBindings() {
     // Coral
-    operator.Start.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.runIndexer()))
-        .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
+    operator.Start.onTrue(new Intake(m_CoralRollerSubsystem));
     operator.Back.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
         .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
 
@@ -202,6 +204,10 @@ public class RobotContainer {
     operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
     operator.X.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
     operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+
+    // Automatic Algae Removal
+    operator.LeftStickButton.onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+    operator.RightStickButton.onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
   }
 
   public LEDSystem getLEDSystem() {

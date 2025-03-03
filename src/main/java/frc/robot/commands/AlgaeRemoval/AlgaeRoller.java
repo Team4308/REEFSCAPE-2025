@@ -1,17 +1,16 @@
 
-package frc.robot.commands.SimpleControl;
+package frc.robot.commands.AlgaeRemoval;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
-public class SimpleRoller extends Command {
-    private final Supplier<Double> control;
+public class AlgaeRoller extends Command {
     private final CoralRollerSubsystem subsystem;
 
-    public SimpleRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
-        this.control = control; 
+    public AlgaeRoller(CoralRollerSubsystem rollerSubsystem) {
         this.subsystem = rollerSubsystem;
         addRequirements(rollerSubsystem);
     }
@@ -23,7 +22,7 @@ public class SimpleRoller extends Command {
 
     @Override
     public void execute() {
-        subsystem.setRollerOutput(control.get());
+        subsystem.setRollerOutput(-Constants.EndEffector.speeds.removeAlgae);
     }
 
     @Override
@@ -33,7 +32,7 @@ public class SimpleRoller extends Command {
 
     @Override
     public boolean isFinished() {
-        return !subsystem.getBeamBreak();
+        return false;
     }
     
 }
