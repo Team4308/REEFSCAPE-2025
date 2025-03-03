@@ -1,0 +1,18 @@
+pid:
+    swerve
+    algae arm
+    elevator
+
+constants:
+    elevator:
+        scoring heights
+        speed
+        feedforward
+        max,min heights
+        algae removal heights
+    end effector:
+        algae removal position
+        barge pos???
+        scoring speeds
+        algae removal speed
+        
