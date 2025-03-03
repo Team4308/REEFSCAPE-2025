@@ -11,7 +11,7 @@ public class SimpleRoller extends Command {
     private final CoralRollerSubsystem subsystem;
 
     public SimpleRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
-        this.control = control; 
+        this.control = control;
         this.subsystem = rollerSubsystem;
         addRequirements(rollerSubsystem);
     }
@@ -35,5 +35,5 @@ public class SimpleRoller extends Command {
     public boolean isFinished() {
         return !subsystem.getBeamBreak();
     }
-    
+
 }

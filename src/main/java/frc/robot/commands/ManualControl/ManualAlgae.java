@@ -8,8 +8,9 @@ import frc.robot.subsystems.AlgaeArmSubsystem;
 public class ManualAlgae extends Command {
     private final Supplier<Double> angle;
     private final AlgaeArmSubsystem subsystem;
+
     public ManualAlgae(Supplier<Double> angle, AlgaeArmSubsystem algaePivotSubsystem) {
-        this.angle = angle; 
+        this.angle = angle;
         this.subsystem = algaePivotSubsystem;
         addRequirements(algaePivotSubsystem);
     }
@@ -33,5 +34,5 @@ public class ManualAlgae extends Command {
     public boolean isFinished() {
         return subsystem.isAtPosition();
     }
-    
+
 }

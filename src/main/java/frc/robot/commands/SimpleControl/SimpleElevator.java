@@ -11,7 +11,7 @@ public class SimpleElevator extends Command {
     private final ElevatorSubsystem subsystem;
 
     public SimpleElevator(Supplier<Double> control, ElevatorSubsystem elevatorSubsystem) {
-        this.control = control; 
+        this.control = control;
         this.subsystem = elevatorSubsystem;
         addRequirements(elevatorSubsystem);
     }
@@ -35,5 +35,5 @@ public class SimpleElevator extends Command {
     public boolean isFinished() {
         return subsystem.isAtPosition();
     }
-    
+
 }

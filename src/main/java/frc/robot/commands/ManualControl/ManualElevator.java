@@ -8,8 +8,9 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ManualElevator extends Command {
     private final Supplier<Double> angle;
     private final ElevatorSubsystem subsystem;
+
     public ManualElevator(Supplier<Double> angle, ElevatorSubsystem elevatorSubsystem) {
-        this.angle = angle; 
+        this.angle = angle;
         this.subsystem = elevatorSubsystem;
         addRequirements(elevatorSubsystem);
     }
@@ -33,5 +34,5 @@ public class ManualElevator extends Command {
     public boolean isFinished() {
         return subsystem.isAtPosition();
     }
-    
+
 }

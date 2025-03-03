@@ -25,15 +25,15 @@ public class LEDSystem extends SubsystemBase {
     m_led.setLength(Constants.constLED.LED_LENGTH);
     m_led.start();
 
-    setDefaultCommand(runPattern(LEDPattern.solid(Color.kBlack)).withName("Idle")); // Set it to default 
+    setDefaultCommand(runPattern(LEDPattern.solid(Color.kBlack)).withName("Idle")); // Set it to default
 
     // Initialize simulation
     if (Robot.isSimulation()) {
-        SmartDashboard.putString("LED State", ledState);
-        SmartDashboard.putNumber("LED Pattern Value", 0.0);
-        SmartDashboard.putNumber("LED R", 0.0);
-        SmartDashboard.putNumber("LED G", 0.0);
-        SmartDashboard.putNumber("LED B", 0.0);
+      SmartDashboard.putString("LED State", ledState);
+      SmartDashboard.putNumber("LED Pattern Value", 0.0);
+      SmartDashboard.putNumber("LED R", 0.0);
+      SmartDashboard.putNumber("LED G", 0.0);
+      SmartDashboard.putNumber("LED B", 0.0);
     }
   }
 
@@ -42,27 +42,27 @@ public class LEDSystem extends SubsystemBase {
   }
 
   public String getLedState() {
-    return ledState;  
+    return ledState;
   }
 
-  // Color Map 
+  // Color Map
 
-  // Red Fault, Error, or other critical issuse 
+  // Red Fault, Error, or other critical issuse
   // Yellow, Test, Debug, Etc
   // Orange Zeroing, Calibrating, etc ( Do not interrupt )
 
   // Green, Game Peice
-  // White Game Peice  
+  // White Game Peice
 
   // Blinking Auto (Any Color)
   // Anything else just Teleop (MaskedLayer , Graident, Rainbow, etc)
 
-  public void setLedState(String status) {  
+  public void setLedState(String status) {
     System.out.println("Setting LED State to: " + status);
     ledState = status;
     LEDPattern pattern;
     switch (status) {
-      case "Idle": 
+      case "Idle":
         currentColor = Color.kDimGray;
         runPattern(LEDPattern.solid(currentColor));
         break;
@@ -91,35 +91,35 @@ public class LEDSystem extends SubsystemBase {
         runPattern(LEDPattern.solid(Color.kSeaGreen));
         break;
       case "Coral":
-        runPattern(LEDPattern.solid(Color.kWhiteSmoke));  
+        runPattern(LEDPattern.solid(Color.kWhiteSmoke));
         break;
       default:
-        // Idk if this works 
+        // Idk if this works
         runPattern(LEDPattern.progressMaskLayer(() -> m_elevator.getPosition() / m_elevator.getMaxHeight()));
         break;
     }
-    
+
     if (Robot.isSimulation()) {
-        SmartDashboard.putString("LED State", ledState);
+      SmartDashboard.putString("LED State", ledState);
     }
   }
 
   @Override
   public void periodic() {
     m_led.setData(m_buffer);
-    
+
     if (Robot.isSimulation()) {
-        // Update pattern value for progress indicators
-        if (ledState.equals("Auto") || ledState.equals("Teleop")) {
-            patternValue = m_elevator.getPosition() / m_elevator.getMaxHeight();
-            SmartDashboard.putNumber("LED Pattern Value", patternValue);
-        }
-        
-        // Force dashboard updates
-        SmartDashboard.putString("LED State", ledState);
-        SmartDashboard.putNumber("LED R", currentColor.red);
-        SmartDashboard.putNumber("LED G", currentColor.green);
-        SmartDashboard.putNumber("LED B", currentColor.blue);
+      // Update pattern value for progress indicators
+      if (ledState.equals("Auto") || ledState.equals("Teleop")) {
+        patternValue = m_elevator.getPosition() / m_elevator.getMaxHeight();
+        SmartDashboard.putNumber("LED Pattern Value", patternValue);
+      }
+
+      // Force dashboard updates
+      SmartDashboard.putString("LED State", ledState);
+      SmartDashboard.putNumber("LED R", currentColor.red);
+      SmartDashboard.putNumber("LED G", currentColor.green);
+      SmartDashboard.putNumber("LED B", currentColor.blue);
     }
   }
 

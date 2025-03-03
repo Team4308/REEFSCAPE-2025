@@ -11,12 +11,12 @@ import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
 public class FastL2 extends SequentialCommandGroup {
-    public FastL2(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem, AlgaeArmSubsystem algaeArmSubsystem) {
+    public FastL2(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
+            AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
-            new SimpleAlgae(() -> Constants.EndEffector.algaePositions.restPosition, algaeArmSubsystem),
-            new SimpleElevator(() -> Constants.constElevator.L2, elevatorSubsystem),
-            new SimpleRoller(() -> Constants.EndEffector.speeds.L23, rollerSubsystem),
-            new SimpleElevator(() -> Constants.constElevator.MIN_HEIGHT, elevatorSubsystem)
-        );
-    }    
+                new SimpleAlgae(() -> Constants.EndEffector.algaePositions.restPosition, algaeArmSubsystem),
+                new SimpleElevator(() -> Constants.constElevator.L2, elevatorSubsystem),
+                new SimpleRoller(() -> Constants.EndEffector.speeds.L23, rollerSubsystem),
+                new SimpleElevator(() -> Constants.constElevator.MIN_HEIGHT, elevatorSubsystem));
+    }
 }

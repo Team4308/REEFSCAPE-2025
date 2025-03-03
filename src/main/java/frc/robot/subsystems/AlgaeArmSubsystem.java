@@ -16,9 +16,12 @@ import frc.robot.Ports;
 
 public class AlgaeArmSubsystem extends LogSubsystem {
     private final TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
-    
-    PIDController algaepidController = new PIDController(Constants.EndEffector.PID.kP, Constants.EndEffector.PID.kI, Constants.EndEffector.PID.kD);
-    ArmFeedforward algaeFeedForward = new ArmFeedforward(Constants.EndEffector.FeedForward.kS, Constants.EndEffector.FeedForward.kG, Constants.EndEffector.FeedForward.kV, Constants.EndEffector.FeedForward.kA);
+
+    PIDController algaepidController = new PIDController(Constants.EndEffector.PID.kP, Constants.EndEffector.PID.kI,
+            Constants.EndEffector.PID.kD);
+    ArmFeedforward algaeFeedForward = new ArmFeedforward(Constants.EndEffector.FeedForward.kS,
+            Constants.EndEffector.FeedForward.kG, Constants.EndEffector.FeedForward.kV,
+            Constants.EndEffector.FeedForward.kA);
 
     CANcoder canCoder = new CANcoder(Ports.EndEffector.ALGAE_CANCODER);
 
@@ -48,15 +51,18 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double currentAngle = getAlgaePosition();
 
         double motorVoltage = algaepidController.calculate(currentAngle, targetAngle);
-        motorVoltage = DoubleUtils.clamp(motorVoltage, -Constants.EndEffector.speeds.maxAlgaeVelocity, Constants.EndEffector.speeds.maxAlgaeVelocity);
+        motorVoltage = DoubleUtils.clamp(motorVoltage, -Constants.EndEffector.speeds.maxAlgaeVelocity,
+                Constants.EndEffector.speeds.maxAlgaeVelocity);
 
-        double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle), Constants.EndEffector.speeds.maxAlgaeVelocity);
+        double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle),
+                Constants.EndEffector.speeds.maxAlgaeVelocity);
 
         algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
     }
 
     public void setAlgaePosition(double degree) {
-        targetAngle = DoubleUtils.clamp(degree, Constants.EndEffector.algaePositions.minPosition, Constants.EndEffector.algaePositions.maxPosition);
+        targetAngle = DoubleUtils.clamp(degree, Constants.EndEffector.algaePositions.minPosition,
+                Constants.EndEffector.algaePositions.maxPosition);
     }
 
     public boolean isAtPosition() {
@@ -66,7 +72,6 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     public void editAlgaePosition(double difference) {
         targetAngle += difference;
     }
-
 
     @Override
     public void periodic() {

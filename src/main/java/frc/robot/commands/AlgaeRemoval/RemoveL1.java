@@ -12,14 +12,14 @@ import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
 public class RemoveL1 extends SequentialCommandGroup {
-    public RemoveL1(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem, AlgaeArmSubsystem algaeArmSubsystem) {
+    public RemoveL1(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
+            AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
-            new SimpleAlgae(() -> Constants.EndEffector.algaePositions.removeAlgaePosition, algaeArmSubsystem),
-            new SimpleElevator(() -> Constants.constElevator.ALGAE1, elevatorSubsystem),
-            new ParallelDeadlineGroup(
-                new ElevatorwithVelocity(() -> Constants.constElevator.MIN_HEIGHT, () -> Constants.constElevator.ALGAE_REMOVAL_SPEED, elevatorSubsystem),
-                new AlgaeRoller(false, rollerSubsystem)
-            )
-        );
-    }    
+                new SimpleAlgae(() -> Constants.EndEffector.algaePositions.removeAlgaePosition, algaeArmSubsystem),
+                new SimpleElevator(() -> Constants.constElevator.ALGAE1, elevatorSubsystem),
+                new ParallelDeadlineGroup(
+                        new ElevatorwithVelocity(() -> Constants.constElevator.MIN_HEIGHT,
+                                () -> Constants.constElevator.ALGAE_REMOVAL_SPEED, elevatorSubsystem),
+                        new AlgaeRoller(false, rollerSubsystem)));
+    }
 }

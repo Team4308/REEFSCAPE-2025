@@ -10,7 +10,7 @@ public class SimpleAlgae extends Command {
     private final AlgaeArmSubsystem subsystem;
 
     public SimpleAlgae(Supplier<Double> angle, AlgaeArmSubsystem algaePivotSubsystem) {
-        this.angle = angle; 
+        this.angle = angle;
         this.subsystem = algaePivotSubsystem;
         addRequirements(algaePivotSubsystem);
     }
@@ -34,5 +34,5 @@ public class SimpleAlgae extends Command {
     public boolean isFinished() {
         return subsystem.isAtPosition();
     }
-    
+
 }

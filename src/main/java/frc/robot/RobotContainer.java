@@ -9,7 +9,6 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
-import ca.team4308.absolutelib.control.JoystickHelper;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -33,8 +32,6 @@ import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.CoralScoring.FastL4;
 import frc.robot.commands.ManualControl.ManualAlgae;
 import frc.robot.commands.ManualControl.ManualElevator;
-import frc.robot.commands.SimpleControl.SimpleAlgae;
-import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.AlgaeArmSubsystem;
@@ -189,18 +186,24 @@ public class RobotContainer {
     operator.RightStickButton.onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
 
     // Automatic Barge Removal & Scoring
-    //I need more buttons
+    // I need more buttons
 
-    // *** These are failsafes, that should be already covered by the previous commands ***
+    // *** These are failsafes, that should be already covered by the previous
+    // commands ***
     // Coral
     operator.Start.onTrue(new Intake(m_CoralRollerSubsystem)); // INTAKING
     operator.Back.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
-        .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));   //SHOOTING
+        .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers())); // SHOOTING
 
     // Algae
     operator.RB.onTrue(new InstantCommand(
-        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));// Set position to remove algae
-    operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));//Spins Rollers to remove algae
+        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));// Set
+                                                                                                               // position
+                                                                                                               // to
+                                                                                                               // remove
+                                                                                                               // algae
+    operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));// Spins Rollers to remove
+                                                                                              // algae
     operator.RB.onFalse((new InstantCommand(
         () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition))));
     operator.RB.onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
@@ -229,7 +232,6 @@ public class RobotContainer {
     return operator.getLeftY();
   }
 
-
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -240,14 +242,15 @@ public class RobotContainer {
     return drivebase.getAutonomousCommand("New Auto");
   }
 
-  public void periodic() {}
+  public void periodic() {
+  }
 
   public double joystickAlgaeArm() {
     return deadZone(operator.getLeftY()) * 5;
   }
 
   public double joystickElevatorControl() {
-    return deadZone(operator.getRightY())/20;
+    return deadZone(operator.getRightY()) / 20;
   }
 
   public double triggerRollerControl() {

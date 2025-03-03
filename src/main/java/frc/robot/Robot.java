@@ -42,30 +42,33 @@ public class Robot extends TimedRobot {
    * for any initialization code.
    */
   @Override
-  public void robotInit()
-  {
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+  public void robotInit() {
+    // Instantiate our RobotContainer. This will perform all our button bindings,
+    // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
-    // immediately when disabled, but then also let it be pushed more 
+    // Create a timer to disable motor brake a few seconds after disable. This will
+    // let the robot stop
+    // immediately when disabled, but then also let it be pushed more
     disabledTimer = new Timer();
 
     // Ensure LED system is initialized
     m_robotContainer.getLEDSystem().setLedState("Idle");
 
-    if (isSimulation())
-    {
+    if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
   }
 
   /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics that you want ran
+   * This function is called every 20 ms, no matter the mode. Use this for items
+   * like diagnostics that you want ran
    * during disabled, autonomous, teleoperated and test.
    *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
    * SmartDashboard integrated updating.
    */
   @Override
@@ -74,16 +77,13 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void disabledInit()
-  {
+  public void disabledInit() {
     m_robotContainer.getLEDSystem().setLedState("Idle");
   }
 
   @Override
-  public void disabledPeriodic()
-  {
-    if (disabledTimer.hasElapsed(Constants.Swerve.WHEEL_LOCK_TIME))
-    {
+  public void disabledPeriodic() {
+    if (disabledTimer.hasElapsed(Constants.Swerve.WHEEL_LOCK_TIME)) {
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
       disabledTimer.reset();
@@ -91,7 +91,8 @@ public class Robot extends TimedRobot {
   }
 
   /**
-   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+   * This autonomous runs the autonomous command selected by your
+   * {@link RobotContainer} class.
    */
   @Override
   public void autonomousInit() {
@@ -99,15 +100,15 @@ public class Robot extends TimedRobot {
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    if (m_autonomousCommand != null)
-    {
+    if (m_autonomousCommand != null) {
       m_robotContainer.getLEDSystem().setLedState("Auto");
       m_autonomousCommand.schedule();
     }
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
   public void teleopInit() {
@@ -135,7 +136,8 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
   public void simulationInit() {

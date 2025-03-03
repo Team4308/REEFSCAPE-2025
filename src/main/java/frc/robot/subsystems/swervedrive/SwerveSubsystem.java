@@ -78,24 +78,29 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDController reefHeadingAlignController = new PIDController(kReefP.get(), kReefI.get(), kReefD.get());
 
   public SwerveSubsystem(File directory) {
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
+    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
+    // objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
           new Pose2d(new Translation2d(Meter.of(1),
               Meter.of(4)),
               Rotation2d.fromDegrees(0)));
-      // Alternative method if you don't want to supply the conversion factor via JSON files.
-      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed, angleConversionFactor, driveConversionFactor);
+      // Alternative method if you don't want to supply the conversion factor via JSON
+      // files.
+      // swerveDrive = new SwerveParser(directory).createSwerveDrive(maximumSpeed,
+      // angleConversionFactor, driveConversionFactor);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(false); // Only set to true if controlling the robot via angle.
     swerveDrive.setCosineCompensator(false);
-    // Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1. Could be negative
-    swerveDrive.setAngularVelocityCompensation(true,true,0.1); 
-    // Resync absolute encoders and motor encoders periodically when they are not moving.
-    swerveDrive.setModuleEncoderAutoSynchronize(false,1); 
+    // Correct for skew that gets worse as angular velocity increases. Start with a
+    // coefficient of 0.1. Could be negative
+    swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
+    // Resync absolute encoders and motor encoders periodically when they are not
+    // moving.
+    swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
     if (visionDriveTest) {
       setupPhotonVision();
       // Stop the odometry thread while running vision to synchronize updates better.
@@ -132,19 +137,20 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void checkTunableValues() {
-        if (!Constants.LoggedDashboard.tuningMode) {
-            return;
-        }
-        // Only update LoggedTunableNumbers when enabled
-        if (DriverStation.isEnabled()) {
-            LoggedTunableNumber.ifChanged(hashCode(), 
-            () -> reefHeadingAlignController.setPID(kReefP.get(), kReefI.get(), kReefD.get()), kReefP, kReefI, kReefD);
-        }
+    if (!Constants.LoggedDashboard.tuningMode) {
+      return;
     }
+    // Only update LoggedTunableNumbers when enabled
+    if (DriverStation.isEnabled()) {
+      LoggedTunableNumber.ifChanged(hashCode(),
+          () -> reefHeadingAlignController.setPID(kReefP.get(), kReefI.get(), kReefD.get()), kReefP, kReefI, kReefD);
+    }
+  }
 
   // Setup AutoBuilder for PathPlanner.
   public void setupPathPlanner() {
-    // Load the RobotConfig from the GUI settings. You should probably store this in your Constants file
+    // Load the RobotConfig from the GUI settings. You should probably store this in
+    // your Constants file
     RobotConfig config;
     try {
       config = RobotConfig.fromGUISettings();
@@ -167,15 +173,16 @@ public class SwerveSubsystem extends SubsystemBase {
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
           // optionally outputs individual module feedforwards
           new PPHolonomicDriveController(
-              // PPHolonomicController is the built in path following controller for holonomic drive trains
+              // PPHolonomicController is the built in path following controller for holonomic
+              // drive trains
               // Translation PID constants
               new PIDConstants(5.0, 0.0, 0.0),
               // Rotation PID constants
-              new PIDConstants(5.0, 0.0, 0.0)
-          ),
+              new PIDConstants(5.0, 0.0, 0.0)),
           config,
           () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // Boolean supplier that controls when the path will be mirrored for the red
+            // alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
@@ -221,9 +228,9 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command aimAtReef(double tolerance) {
     return run(
         () -> {
-          drive(ChassisSpeeds.fromFieldRelativeSpeeds(0,0,
+          drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
               reefHeadingAlignController.calculate(getHeading().getRadians(),
-              getYawToReef().getRadians()),
+                  getYawToReef().getRadians()),
               getHeading()));
         }).until(() -> Math.abs(getYawToReef().minus(getHeading()).getDegrees()) < tolerance);
   }
@@ -263,8 +270,7 @@ public class SwerveSubsystem extends SubsystemBase {
     );
   }
 
-
-   // Swerve drive with Setpoint Generator from 254, implemented by PathPlanner
+  // Swerve drive with Setpoint Generator from 254, implemented by PathPlanner
   private Command driveWithSetpointGenerator(Supplier<ChassisSpeeds> robotRelativeChassisSpeed)
       throws IOException, ParseException {
     SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(RobotConfig.fromGUISettings(),
@@ -290,7 +296,7 @@ public class SwerveSubsystem extends SubsystemBase {
         });
   }
 
-   // Field Relative Drive with Setpoint Generator
+  // Field Relative Drive with Setpoint Generator
   public Command driveWithSetpointGeneratorFieldRelative(Supplier<ChassisSpeeds> fieldRelativeSpeeds) {
     try {
       return driveWithSetpointGenerator(() -> {
@@ -312,6 +318,7 @@ public class SwerveSubsystem extends SubsystemBase {
             this, swerveDrive, 12, true),
         3.0, 5.0, 3.0);
   }
+
   // SysID Angle Motors Characterization
   public Command sysIdAngleMotorCommand() {
     return SwerveDriveTest.generateSysIdCommand(
@@ -335,7 +342,8 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(kS, kV, kA));
   }
 
-  // Command to drive the robot using translative values and heading as angular velocity.
+  // Command to drive the robot using translative values and heading as angular
+  // velocity.
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotationX) {
     return run(() -> {
@@ -349,7 +357,8 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  // Command to drive the robot using translative values and heading as a setpoint.
+  // Command to drive the robot using translative values and heading as a
+  // setpoint.
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
       DoubleSupplier headingY) {
     // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
@@ -368,7 +377,8 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  // Primary method for controlling the drivebase, for which the swerve drive methods base on.
+  // Primary method for controlling the drivebase, for which the swerve drive
+  // methods base on.
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     swerveDrive.drive(translation,
         rotation,
@@ -410,7 +420,8 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.postTrajectory(trajectory);
   }
 
-  // Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0.
+  // Resets the gyro angle to zero and resets odometry to the same position, but
+  // facing toward 0.
   public void zeroGyro() {
     swerveDrive.zeroGyro();
   }

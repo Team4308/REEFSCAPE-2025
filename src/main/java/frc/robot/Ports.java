@@ -1,34 +1,34 @@
 package frc.robot;
 
 public class Ports {
-     /*** SWERVE MODULE PORTS ***/
+    /*** SWERVE MODULE PORTS ***/
 
-    /*  
-    Swerve Modules go:
-        0 1
-        2 3
-    */
+    /*
+     * Swerve Modules go:
+     * 0 1
+     * 2 3
+     */
     public class Swerve {
-        public static final int FL_DRIVE = 0; 
+        public static final int FL_DRIVE = 0;
         public static final int FL_ROTATION = 0;
-        public static final int FL_ENCODER = 0; 
+        public static final int FL_ENCODER = 0;
 
-        public static final int FR_DRIVE = 0; 
+        public static final int FR_DRIVE = 0;
         public static final int FR_ROTATION = 0;
-        public static final int FR_ENCODER = 0; 
+        public static final int FR_ENCODER = 0;
 
         public static final int BL_DRIVE = 0;
         public static final int BL_ROTATION = 0;
-        public static final int BL_ENCODER = 0; 
+        public static final int BL_ENCODER = 0;
 
         public static final int BR_DRIVE = 0;
         public static final int BR_ROTATION = 0;
-        public static final int BR_ENCODER = 0; 
+        public static final int BR_ENCODER = 0;
     }
 
     /*** SUBSYSTEM IDS ***/
 
-    //Controllers
+    // Controllers
     public static class Joysticks {
         public static final int DRIVER = 0;
         public static final int OPERATOR = 1;

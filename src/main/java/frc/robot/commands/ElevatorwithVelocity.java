@@ -11,8 +11,9 @@ public class ElevatorwithVelocity extends Command {
     private final Supplier<Double> targetVelocity;
     private final ElevatorSubsystem subsystem;
 
-    public ElevatorwithVelocity(Supplier<Double> targetHeight, Supplier<Double> targetVelocity, ElevatorSubsystem elevatorSubsystem) {
-        this.targetHeight = targetHeight; 
+    public ElevatorwithVelocity(Supplier<Double> targetHeight, Supplier<Double> targetVelocity,
+            ElevatorSubsystem elevatorSubsystem) {
+        this.targetHeight = targetHeight;
         this.targetVelocity = targetVelocity;
         this.subsystem = elevatorSubsystem;
         addRequirements(elevatorSubsystem);
@@ -37,5 +38,5 @@ public class ElevatorwithVelocity extends Command {
     public boolean isFinished() {
         return subsystem.isAtPosition();
     }
-    
+
 }

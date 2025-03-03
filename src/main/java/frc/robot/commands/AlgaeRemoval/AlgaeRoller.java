@@ -38,5 +38,5 @@ public class AlgaeRoller extends Command {
     public boolean isFinished() {
         return false;
     }
-    
+
 }

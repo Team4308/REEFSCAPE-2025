@@ -252,7 +252,8 @@ public class Vision {
     private final Matrix<N3, N1> singleTagStdDevs;
     // Standard deviation for multi-tag readings for pose estimation.
     private final Matrix<N3, N1> multiTagStdDevs;
-    // Transform of the camera rotation and translation relative to the center of the robot
+    // Transform of the camera rotation and translation relative to the center of
+    // the robot
     private final Transform3d robotToCamTransform;
     // Current standard deviations used.
     public Matrix<N3, N1> curStdDevs;
@@ -260,7 +261,8 @@ public class Vision {
     public Optional<EstimatedRobotPose> estimatedRobotPose = Optional.empty();
     // Simulated camera instance which only exists during simulations.
     public PhotonCameraSim cameraSim;
-    // Results list to be updated periodically and cached to avoid unnecessary queries.
+    // Results list to be updated periodically and cached to avoid unnecessary
+    // queries.
     public List<PhotonPipelineResult> resultsList = new ArrayList<>();
     // Last read from the camera timestamp to prevent lag due to slow data fetches.
     private double lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
