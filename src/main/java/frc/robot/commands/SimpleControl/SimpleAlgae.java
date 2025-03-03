@@ -1,19 +1,18 @@
-
-package frc.robot.commands;
+package frc.robot.commands.SimpleControl;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CoralRollerSubsystem;
+import frc.robot.subsystems.AlgaeArmSubsystem;
 
-public class ManualControlRoller extends Command {
+public class SimpleAlgae extends Command {
     private final Supplier<Double> control;
-    private final CoralRollerSubsystem subsystem;
+    private final AlgaeArmSubsystem subsystem;
 
-    public ManualControlRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
+    public SimpleAlgae(Supplier<Double> control, AlgaeArmSubsystem algaePivotSubsystem) {
         this.control = control; 
-        this.subsystem = rollerSubsystem;
-        addRequirements(rollerSubsystem);
+        this.subsystem = algaePivotSubsystem;
+        addRequirements(algaePivotSubsystem);
     }
 
     @Override
@@ -23,7 +22,7 @@ public class ManualControlRoller extends Command {
 
     @Override
     public void execute() {
-        subsystem.setRollerOutput(control.get());
+        subsystem.setAlgaePosition(control.get());
     }
 
     @Override
@@ -33,7 +32,7 @@ public class ManualControlRoller extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return subsystem.isAtPosition();
     }
     
 }

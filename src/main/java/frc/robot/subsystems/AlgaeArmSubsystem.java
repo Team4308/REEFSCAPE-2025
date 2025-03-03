@@ -26,7 +26,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     CANcoder canCoder = new CANcoder(Ports.EndEffector.ALGAE_CANCODER);
 
-    double targetAngle = Constants.EndEffector.algaePositions.minPosition;
+    double targetAngle = Constants.EndEffector.algaePositions.restPosition;
 
     public AlgaeArmSubsystem() {
         var config = new Slot0Configs();
@@ -61,6 +61,10 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     public void setAlgaePosition(double degree) {
         targetAngle = DoubleUtils.clamp(degree, Constants.EndEffector.algaePositions.minPosition, Constants.EndEffector.algaePositions.maxPosition);
+    }
+
+    public boolean isAtPosition() {
+        return Math.abs(getAlgaePosition() - targetAngle) < Constants.EndEffector.algaeArmTolerance;
     }
 
 

@@ -47,9 +47,13 @@ public class CoralRollerSubsystem extends LogSubsystem {
     }
 
     public void runIndexer() {
-        if (!beamBreak.get()) {
+        if (!getBeamBreak()) {
             rollerMotor.setControl(rollerVelocity.withVelocity(5));
         }
+    }
+
+    public boolean getBeamBreak() {
+        return beamBreak.get();
     }
 
     public void stopControllers() {
