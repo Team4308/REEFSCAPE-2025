@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
@@ -101,13 +102,14 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.stopOdometryThread();
     }
     setupPathPlanner();
+    RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyro));
   }
 
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
     swerveDrive = new SwerveDrive(driveCfg,
         controllerCfg,
         Constants.MAX_SPEED,
-        new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
+        new Pose2d(new Translation2d(Meter.of(0), Meter.of(0)),
             Rotation2d.fromDegrees(0)));
   }
 

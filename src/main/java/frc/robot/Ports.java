@@ -53,13 +53,13 @@ public class Ports {
 
     // Algae Slapdown
     public static class AlgaeSlapdown {
-        public static final int ALGAE_PIVOT = -1;
-        public static final int ALGAE_ROLLER = -1;
-        public static final int ALGAE_ENCODER = -1;
+        public static final int ALGAE_PIVOT = 8;
+        public static final int ALGAE_ROLLER = 9;
+        public static final int ALGAE_ENCODER = 10;
     }
 
     // Pigeon
     public static class Pigeon {
-        public static final int PIGEON = -1;
+        public static final int PIGEON = 0;
     }
 }

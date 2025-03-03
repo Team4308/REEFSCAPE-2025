@@ -49,8 +49,7 @@ public class RobotContainer {
   private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
 
   // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
-      "swerve"));
+  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
   private final LEDSystem m_ledSubsystem;
   private final ElevatorSubsystem m_ElevatorSubsystem;
   private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
@@ -85,7 +84,7 @@ public class RobotContainer {
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> -driver.getLeftY(),
       () -> -driver.getLeftX())
-      .withControllerRotationAxis(() -> driver.getLeftTrigger())
+      .withControllerRotationAxis(() -> driver.getRightX())
       .deadband(Operator.DEADBAND)
       .scaleTranslation(0.8)
       .allianceRelativeControl(true);
@@ -145,13 +144,13 @@ public class RobotContainer {
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
     if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
     } else {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     }
 
     if (Robot.isSimulation()) {
-      driver.Start.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(3, 3, new Rotation2d()))));
+      driver.Y.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
       driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
 
     }
@@ -221,6 +220,15 @@ public class RobotContainer {
   public ElevatorSubsystem getElevator() {
     return m_ElevatorSubsystem;
   }
+
+  public double getManualElevatorControl() {
+    return operator.getRightY();
+  }
+
+  public double getManualAlgaeControl() {
+    return operator.getLeftY();
+  }
+
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
