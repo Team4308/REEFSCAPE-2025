@@ -9,10 +9,13 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports;
 
 public class ElevatorSubsystem extends SubsystemBase {
+  private static double kDt = 0.02;
 
   private static final double POSITION_TOLERANCE = 0.01; // meters
   private double targetPosition = 0.0;
@@ -23,6 +26,10 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
   private CANcoder cancoder;
+
+  private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));
+  private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
+  private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
   private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
@@ -57,17 +64,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
     double currentMotorRotations = getPosition();
 
+    m_goal = new TrapezoidProfile.State(currentMotorRotations, 0);
+    m_setpoint = m_profile.calculate(kDt, m_setpoint, m_goal);
+
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
-    System.out.print("pid output: ");
-    System.out.println(pidOutput);
+
     double requestedVelocity = DoubleUtils.clamp(
-        currentVelocityLimit,
+        Math.min(currentVelocityLimit, m_setpoint.velocity),
         -constElevator.MAX_MOTOR_RPS,
         constElevator.MAX_MOTOR_RPS);
 
     double feedforwardVoltage = constElevator.feedforward.calculate(requestedVelocity);
-    System.out.print("feedforward output: ");
-    System.out.println(feedforwardVoltage);
+
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
         -6.0,
