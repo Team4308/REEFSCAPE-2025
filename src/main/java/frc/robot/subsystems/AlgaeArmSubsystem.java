@@ -44,7 +44,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public double getAlgaePosition() {
-        return canCoder.getPosition().getValueAsDouble() * 360d;
+        return algaeMotor.getPosition().getValueAsDouble() * 360d / 5;
+        // return canCoder.getPosition().getValueAsDouble() * 360d;
     }
 
     public void goToTargetPosition() {
