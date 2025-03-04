@@ -81,7 +81,9 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     @Override
     public void periodic() {
-        goToTargetPosition();
+        if (!isAtPosition()) {
+            goToTargetPosition();
+        }
     }
 
     public void stopControllers() {

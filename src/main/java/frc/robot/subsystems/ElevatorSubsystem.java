@@ -59,12 +59,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetPosition = DoubleUtils.clamp(targetPosition,
         botHeight, maxHeight);
 
-    double setpointRotations = targetPosition / (Math.PI *
-        constElevator.SPOOL_RADIUS);
+    double setpointRotations = targetPosition / (constElevator.SPOOL_CIRCUMFERENCE);
     double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
     double currentMotorRotations = getPosition();
 
-    m_goal = new TrapezoidProfile.State(currentMotorRotations, 0);
+    m_goal = new TrapezoidProfile.State(setpointRotations - currentMotorRotations, 0);
     m_setpoint = m_profile.calculate(kDt, m_setpoint, m_goal);
 
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
@@ -155,10 +154,10 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPosition() {
-    // double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
-    // return motorRotations / constElevator.GEAR_RATIO;
-    double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
-    return encoder / constElevator.GEAR_RATIO * 4;// needs to be changed
+    double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
+    return motorRotations / constElevator.GEAR_RATIO;
+    // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
+    // return encoder / constElevator.GEAR_RATIO * 4;// needs to be changed
   }
 
   /**
@@ -167,8 +166,11 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPositionInMeters() {
-
     return getPosition() * constElevator.SPOOL_CIRCUMFERENCE;
+  }
+
+  public double getTarget() {
+    return targetPosition;
   }
 
   /**
@@ -207,10 +209,10 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      maxHeight = getPositionInMeters();
+      // maxHeight = getPositionInMeters();
     }
     if (bottomLimitSwitch.get()) {
-      botHeight = getPositionInMeters();
+      // botHeight = getPositionInMeters();
     }
 
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());

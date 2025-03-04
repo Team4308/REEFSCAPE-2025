@@ -207,11 +207,11 @@ public class RobotContainer {
         operator.RB.onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
 
         // Elevator
-        operator.povUp.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(1)));
-        operator.povRight.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(2)));
-        operator.povDown.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(3)));
-        operator.povLeft.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(4)));
-        operator.LB.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(0)));
+        operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(1));
+        operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(2));
+        operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(3));
+        operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(4));
+        operator.LB.onTrue(m_ElevatorSubsystem.goToLevel(0));
     }
 
     public LEDSystem getLEDSystem() {
