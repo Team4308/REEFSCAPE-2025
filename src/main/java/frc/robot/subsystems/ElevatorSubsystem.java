@@ -93,9 +93,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
-    if (topLimitSwitch.get()) {
+    if (bottomLimitSwitch.get()) {
       return Math.max(0, totalVoltage);
-    } else if (bottomLimitSwitch.get()) {
+    } else if (topLimitSwitch.get()) {
       return Math.min(0, totalVoltage);
     }
 
