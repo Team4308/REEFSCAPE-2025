@@ -77,7 +77,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         pidOutput + feedforwardVoltage,
         -12.0,
         12.0);
+    System.out.print(currentMotorRotations);
+    System.out.print(", ");
+    System.out.print(motorRotations);
+    System.out.print(", ");
 
+    System.out.print(totalVoltage);
+    System.out.print(", ");
+    System.out.println(constElevator.pidController.getSetpoint().velocity);
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
@@ -165,7 +172,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   public double getPosition() {
     if (Robot.isSimulation()) {
       XBoxWrapper afsd = new XBoxWrapper(1);
-      tempSim += afsd.getLeftY() / 5;
+      tempSim += afsd.getLeftY() / 10;
       return tempSim;
     }
 

@@ -83,7 +83,7 @@ public final class Constants {
         }
 
         // Tunin
-        public static final ProfiledPIDController pidController = new ProfiledPIDController(1, 0.0, 0.00,
+        public static final ProfiledPIDController pidController = new ProfiledPIDController(0.001, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(5.2, 8), 0.02);
 
         public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.25, 2.0, 0.0);
