@@ -71,7 +71,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     double pidOutput = constElevator.pidController.calculate(getPositionInMeters(), targetPosition);
 
     double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
-    // double feedforwardVoltage = constElevator.feedforward.calculate(pidOutput);
 
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
