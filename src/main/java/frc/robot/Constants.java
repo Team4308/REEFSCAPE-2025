@@ -75,25 +75,25 @@ public final class Constants {
             ELEVATOR_CONFIG.Slot0.GravityType = GravityTypeValue.Elevator_Static;
             ELEVATOR_CONFIG.Slot0.kG = 0.3;
             ELEVATOR_CONFIG.Slot0.kS = 0.4;
-            ELEVATOR_CONFIG.Slot0.kP = 1;
+            ELEVATOR_CONFIG.Slot0.kP = 0.0;
             ELEVATOR_CONFIG.Slot0.kI = 0.0;
             ELEVATOR_CONFIG.Slot0.kD = 0.0;
         }
 
         // Tunin
-        public static final PIDController pidController = new PIDController(0.1, 0.0, 0.00);
-        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(1, 0.05, 18.05, 0.01);
+        public static final PIDController pidController = new PIDController(0.0, 0.0, 0.00);
+        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.25, 2.0, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;
         public static final double SPOOL_RADIUS = 1.76; // INCHES ( CHANGE )
         public static final double floorToEvevatorHeight = 10.0; // INCHES (CHANGE )
         public static double MAX_HEIGHT = Units.inchesToMeters(50.0);
-        public static double MIN_HEIGHT = 0.031241;
+        public static double MIN_HEIGHT = 0.0;
         // Reef Zone heights inches
-        public static final double L1 = Units.inchesToMeters(18.0 - floorToEvevatorHeight + 2);
-        public static final double L2 = Units.inchesToMeters(31.875 - floorToEvevatorHeight + 2);
-        public static final double L3 = Units.inchesToMeters(47.652 - floorToEvevatorHeight + 2);
+        public static final double L1 = Units.inchesToMeters(8);
+        public static final double L2 = Units.inchesToMeters(21.875);
+        public static final double L3 = Units.inchesToMeters(27.652);
         public static double L4 = Units.inchesToMeters(MAX_HEIGHT);
         public static double ALGAE1 = Units.inchesToMeters(1); // idk bro
         public static double ALGAE2 = Units.inchesToMeters(1); // idk bro

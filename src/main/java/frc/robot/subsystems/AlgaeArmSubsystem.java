@@ -59,7 +59,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle),
                 Constants.EndEffector.speeds.maxAlgaeVelocity);
 
-        algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
+        // algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
     }
 
     public void setAlgaePosition(double degree) {

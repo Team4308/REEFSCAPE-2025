@@ -26,7 +26,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
   private CANcoder cancoder;
-
+  private Double encoderOffset = 0.0;
   private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));
   private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
   private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
@@ -69,7 +69,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
 
     double requestedVelocity = DoubleUtils.clamp(
-        Math.min(currentVelocityLimit, m_setpoint.velocity),
+        Math.min(currentVelocityLimit, 9999999999.0),
         -constElevator.MAX_MOTOR_RPS,
         constElevator.MAX_MOTOR_RPS);
 
@@ -79,6 +79,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         pidOutput + feedforwardVoltage,
         -6.0,
         6.0);
+
+    SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
+    SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
     return totalVoltage;
   }
@@ -154,10 +157,10 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPosition() {
-    double motorRotations = rightMotorLeader.getPosition().getValueAsDouble();
-    return motorRotations / constElevator.GEAR_RATIO;
+    double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() + encoderOffset;
+    return (motorRotations / constElevator.GEAR_RATIO);
     // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
-    // return encoder / constElevator.GEAR_RATIO * 4;// needs to be changed
+    // return encoder / constElevator.GEAR_RATIO * 4 ;// needs to be changed
   }
 
   /**
@@ -201,25 +204,24 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (!isAtPosition()) {
-      double voltage = calculateVoltage();
-      rightMotorLeader.setVoltage(voltage);
-      leftMotorFollower.setVoltage(voltage);
-    }
+    double voltage = calculateVoltage();
+    rightMotorLeader.setVoltage(voltage);
+    leftMotorFollower.setVoltage(voltage);
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      // maxHeight = getPositionInMeters();
+      maxHeight = getPositionInMeters();
     }
     if (bottomLimitSwitch.get()) {
-      // botHeight = getPositionInMeters();
+      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
-
+    SmartDashboard.putNumber("Elevator Encoder Offset", encoderOffset);
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
     SmartDashboard.putNumber("Elevator Target", targetPosition);
     SmartDashboard.putNumber("Elevator Error", targetPosition - getPositionInMeters());
     SmartDashboard.putBoolean("At Position", isAtPosition());
-    SmartDashboard.putNumber("Elevator Current", rightMotorLeader.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator Current", rightMotorLeader.getSupplyCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator Voltage", voltage);
   }
 
   /**
