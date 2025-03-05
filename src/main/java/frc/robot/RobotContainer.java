@@ -9,19 +9,19 @@ import java.io.File;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
-
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import swervelib.SwerveInputStream;
-
 import frc.robot.Constants.Operator;
 import frc.robot.commands.Intake;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
@@ -33,11 +33,12 @@ import frc.robot.commands.CoralScoring.FastL4;
 import frc.robot.commands.ManualControl.ManualAlgae;
 import frc.robot.commands.ManualControl.ManualElevator;
 import frc.robot.commands.SimpleControl.SimpleRoller;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSystem;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import swervelib.SwerveInputStream;
 
 public class RobotContainer {
 
@@ -70,8 +71,8 @@ public class RobotContainer {
   // Clone's the angular velocity input stream and converts it to a fieldRelative
   // input stream.
   SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driver::getRightX,
-      driver::getRightY)
-      .headingWhile(true);
+                                                                                             driver::getRightY)
+                                                                                             .headingWhile(true);
 
   // Clone's the angular velocity input stream and converts it to a roboRelative
   // input stream.
@@ -100,6 +101,8 @@ public class RobotContainer {
               (Math.PI *
                   2))
       .headingWhile(true);
+  SwerveInputStream driveToClosestLeftReef = driveDirectAngle.copy();
+  SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
 
   public RobotContainer() {
     m_ledSubsystem = new LEDSystem();
@@ -136,6 +139,28 @@ public class RobotContainer {
     Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
+    driveToClosestLeftReef.driveToPose(() -> drivebase.getClosestLeftReefPose(),
+                                           new ProfiledPIDController(5,0,0,
+                                                                     new Constraints(5, 2)),
+                                           new ProfiledPIDController(5,0,0,
+                                                                     new Constraints(Units.degreesToRadians(360),
+                                                                                     Units.degreesToRadians(180))
+                                           ));
+    driveToClosestRightReef.driveToPose(() -> drivebase.getClosestRightReefPose(),
+                                           new ProfiledPIDController(5,0,0,
+                                                                     new Constraints(5, 2)),
+                                           new ProfiledPIDController(5,0,0,
+                                                                     new Constraints(Units.degreesToRadians(360),
+                                                                                     Units.degreesToRadians(180))
+                                           ));
+    driver.LB.whileTrue(Commands.runEnd(() -> driveToClosestLeftReef.driveToPoseEnabled(true),
+                                        () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
+    driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
+                                        () -> driveToClosestRightReef.driveToPoseEnabled(false)));
+    
+    driver.povDown.whileTrue(Commands.run(drivebase::lock, drivebase));
+    driver.povUp.onTrue(Commands.runOnce(drivebase::zeroGyro, drivebase));
+
     if (RobotBase.isSimulation()) {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
     } else {
@@ -143,7 +168,7 @@ public class RobotContainer {
     }
 
     if (Robot.isSimulation()) {
-      driver.Y.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(0, 0, new Rotation2d()))));
+      driver.Y.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(1, 4, new Rotation2d()))));
       driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
 
     }

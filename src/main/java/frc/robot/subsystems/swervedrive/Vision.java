@@ -226,20 +226,16 @@ public class Vision {
     /**
      * Left Camera
      */
-    LEFT_CAM("Arduck OV9281",
-        new Rotation3d(0, Math.toRadians(-28.125), Math.toRadians(150)),
-        new Translation3d(Units.inchesToMeters(-10.507),
-            Units.inchesToMeters(12.344),
-            Units.inchesToMeters(8.453)),
+    FRONT_CAM("Arduck OV9281",
+        new Rotation3d(0, Math.toRadians(-10), Math.toRadians(45)),
+        new Translation3d(0.24499, -0.27672, 0.22145),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Right Camera
      */
-    RIGHT_CAM("Argoose OV9821",
-        new Rotation3d(0, Math.toRadians(-28.125), Math.toRadians(210)),
-        new Translation3d(Units.inchesToMeters(-10.507),
-            Units.inchesToMeters(-12.344),
-            Units.inchesToMeters(8.453)),
+    FUNNEL_CAM("Argoose OV9821",
+        new Rotation3d(0, Math.toRadians(-10), Math.toRadians(-10)),
+        new Translation3d(-0.1397, -0.2794, 0.26612),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     // Latency alert to use when high latency is detected.
