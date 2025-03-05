@@ -1,43 +1,70 @@
 package frc.robot.subsystems;
+
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import java.util.function.DoubleUnaryOperator;
+
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import ca.team4308.absolutelib.math.DoubleUtils;
+import frc.robot.Constants;
 import frc.robot.Constants.Slapdown;
+import frc.robot.Constants.EndEffector.FeedForward;
+import frc.robot.Ports;
 
 public class SlapdownSubsystem extends SubsystemBase {
-    /*
-     * Subsystem roughly works like this (not to scale):
-     *        _
-     *       | O
-     *      [2]
-     *     / |_O
-     *    /
-     *  [1]
-     * 
-     * Motor 1 is the pivot motor; it causes the whole mechanism to move up and down. When down, it can grab
-     * pipes off of the ground.
-     * 
-     * Motor 2 is the intake motor; it does the actual intaking, pulling pipes in. Its only purpose is to
-     * spin the wheels, and they are physically linked together.
-     */
-
-    private TalonFX pivotMotor;
+    private TalonSRX pivotMotor;
     private TalonFX intakeMotor;
+    private ArmFeedforward slapdownArmFeedforward = new ArmFeedforward(0, 0, 0);
+    private PIDController pidController = new PIDController(0, 0, 0);
+    public double currentTarget = 90;// straight up
 
     public SlapdownSubsystem() {
-        this.pivotMotor = new TalonFX(1); // To do: Get the right device IDs.
-        this.intakeMotor = new TalonFX(2);
+        this.pivotMotor = new TalonSRX(Ports.AlgaeSlapdown.ALGAE_PIVOT);
+        this.intakeMotor = new TalonFX(Ports.AlgaeSlapdown.ALGAE_ROLLER);
     }
 
-    public void SetArmPosition(double position) {
-        // 0.0 is all the way up, 1.0 is all the way down.
-        pivotMotor.setControl(
-            new PositionVoltage(
-                Slapdown.PIVOT_TOP_ANGLE + position * (Slapdown.PIVOT_TOP_ANGLE - Slapdown.PIVOT_BOTTOM_ANGLE)
-            )
-        );
+    public void SetArmPosition(double degrees) {
+        currentTarget = DoubleUtils.clamp(degrees, 0, 90);// 90 is straight down, probably too far
+    }
+
+    public double calculatePower() {
+        double setPoint = currentTarget;
+        double curPoint = getPosition();
+
+        double pidOut = pidController.calculate(curPoint, setPoint);
+
+        double feedforwardOutput = slapdownArmFeedforward.calculate(Math.toRadians(curPoint),
+                Constants.EndEffector.speeds.maxAlgaeVelocity);
+        feedforwardOutput = DoubleUtils.mapRange(feedforwardOutput, -12, 12, -1, 1);
+
+        double output = pidOut + feedforwardOutput;
+        output = DoubleUtils.clamp(feedforwardOutput, -1, 1);
+        return output;
+    }
+
+    public double getPosition() {
+        double value = this.pivotMotor.getSelectedSensorPosition() / 10;// returns degrees
+        value = value / 2;// gear ratio
+        return value;
+    }
+
+    public Command setPosition(double angle) {
+        return runOnce(() -> {
+            currentTarget = angle;
+        });
+    }
+
+    public Command setIntake(double speed) {
+        return run(() -> {
+            intakeMotor.set(speed);
+        });
     }
 
     // Starts the intake wheels. While it won't be very effective,
@@ -49,5 +76,11 @@ public class SlapdownSubsystem extends SubsystemBase {
     // Stops the intake wheels.
     public void StopIntake() {
         intakeMotor.set(0.0);
+    }
+
+    @Override
+    public void periodic() {
+        double power = calculatePower();
+        // pivotMotor.set(TalonSRXControlMode.PercentOutput, power);
     }
 }
