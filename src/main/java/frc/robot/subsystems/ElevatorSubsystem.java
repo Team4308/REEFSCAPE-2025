@@ -222,7 +222,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      // maxHeight = getPositionInMeters();
+      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble() + maxHeight;
     }
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
