@@ -184,11 +184,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (Robot.isSimulation()) {
       double value = new XBoxWrapper(1).getLeftY();
       simEnc -= value / 10;
+      return simEnc;
     }
-    return simEnc;
-    // double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() +
-    // encoderOffset;
-    // return (motorRotations / constElevator.GEAR_RATIO);
+
+    double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() + encoderOffset;
+    return (motorRotations / constElevator.GEAR_RATIO);
     // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
     // return encoder / constElevator.GEAR_RATIO * 4 ;// needs to be changed
   }
