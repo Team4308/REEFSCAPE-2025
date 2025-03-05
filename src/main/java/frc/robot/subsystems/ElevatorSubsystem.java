@@ -12,6 +12,7 @@ import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
@@ -49,6 +50,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     cancoder = new CANcoder(Ports.Elevator.ELEVATOR_CANCODER);
 
     cancoder.setPosition(0);
+
+    constElevator.pidController.setTolerance(POSITION_TOLERANCE);
   }
 
   /**
@@ -72,6 +75,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
 
     double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
+    // double feedforwardVoltage = constElevator.feedforward.calculate(pidOutput);
 
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
@@ -79,12 +83,15 @@ public class ElevatorSubsystem extends SubsystemBase {
         12.0);
 
     System.out.print(currentMotorRotations);
+    SmartDashboard.putNumber("encoder pos", currentMotorRotations);
     System.out.print(", ");
     System.out.print(motorRotations);
+    SmartDashboard.putNumber("targett", motorRotations);
     System.out.print(", ");
-    System.out.println(totalVoltage);
-    // System.out.print(", ");
-    // System.out.println(constElevator.pidController.getSetpoint().velocity);
+    System.out.print(pidOutput);
+    SmartDashboard.putNumber("pid output", pidOutput);
+    System.out.print(", ");
+    System.out.println(constElevator.pidController.getSetpoint().velocity);
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
@@ -168,9 +175,17 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @return Double
    */
+  double simEnc = 0;
+
   public double getPosition() {
-    double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() + encoderOffset;
-    return (motorRotations / constElevator.GEAR_RATIO);
+    if (Robot.isSimulation()) {
+      double value = new XBoxWrapper(1).getLeftY();
+      simEnc -= value / 10;
+    }
+    return simEnc;
+    // double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() +
+    // encoderOffset;
+    // return (motorRotations / constElevator.GEAR_RATIO);
     // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
     // return encoder / constElevator.GEAR_RATIO * 4 ;// needs to be changed
   }
@@ -235,6 +250,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("At Position", isAtPosition());
     SmartDashboard.putNumber("Elevator Current", rightMotorLeader.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Elevator Voltage", voltage);
+
   }
 
   /**

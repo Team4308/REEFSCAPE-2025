@@ -69,14 +69,15 @@ public final class Constants {
         static {
             ELEVATOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-            ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Units
-                    .radiansPerSecondToRotationsPerMinute(20);
-            ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Units.rotationsToRadians(3);
-            ELEVATOR_CONFIG.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-            ELEVATOR_CONFIG.Slot0.kG = 0.3;
-            ELEVATOR_CONFIG.Slot0.kS = 0.4;
+            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Units
+            // .radiansPerSecondToRotationsPerMinute(20);
+            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+            // Units.rotationsToRadians(3);
+            // ELEVATOR_CONFIG.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+            // ELEVATOR_CONFIG.Slot0.kG = 0.3;
+            // ELEVATOR_CONFIG.Slot0.kS = 0.4;
             ELEVATOR_CONFIG.Slot0.kP = 0.0;
             ELEVATOR_CONFIG.Slot0.kI = 0.0;
             ELEVATOR_CONFIG.Slot0.kD = 0.0;
@@ -84,9 +85,9 @@ public final class Constants {
 
         // Tunin
         public static final ProfiledPIDController pidController = new ProfiledPIDController(0.001, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(5.2, 8), 0.02);
-
-        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.25, 2.0, 0.0);
+                new TrapezoidProfile.Constraints(5.2, 3), 0.02);
+        public static final PIDController pidcControllerNew = new PIDController(0.1, 0, 0);
+        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.25, 0, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;
