@@ -12,6 +12,7 @@ import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
@@ -49,6 +50,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     cancoder = new CANcoder(Ports.Elevator.ELEVATOR_CANCODER);
 
     cancoder.setPosition(0);
+
+    constElevator.pidController.setTolerance(POSITION_TOLERANCE);
   }
 
   /**
@@ -65,34 +68,29 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetPosition = DoubleUtils.clamp(targetPosition,
         botHeight, maxHeight);
 
-    double setpointRotations = targetPosition / (constElevator.SPOOL_CIRCUMFERENCE);
-    double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
-    double currentMotorRotations = getPosition();
+    double pidOutput = constElevator.pidController.calculate(getPositionInMeters(), targetPosition);
 
-    /*
-     * double pidOutput =
-     * constElevator.pidController.calculate(currentMotorRotations, motorRotations);
-     * 
-     * double feedforwardVoltage =
-     * constElevator.feedforward.calculate(constElevator.pidController.getSetpoint()
-     * .velocity);
-     */
-    double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
-
-    double feedforwardVoltage = constElevator.feedforward.calculate(currentVelocityLimit);
+    double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
+    // double feedforwardVoltage = constElevator.feedforward.calculate(pidOutput);
 
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
         -12.0,
         12.0);
 
-    System.out.print(currentMotorRotations);
+    System.out.print(getPositionInMeters());
+    SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
     System.out.print(", ");
-    System.out.print(motorRotations);
+    System.out.print(targetPosition);
+    SmartDashboard.putNumber("target", targetPosition);
     System.out.print(", ");
-    System.out.println(totalVoltage);
-    // System.out.print(", ");
-    // System.out.println(constElevator.pidController.getSetpoint().velocity);
+    System.out.print(pidOutput);
+    SmartDashboard.putNumber("pid output", pidOutput);
+    System.out.print(", ");
+    System.out.println(constElevator.pidController.getSetpoint().velocity);
+    SmartDashboard.putNumber("Setpoint Position", constElevator.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Setpoint Velocity", constElevator.pidController.getSetpoint().velocity);
+
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
@@ -176,7 +174,15 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @return Double
    */
+  double simEnc = 0;
+
   public double getPosition() {
+    if (Robot.isSimulation()) {
+      double value = new XBoxWrapper(1).getLeftY();
+      simEnc -= value / 10;
+      return simEnc;
+    }
+
     double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() + encoderOffset;
     return (motorRotations / constElevator.GEAR_RATIO);
     // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
@@ -243,6 +249,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("At Position", isAtPosition());
     SmartDashboard.putNumber("Elevator Current", rightMotorLeader.getSupplyCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Elevator Voltage", voltage);
+
   }
 
   /**
