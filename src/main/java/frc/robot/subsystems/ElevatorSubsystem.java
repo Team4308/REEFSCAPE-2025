@@ -69,17 +69,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
     double currentMotorRotations = getPosition();
 
-    /*
-     * double pidOutput =
-     * constElevator.pidController.calculate(currentMotorRotations, motorRotations);
-     * 
-     * double feedforwardVoltage =
-     * constElevator.feedforward.calculate(constElevator.pidController.getSetpoint()
-     * .velocity);
-     */
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
 
-    double feedforwardVoltage = constElevator.feedforward.calculate(currentVelocityLimit);
+    double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
 
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
