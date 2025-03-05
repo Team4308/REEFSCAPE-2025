@@ -87,7 +87,7 @@ public final class Constants {
         public static final ProfiledPIDController pidController = new ProfiledPIDController(0.001, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(5.2, 3), 0.02);
         public static final PIDController pidcControllerNew = new PIDController(0.1, 0, 0);
-        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.25, 0, 0.0);
+        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.25, 1.0, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;

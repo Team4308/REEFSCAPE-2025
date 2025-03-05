@@ -92,6 +92,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("pid output", pidOutput);
     System.out.print(", ");
     System.out.println(constElevator.pidController.getSetpoint().velocity);
+    SmartDashboard.putNumber("pidVELOCITty", constElevator.pidController.getSetpoint().position);
+
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
