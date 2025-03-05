@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-
+import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports;
 import frc.robot.Robot;
@@ -69,22 +69,30 @@ public class ElevatorSubsystem extends SubsystemBase {
     double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
     double currentMotorRotations = getPosition();
 
+    /*
+     * double pidOutput =
+     * constElevator.pidController.calculate(currentMotorRotations, motorRotations);
+     * 
+     * double feedforwardVoltage =
+     * constElevator.feedforward.calculate(constElevator.pidController.getSetpoint()
+     * .velocity);
+     */
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
 
-    double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
+    double feedforwardVoltage = constElevator.feedforward.calculate(currentVelocityLimit);
 
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
         -12.0,
         12.0);
+
     System.out.print(currentMotorRotations);
     System.out.print(", ");
     System.out.print(motorRotations);
     System.out.print(", ");
-
-    System.out.print(totalVoltage);
-    System.out.print(", ");
-    System.out.println(constElevator.pidController.getSetpoint().velocity);
+    System.out.println(totalVoltage);
+    // System.out.print(", ");
+    // System.out.println(constElevator.pidController.getSetpoint().velocity);
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
@@ -101,6 +109,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * Checks if the elevator is at the desired position
    * 
    * @return Boolean
+   * 
    */
   public boolean isAtPosition() {
     return Math.abs(getPositionInMeters() - targetPosition) < POSITION_TOLERANCE;
@@ -167,15 +176,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @return Double
    */
-  double tempSim = 0;
-
   public double getPosition() {
-    if (Robot.isSimulation()) {
-      XBoxWrapper afsd = new XBoxWrapper(1);
-      tempSim += afsd.getLeftY() / 10;
-      return tempSim;
-    }
-
     double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() + encoderOffset;
     return (motorRotations / constElevator.GEAR_RATIO);
     // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
