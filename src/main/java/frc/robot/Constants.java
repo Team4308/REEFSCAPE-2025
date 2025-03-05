@@ -84,9 +84,9 @@ public final class Constants {
         }
 
         // Tunin
-        public static final ProfiledPIDController pidController = new ProfiledPIDController(0.0, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(0.3,0.3), 0.02);
-        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.35, 1.0, 0.0);
+        public static final ProfiledPIDController pidController = new ProfiledPIDController(0.1, 0.0, 0.00,
+                new TrapezoidProfile.Constraints(5.0,11.0), 0.02);
+        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.36, 2.6, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 6.222222;
@@ -95,10 +95,10 @@ public final class Constants {
         public static double MAX_HEIGHT = Units.inchesToMeters(50.0);
         public static double MIN_HEIGHT = 0.0;
         // Reef Zone heights inches
-        public static final double L1 = Units.inchesToMeters(8);
-        public static final double L2 = Units.inchesToMeters(21.875);
-        public static final double L3 = Units.inchesToMeters(27.652);
-        public static double L4 = Units.inchesToMeters(MAX_HEIGHT);
+        public static final double L1 = Units.inchesToMeters(4);
+        public static final double L2 = Units.inchesToMeters(10.875);
+        public static final double L3 = Units.inchesToMeters(15.652);
+        public static final double L4 = Units.inchesToMeters(40);
         public static double ALGAE1 = Units.inchesToMeters(1); // idk bro
         public static double ALGAE2 = Units.inchesToMeters(1); // idk bro
 
@@ -110,7 +110,7 @@ public final class Constants {
         public static final double ALGAE_REMOVAL_SPEED = 1;
 
         // Convert speeds to motor RPS using spool circumference
-        public static final double SPOOL_CIRCUMFERENCE = Math.PI * SPOOL_RADIUS * 0.0254;
+        public static final double SPOOL_CIRCUMFERENCE = 2 * Math.PI * SPOOL_RADIUS * 0.0254;
         public static final double MAX_MOTOR_RPS = (MAX_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
         public static final double NORMAL_MOTOR_RPS = (NORMAL_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
         public static final double SLOW_MOTOR_RPS = (SLOW_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;

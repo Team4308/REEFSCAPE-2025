@@ -117,7 +117,6 @@ public class RobotContainer {
 
         m_AlgaeArmSubsystem.setDefaultCommand(ManualAlgaeCommand);
         m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
-        m_ElevatorSubsystem.setDefaultCommand(ManualElevatorCommand);
 
         CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
         CommandScheduler.getInstance().registerSubsystem(m_ElevatorSubsystem);

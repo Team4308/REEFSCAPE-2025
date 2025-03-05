@@ -30,7 +30,7 @@ public class Intake extends Command {
 
     @Override
     public boolean isFinished() {
-        return subsystem.getBeamBreak();
+        return !subsystem.getBeamBreak();
     }
 
 }

@@ -24,8 +24,6 @@ public class AlgaeArmSubsystem extends LogSubsystem {
             Constants.EndEffector.FeedForward.kG, Constants.EndEffector.FeedForward.kV,
             Constants.EndEffector.FeedForward.kA);
 
-    private CANcoder canCoder = new CANcoder(Ports.EndEffector.ALGAE_CANCODER);
-
     private double targetAngle = Constants.EndEffector.algaePositions.restPosition;
 
     public AlgaeArmSubsystem() {
