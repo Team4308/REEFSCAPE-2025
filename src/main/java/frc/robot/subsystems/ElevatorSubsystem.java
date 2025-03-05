@@ -68,11 +68,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     targetPosition = DoubleUtils.clamp(targetPosition,
         botHeight, maxHeight);
 
-    double setpointRotations = targetPosition / (constElevator.SPOOL_CIRCUMFERENCE);
-    double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
-    double currentMotorRotations = getPosition();
-
-    double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
+    double pidOutput = constElevator.pidController.calculate(getPositionInMeters(), targetPosition);
 
     double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
     // double feedforwardVoltage = constElevator.feedforward.calculate(pidOutput);
@@ -82,18 +78,18 @@ public class ElevatorSubsystem extends SubsystemBase {
         -12.0,
         12.0);
 
-    System.out.print(currentMotorRotations);
-    SmartDashboard.putNumber("encoder pos", currentMotorRotations);
+    System.out.print(getPositionInMeters());
+    SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
     System.out.print(", ");
-    System.out.print(motorRotations);
-    SmartDashboard.putNumber("targett", motorRotations);
+    System.out.print(targetPosition);
+    SmartDashboard.putNumber("target", targetPosition);
     System.out.print(", ");
     System.out.print(pidOutput);
     SmartDashboard.putNumber("pid output", pidOutput);
     System.out.print(", ");
     System.out.println(constElevator.pidController.getSetpoint().velocity);
-    SmartDashboard.putNumber("pidVELOCITty", constElevator.pidController.getSetpoint().position);
-    SmartDashboard.putNumber("pidVELOCITtay", constElevator.pidController.getSetpoint().velocity);
+    SmartDashboard.putNumber("Setpoint Position", constElevator.pidController.getSetpoint().position);
+    SmartDashboard.putNumber("Setpoint Velocity", constElevator.pidController.getSetpoint().velocity);
 
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
