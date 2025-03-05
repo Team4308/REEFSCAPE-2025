@@ -1,18 +1,27 @@
 package frc.robot.subsystems;
 
+import javax.security.auth.x500.X500Principal;
+
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import ca.team4308.absolutelib.control.JoystickHelper;
+import ca.team4308.absolutelib.control.XBoxWrapper;
 import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports;
+import frc.robot.Robot;
 
 public class ElevatorSubsystem extends SubsystemBase {
   private static double kDt = 0.02;
@@ -27,9 +36,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput bottomLimitSwitch;
   private CANcoder cancoder;
   private Double encoderOffset = 0.0;
-  private final TrapezoidProfile m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(1.75, 0.75));
-  private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-  private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
   private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
@@ -63,25 +69,23 @@ public class ElevatorSubsystem extends SubsystemBase {
     double motorRotations = setpointRotations * constElevator.GEAR_RATIO;
     double currentMotorRotations = getPosition();
 
-    m_goal = new TrapezoidProfile.State(setpointRotations - currentMotorRotations, 0);
-    m_setpoint = m_profile.calculate(kDt, m_setpoint, m_goal);
-
     double pidOutput = constElevator.pidController.calculate(currentMotorRotations, motorRotations);
 
-    double requestedVelocity = DoubleUtils.clamp(
-        Math.min(currentVelocityLimit, 9999999999.0),
-        -constElevator.MAX_MOTOR_RPS,
-        constElevator.MAX_MOTOR_RPS);
-
-    double feedforwardVoltage = constElevator.feedforward.calculate(requestedVelocity);
+    double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
 
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
-        -6.0,
-        6.0);
+        -12.0,
+        12.0);
 
     SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
     SmartDashboard.putNumber("elevatorFeedback", pidOutput);
+
+    if (topLimitSwitch.get()) {
+      return Math.max(0, totalVoltage);
+    } else if (bottomLimitSwitch.get()) {
+      return Math.min(0, totalVoltage);
+    }
 
     return totalVoltage;
   }
@@ -156,7 +160,15 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @return Double
    */
+  double tempSim = 0;
+
   public double getPosition() {
+    if (Robot.isSimulation()) {
+      XBoxWrapper afsd = new XBoxWrapper(1);
+      tempSim += afsd.getLeftY() / 5;
+      return tempSim;
+    }
+
     double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() + encoderOffset;
     return (motorRotations / constElevator.GEAR_RATIO);
     // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
@@ -210,7 +222,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      maxHeight = getPositionInMeters();
+      // maxHeight = getPositionInMeters();
     }
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
