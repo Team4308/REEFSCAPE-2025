@@ -22,7 +22,7 @@ public class ManualElevator extends Command {
 
     @Override
     public void execute() {
-        subsystem.setPositionCommand(subsystem.getPositionInMeters() + angle.get());
+        subsystem.setPosition(subsystem.getTarget() + angle.get());
     }
 
     @Override

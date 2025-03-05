@@ -44,7 +44,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public double getAlgaePosition() {
-        return canCoder.getPosition().getValueAsDouble() * 360d;
+        return algaeMotor.getPosition().getValueAsDouble() * 360d / 5;
+        // return canCoder.getPosition().getValueAsDouble() * 360d;
     }
 
     public void goToTargetPosition() {
@@ -58,7 +59,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle),
                 Constants.EndEffector.speeds.maxAlgaeVelocity);
 
-        algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
+        // algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
     }
 
     public void setAlgaePosition(double degree) {
@@ -80,7 +81,9 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     @Override
     public void periodic() {
-        goToTargetPosition();
+        if (!isAtPosition()) {
+            goToTargetPosition();
+        }
     }
 
     public void stopControllers() {

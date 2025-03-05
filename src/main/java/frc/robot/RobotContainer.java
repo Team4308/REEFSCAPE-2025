@@ -42,31 +42,31 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
 
-  // Controllers
-  private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
-  private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
+    // Controllers
+    private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
+    private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
 
-  // The robot's subsystems and commands are defined here...
-  private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
-  private final LEDSystem m_ledSubsystem;
-  private final ElevatorSubsystem m_ElevatorSubsystem;
-  private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
-  private final CoralRollerSubsystem m_CoralRollerSubsystem;
+    // The robot's subsystems and commands are defined here...
+    private final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+    private final LEDSystem m_ledSubsystem;
+    private final ElevatorSubsystem m_ElevatorSubsystem;
+    private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
+    private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
-  // Failsafe commands
-  private final SimpleRoller SimpleRollerCommand;
-  private final ManualAlgae ManualAlgaeCommand;
-  private final ManualElevator ManualElevatorCommand;
+    // Failsafe commands
+    private final SimpleRoller SimpleRollerCommand;
+    private final ManualAlgae ManualAlgaeCommand;
+    private final ManualElevator ManualElevatorCommand;
 
-  // Converts driver input into a field-relative ChassisSpeeds that is controlled
-  // by angular velocity.
-  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
-      () -> driver.getLeftY() * -1,
-      () -> driver.getLeftX() * -1)
-      .withControllerRotationAxis(driver::getRightX)
-      .deadband(Operator.DEADBAND)
-      .scaleTranslation(1.0)
-      .allianceRelativeControl(true);
+    // Converts driver input into a field-relative ChassisSpeeds that is controlled
+    // by angular velocity.
+    SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
+            () -> driver.getLeftY() * -1,
+            () -> driver.getLeftX() * -1)
+            .withControllerRotationAxis(driver::getRightX)
+            .deadband(Operator.DEADBAND)
+            .scaleTranslation(1.0)
+            .allianceRelativeControl(true);
 
   // Clone's the angular velocity input stream and converts it to a fieldRelative
   // input stream.
@@ -74,10 +74,10 @@ public class RobotContainer {
                                                                                              driver::getRightY)
                                                                                              .headingWhile(true);
 
-  // Clone's the angular velocity input stream and converts it to a roboRelative
-  // input stream.
-  SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-      .allianceRelativeControl(false);
+    // Clone's the angular velocity input stream and converts it to a roboRelative
+    // input stream.
+    SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
+            .allianceRelativeControl(false);
 
   SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
       () -> -driver.getLeftY(),
@@ -104,31 +104,31 @@ public class RobotContainer {
   SwerveInputStream driveToClosestLeftReef = driveDirectAngle.copy();
   SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
 
-  public RobotContainer() {
-    m_ledSubsystem = new LEDSystem();
-    m_ElevatorSubsystem = new ElevatorSubsystem();
-    m_ledSubsystem.setElevator(m_ElevatorSubsystem);
-    m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
-    m_CoralRollerSubsystem = new CoralRollerSubsystem();
+    public RobotContainer() {
+        m_ledSubsystem = new LEDSystem();
+        m_ElevatorSubsystem = new ElevatorSubsystem();
+        m_ledSubsystem.setElevator(m_ElevatorSubsystem);
+        m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
+        m_CoralRollerSubsystem = new CoralRollerSubsystem();
 
-    SimpleRollerCommand = new SimpleRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
-    ManualAlgaeCommand = new ManualAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
-    ManualElevatorCommand = new ManualElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
+        SimpleRollerCommand = new SimpleRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
+        ManualAlgaeCommand = new ManualAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
+        ManualElevatorCommand = new ManualElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
 
-    m_AlgaeArmSubsystem.setDefaultCommand(ManualAlgaeCommand);
-    m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
-    m_ElevatorSubsystem.setDefaultCommand(ManualElevatorCommand);
+        m_AlgaeArmSubsystem.setDefaultCommand(ManualAlgaeCommand);
+        m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
+        m_ElevatorSubsystem.setDefaultCommand(ManualElevatorCommand);
 
-    CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
-    CommandScheduler.getInstance().registerSubsystem(m_ElevatorSubsystem);
-    CommandScheduler.getInstance().registerSubsystem(m_AlgaeArmSubsystem);
-    CommandScheduler.getInstance().registerSubsystem(m_CoralRollerSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(m_ElevatorSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(m_AlgaeArmSubsystem);
+        CommandScheduler.getInstance().registerSubsystem(m_CoralRollerSubsystem);
 
-    configureDriverBindings();
-    configureOperatorBindings();
-    DriverStation.silenceJoystickConnectionWarning(true);
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-  }
+        configureDriverBindings();
+        configureOperatorBindings();
+        DriverStation.silenceJoystickConnectionWarning(true);
+        NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    }
 
   private void configureDriverBindings() {
     Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
@@ -161,129 +161,131 @@ public class RobotContainer {
     driver.povDown.whileTrue(Commands.run(drivebase::lock, drivebase));
     driver.povUp.onTrue(Commands.runOnce(drivebase::zeroGyro, drivebase));
 
-    if (RobotBase.isSimulation()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
-    } else {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    }
+        if (RobotBase.isSimulation()) {
+            drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
+        } else {
+            drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+        }
 
     if (Robot.isSimulation()) {
       driver.Y.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(1, 4, new Rotation2d()))));
       driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
 
+        }
+        if (DriverStation.isTest()) {
+            drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
+
+            driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+            driver.Y.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
+            driver.Start.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+            driver.Back.whileTrue(drivebase.centerModulesCommand());
+            driver.LB.onTrue(Commands.none());
+            driver.RightStickButton.onTrue(Commands.none());
+        } else {
+            driver.A.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+            driver.X.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+            driver.B.whileTrue(
+                    drivebase.driveToPose(
+                            new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
+            driver.Start.whileTrue(Commands.none());
+            driver.Back.whileTrue(Commands.none());
+            driver.LB.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+            driver.RB.onTrue(Commands.none());
+        }
+
     }
-    if (DriverStation.isTest()) {
-      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
 
-      driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driver.Y.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-      driver.Start.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driver.Back.whileTrue(drivebase.centerModulesCommand());
-      driver.LB.onTrue(Commands.none());
-      driver.RightStickButton.onTrue(Commands.none());
-    } else {
-      driver.A.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driver.X.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-      driver.B.whileTrue(
-          drivebase.driveToPose(
-              new Pose2d(new Translation2d(4, 4), Rotation2d.fromDegrees(0))));
-      driver.Start.whileTrue(Commands.none());
-      driver.Back.whileTrue(Commands.none());
-      driver.LB.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driver.RB.onTrue(Commands.none());
+    private void configureOperatorBindings() {
+        // Automatic Scoring
+        operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+        operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+        operator.X.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+        operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+
+        // Automatic Algae Removal
+        operator.LeftStickButton.onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+        operator.RightStickButton
+                .onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+
+        // Automatic Barge Removal & Scoring
+        // I need more buttons
+
+        // *** These are failsafes, that should be already covered by the previous
+        // commands ***
+        // Coral
+        operator.Start.onTrue(new Intake(m_CoralRollerSubsystem)); // INTAKING
+        operator.Back.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
+                .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers())); // SHOOTING
+
+        // Algae
+        operator.RB.onTrue(new InstantCommand(
+                () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));// Set
+                                                                                                                       // position
+                                                                                                                       // to
+                                                                                                                       // remove
+                                                                                                                       // algae
+        operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));// Spins Rollers to
+                                                                                                  // remove
+                                                                                                  // algae
+        operator.RB.onFalse((new InstantCommand(
+                () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition))));
+        operator.RB.onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
+
+        // Elevator
+        operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(1));
+        operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(2));
+        operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(3));
+        operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(4));
+        operator.LB.onTrue(m_ElevatorSubsystem.goToLevel(0));
     }
 
-  }
-
-  private void configureOperatorBindings() {
-    // Automatic Scoring
-    operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.X.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-
-    // Automatic Algae Removal
-    operator.LeftStickButton.onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-    operator.RightStickButton.onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-
-    // Automatic Barge Removal & Scoring
-    // I need more buttons
-
-    // *** These are failsafes, that should be already covered by the previous
-    // commands ***
-    // Coral
-    operator.Start.onTrue(new Intake(m_CoralRollerSubsystem)); // INTAKING
-    operator.Back.whileTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
-        .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers())); // SHOOTING
-
-    // Algae
-    operator.RB.onTrue(new InstantCommand(
-        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)));// Set
-                                                                                                               // position
-                                                                                                               // to
-                                                                                                               // remove
-                                                                                                               // algae
-    operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));// Spins Rollers to remove
-                                                                                              // algae
-    operator.RB.onFalse((new InstantCommand(
-        () -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition))));
-    operator.RB.onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
-
-    // Elevator
-    operator.povUp.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(1)));
-    operator.povRight.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(2)));
-    operator.povDown.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(3)));
-    operator.povLeft.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(4)));
-    operator.LB.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.goToLevel(0)));
-  }
-
-  public LEDSystem getLEDSystem() {
-    return m_ledSubsystem;
-  }
-
-  public ElevatorSubsystem getElevator() {
-    return m_ElevatorSubsystem;
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return drivebase.getAutonomousCommand("New Auto");
-  }
-
-  public void periodic() {
-  }
-
-  private double joystickAlgaeArm() {
-    return deadZone(operator.getLeftY()) * 5;
-  }
-
-  private double joystickElevatorControl() {
-    return deadZone(operator.getRightY()) / 20;
-  }
-
-  private double triggerRollerControl() {
-    double isPos = deadZone(operator.getRightTrigger());
-    double isNeg = deadZone(operator.getLeftTrigger());
-    if (isPos > 0) {
-      return isPos;
-    } else {
-      return isNeg;
+    public LEDSystem getLEDSystem() {
+        return m_ledSubsystem;
     }
-  }
 
-  public void setMotorBrake(boolean brake) {
-    drivebase.setMotorBrake(brake);
-  }
-
-  private static double deadZone(double integer) {
-    if (0.09 >= integer && integer >= -0.09) {
-      integer = 0;
+    public ElevatorSubsystem getElevator() {
+        return m_ElevatorSubsystem;
     }
-    return integer;
-  }
+
+    /**
+     * Use this to pass the autonomous command to the main {@link Robot} class.
+     *
+     * @return the command to run in autonomous
+     */
+    public Command getAutonomousCommand() {
+        // An example command will be run in autonomous
+        return drivebase.getAutonomousCommand("New Auto");
+    }
+
+    public void periodic() {
+    }
+
+    private double joystickAlgaeArm() {
+        return deadZone(operator.getLeftY()) * 5;
+    }
+
+    private double joystickElevatorControl() {
+        return deadZone(operator.getRightY()) / 20;
+    }
+
+    private double triggerRollerControl() {
+        double isPos = deadZone(operator.getRightTrigger());
+        double isNeg = deadZone(operator.getLeftTrigger());
+        if (isPos > 0) {
+            return isPos;
+        } else {
+            return isNeg;
+        }
+    }
+
+    public void setMotorBrake(boolean brake) {
+        drivebase.setMotorBrake(brake);
+    }
+
+    private static double deadZone(double integer) {
+        if (0.09 >= integer && integer >= -0.09) {
+            integer = 0;
+        }
+        return integer;
+    }
 }

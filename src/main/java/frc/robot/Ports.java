@@ -40,7 +40,7 @@ public class Ports {
         public static final int ELEVATOR_FOLLOWER = 1;
         public static final int LIMIT_SWITCH_TOP = 0;
         public static final int LIMIT_SWITCH_BOTTOM = 1;
-        public static final int ELEVATOR_CANCODER = -1;
+        public static final int ELEVATOR_CANCODER = 166;
     }
 
     // End effector
@@ -48,7 +48,7 @@ public class Ports {
         public static final int CORAL_MOTOR = 3;
         public static final int INDEX_BEAM_BREAK = 2;
         public static final int ALGAE_MOTOR = 4;
-        public static final int ALGAE_CANCODER = -1;
+        public static final int ALGAE_CANCODER = 166;
     }
 
     // Algae Slapdown
@@ -60,6 +60,6 @@ public class Ports {
 
     // Pigeon
     public static class Pigeon {
-        public static final int PIGEON = 0;
+        public static final int PIGEON = 166;
     }
 }
