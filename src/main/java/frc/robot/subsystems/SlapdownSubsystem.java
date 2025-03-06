@@ -15,7 +15,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import ca.team4308.absolutelib.math.DoubleUtils;
 import frc.robot.Constants;
 import frc.robot.Constants.Slapdown;
-import frc.robot.Constants.EndEffector.FeedForward;
 import frc.robot.Ports;
 
 public class SlapdownSubsystem extends SubsystemBase {

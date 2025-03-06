@@ -68,41 +68,41 @@ public class RobotContainer {
             .scaleTranslation(1.0)
             .allianceRelativeControl(true);
 
-  // Clone's the angular velocity input stream and converts it to a fieldRelative
-  // input stream.
-  SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driver::getRightX,
-                                                                                             driver::getRightY)
-                                                                                             .headingWhile(true);
+    // Clone's the angular velocity input stream and converts it to a fieldRelative
+    // input stream.
+    SwerveInputStream driveDirectAngle = driveAngularVelocity.copy().withControllerHeadingAxis(driver::getRightX,
+            driver::getRightY)
+            .headingWhile(true);
 
     // Clone's the angular velocity input stream and converts it to a roboRelative
     // input stream.
     SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
             .allianceRelativeControl(false);
 
-  SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
-      () -> -driver.getLeftY(),
-      () -> -driver.getLeftX())
-      .withControllerRotationAxis(() -> driver.getRightX())
-      .deadband(Operator.DEADBAND)
-      .scaleTranslation(0.8)
-      .allianceRelativeControl(true);
-  // Derive the heading axis with math!
-  SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
-      .withControllerHeadingAxis(() -> Math.sin(
-          driver.getLeftTrigger() *
-              Math.PI)
-          *
-          (Math.PI *
-              2),
-          () -> Math.cos(
-              driver.getLeftTrigger() *
-                  Math.PI)
-              *
-              (Math.PI *
-                  2))
-      .headingWhile(true);
-  SwerveInputStream driveToClosestLeftReef = driveDirectAngle.copy();
-  SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
+    SwerveInputStream driveAngularVelocityKeyboard = SwerveInputStream.of(drivebase.getSwerveDrive(),
+            () -> -driver.getLeftY(),
+            () -> -driver.getLeftX())
+            .withControllerRotationAxis(() -> driver.getRightX())
+            .deadband(Operator.DEADBAND)
+            .scaleTranslation(0.8)
+            .allianceRelativeControl(true);
+    // Derive the heading axis with math!
+    SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
+            .withControllerHeadingAxis(() -> Math.sin(
+                    driver.getLeftTrigger() *
+                            Math.PI)
+                    *
+                    (Math.PI *
+                            2),
+                    () -> Math.cos(
+                            driver.getLeftTrigger() *
+                                    Math.PI)
+                            *
+                            (Math.PI *
+                                    2))
+            .headingWhile(true);
+    SwerveInputStream driveToClosestLeftReef = driveDirectAngle.copy();
+    SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
 
     public RobotContainer() {
         m_ledSubsystem = new LEDSystem();
@@ -117,6 +117,7 @@ public class RobotContainer {
 
         m_AlgaeArmSubsystem.setDefaultCommand(ManualAlgaeCommand);
         m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
+        m_ElevatorSubsystem.setDefaultCommand(ManualElevatorCommand);
 
         CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
         CommandScheduler.getInstance().registerSubsystem(m_ElevatorSubsystem);
@@ -129,36 +130,34 @@ public class RobotContainer {
         NamedCommands.registerCommand("test", Commands.print("I EXIST"));
     }
 
-  private void configureDriverBindings() {
-    Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
-    Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-    Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
-    Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-    Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
-    Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
-    Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
+    private void configureDriverBindings() {
+        Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+        Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
+        Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
+        Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+        Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
+        Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
+        Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
-    driveToClosestLeftReef.driveToPose(() -> drivebase.getClosestLeftReefPose(),
-                                           new ProfiledPIDController(5,0,0,
-                                                                     new Constraints(5, 2)),
-                                           new ProfiledPIDController(5,0,0,
-                                                                     new Constraints(Units.degreesToRadians(360),
-                                                                                     Units.degreesToRadians(180))
-                                           ));
-    driveToClosestRightReef.driveToPose(() -> drivebase.getClosestRightReefPose(),
-                                           new ProfiledPIDController(5,0,0,
-                                                                     new Constraints(5, 2)),
-                                           new ProfiledPIDController(5,0,0,
-                                                                     new Constraints(Units.degreesToRadians(360),
-                                                                                     Units.degreesToRadians(180))
-                                           ));
-    driver.LB.whileTrue(Commands.runEnd(() -> driveToClosestLeftReef.driveToPoseEnabled(true),
-                                        () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
-    driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
-                                        () -> driveToClosestRightReef.driveToPoseEnabled(false)));
-    
-    driver.povDown.whileTrue(Commands.run(drivebase::lock, drivebase));
-    driver.povUp.onTrue(Commands.runOnce(drivebase::zeroGyro, drivebase));
+        driveToClosestLeftReef.driveToPose(() -> drivebase.getClosestLeftReefPose(),
+                new ProfiledPIDController(5, 0, 0,
+                        new Constraints(5, 2)),
+                new ProfiledPIDController(5, 0, 0,
+                        new Constraints(Units.degreesToRadians(360),
+                                Units.degreesToRadians(180))));
+        driveToClosestRightReef.driveToPose(() -> drivebase.getClosestRightReefPose(),
+                new ProfiledPIDController(5, 0, 0,
+                        new Constraints(5, 2)),
+                new ProfiledPIDController(5, 0, 0,
+                        new Constraints(Units.degreesToRadians(360),
+                                Units.degreesToRadians(180))));
+        driver.LB.whileTrue(Commands.runEnd(() -> driveToClosestLeftReef.driveToPoseEnabled(true),
+                () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
+        driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
+                () -> driveToClosestRightReef.driveToPoseEnabled(false)));
+
+        driver.povDown.whileTrue(Commands.run(drivebase::lock, drivebase));
+        driver.povUp.onTrue(Commands.runOnce(drivebase::zeroGyro, drivebase));
 
         if (RobotBase.isSimulation()) {
             drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
@@ -166,9 +165,9 @@ public class RobotContainer {
             drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
         }
 
-    if (Robot.isSimulation()) {
-      driver.Y.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(1, 4, new Rotation2d()))));
-      driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
+        if (Robot.isSimulation()) {
+            driver.Y.onTrue(Commands.runOnce(() -> drivebase.resetOdometry(new Pose2d(1, 4, new Rotation2d()))));
+            driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
 
         }
         if (DriverStation.isTest()) {
