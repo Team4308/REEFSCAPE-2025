@@ -89,16 +89,16 @@ public final class Constants {
         public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.36, 2.6, 0.0);
 
         // Elevator physical constants
-        public static final double GEAR_RATIO = 6.222222;
-        public static final double SPOOL_RADIUS = 1.76; // INCHES ( CHANGE )
-        public static final double floorToEvevatorHeight = 10.0; // INCHES (CHANGE )
-        public static double MAX_HEIGHT = Units.inchesToMeters(50.0);
-        public static double MIN_HEIGHT = 0.0;
+        public static final double GEAR_RATIO = 4.8611111111111111111111111111111111;
+        public static final double SPOOL_RADIUS = 1.757; // INCHES ( CHANGE )
+        public static final double floorToEvevatorHeight = 4.875; // INCHES (CHANGE )
+        public static double MAX_HEIGHT = Units.inchesToMeters(56.875);
+        public static double MIN_HEIGHT = 4.875;
         // Reef Zone heights inches
-        public static final double L1 = Units.inchesToMeters(4);
-        public static final double L2 = Units.inchesToMeters(10.875);
-        public static final double L3 = Units.inchesToMeters(15.652);
-        public static final double L4 = Units.inchesToMeters(40);
+        public static final double L1 = Units.inchesToMeters(4.875);
+        public static final double L2 = Units.inchesToMeters(16.595);
+        public static final double L3 = Units.inchesToMeters(31.187);
+        public static final double L4 = Units.inchesToMeters(56.875);
         public static double ALGAE1 = Units.inchesToMeters(1); // idk bro
         public static double ALGAE2 = Units.inchesToMeters(1); // idk bro
 

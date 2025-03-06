@@ -194,7 +194,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPositionInMeters() {
-    return getPosition() * constElevator.SPOOL_CIRCUMFERENCE;
+    return getPosition() * constElevator.SPOOL_CIRCUMFERENCE + constElevator.floorToEvevatorHeight;
   }
 
   public double getTarget() {
@@ -235,14 +235,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble() / constElevator.GEAR_RATIO
-          * constElevator.SPOOL_CIRCUMFERENCE;
+      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble() + (constElevator.MAX_HEIGHT - constElevator.floorToEvevatorHeight / constElevator.SPOOL_CIRCUMFERENCE) * constElevator.GEAR_RATIO;
     }
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
     SmartDashboard.putNumber("Elevator Encoder Offset", encoderOffset);
-    SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
     SmartDashboard.putNumber("Elevator Target", targetPosition);
     SmartDashboard.putNumber("Elevator Error", targetPosition - getPositionInMeters());
     SmartDashboard.putBoolean("At Position", isAtPosition());
