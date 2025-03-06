@@ -29,6 +29,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     private double targetAngle = Constants.EndEffector.algaePositions.restPosition;
 
+    private double offset = 0.0;
+
     public AlgaeArmSubsystem() {
         var config = new Slot0Configs();
         config.kS = 0.1; // Add 0.1 V output to overcome static friction
@@ -41,6 +43,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         algaeMotor.getConfigurator().apply(configuration);
         algaeMotor.getConfigurator().apply(config);
 
+        offset = -algaeMotor.getPosition().getValueAsDouble() - 90;
+
         stopControllers();
     }
 
@@ -51,7 +55,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
             tempSim -= new XBoxWrapper(1).getRightY() / 10;
             return tempSim;
         }
-        return algaeMotor.getPosition().getValueAsDouble() * 360d / 5;
+        return (algaeMotor.getPosition().getValueAsDouble() - offset) * 360d / 10;
         // return canCoder.getPosition().getValueAsDouble() * 360d;
     }
 
