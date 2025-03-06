@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -31,6 +32,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     instance = this;
+
   }
 
   public static Robot getInstance() {
@@ -52,9 +54,7 @@ public class Robot extends TimedRobot {
     // let the robot stop
     // immediately when disabled, but then also let it be pushed more
     disabledTimer = new Timer();
-
-    // Ensure LED system is initialized
-    m_robotContainer.getLEDSystem().setLedState("Idle");
+    
 
     if (isSimulation()) {
       DriverStation.silenceJoystickConnectionWarning(true);

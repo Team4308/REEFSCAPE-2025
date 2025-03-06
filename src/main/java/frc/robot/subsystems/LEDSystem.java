@@ -29,7 +29,6 @@ public class LEDSystem extends SubsystemBase {
 
     // Initialize simulation
     if (Robot.isSimulation()) {
-      SmartDashboard.putString("LED State", ledState);
       SmartDashboard.putNumber("LED Pattern Value", 0.0);
       SmartDashboard.putNumber("LED R", 0.0);
       SmartDashboard.putNumber("LED G", 0.0);
@@ -63,7 +62,7 @@ public class LEDSystem extends SubsystemBase {
     LEDPattern pattern;
     switch (status) {
       case "Idle":
-        currentColor = Color.kDimGray;
+        currentColor = Color.kRed;
         runPattern(LEDPattern.solid(currentColor));
         break;
       case "Auto":
@@ -106,7 +105,9 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    runPattern(LEDPattern.solid(currentColor));
     m_led.setData(m_buffer);
+    SmartDashboard.putString("LED State", ledState);
 
     if (Robot.isSimulation()) {
       // Update pattern value for progress indicators
@@ -116,7 +117,6 @@ public class LEDSystem extends SubsystemBase {
       }
 
       // Force dashboard updates
-      SmartDashboard.putString("LED State", ledState);
       SmartDashboard.putNumber("LED R", currentColor.red);
       SmartDashboard.putNumber("LED G", currentColor.green);
       SmartDashboard.putNumber("LED B", currentColor.blue);

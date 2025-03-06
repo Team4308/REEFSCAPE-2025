@@ -59,8 +59,8 @@ public final class Constants {
     }
 
     public static class constLED {
-        public static final int LED_PORT = 5;
-        public static final int LED_LENGTH = 120;
+        public static final int LED_PORT = 0;
+        public static final int LED_LENGTH = 60;
         public static final double SIM_UPDATE_RATE = 0.02;
     }
 
@@ -84,21 +84,21 @@ public final class Constants {
         }
 
         // Tunin
-        public static final ProfiledPIDController pidController = new ProfiledPIDController(0.1, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(5.0, 11.0), 0.02);
-        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.36, 2.6, 0.0);
+        public static final ProfiledPIDController pidController = new ProfiledPIDController(1.5, 0.0, 0.00,
+                new TrapezoidProfile.Constraints(5.42, 11.91), 0.02);
+        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.40, 2.0, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 4.8611111111111111111111111111111111;
-        public static final double SPOOL_RADIUS = 1.757; // INCHES ( CHANGE )
-        public static final double floorToEvevatorHeight = 4.875; // INCHES (CHANGE )
-        public static double MAX_HEIGHT = Units.inchesToMeters(56.875);
-        public static double MIN_HEIGHT = 4.875;
+        public static final double SPOOL_RADIUS = Units.inchesToMeters(1.757); // INCHES ( CHANGE )
+        public static final double floorToEvevatorHeight = Units.inchesToMeters(4.875); // INCHES (CHANGE )
+        public static double MAX_HEIGHT = Units.inchesToMeters(64);
+        public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
         // Reef Zone heights inches
-        public static final double L1 = Units.inchesToMeters(4.875);
-        public static final double L2 = Units.inchesToMeters(16.595);
-        public static final double L3 = Units.inchesToMeters(31.187);
-        public static final double L4 = Units.inchesToMeters(56.875);
+        public static final double L1 = Units.inchesToMeters(8.0);
+        public static final double L2 = Units.inchesToMeters(20.0);
+        public static final double L3 = Units.inchesToMeters(39.0);
+        public static final double L4 = MAX_HEIGHT;
         public static double ALGAE1 = Units.inchesToMeters(1); // idk bro
         public static double ALGAE2 = Units.inchesToMeters(1); // idk bro
 
@@ -110,7 +110,7 @@ public final class Constants {
         public static final double ALGAE_REMOVAL_SPEED = 1;
 
         // Convert speeds to motor RPS using spool circumference
-        public static final double SPOOL_CIRCUMFERENCE = 2 * Math.PI * SPOOL_RADIUS * 0.0254;
+        public static final double SPOOL_CIRCUMFERENCE = 2 * Math.PI * SPOOL_RADIUS;
         public static final double MAX_MOTOR_RPS = (MAX_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
         public static final double NORMAL_MOTOR_RPS = (NORMAL_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
         public static final double SLOW_MOTOR_RPS = (SLOW_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
@@ -142,7 +142,7 @@ public final class Constants {
             // arbitray values
             public static final double L1 = 5;
             public static final double L23 = 50;
-            public static final double L4 = 25;
+            public static final double L4 = 10;
 
             public static final double maxAlgaeVelocity = 15;
             public static final double intake = 10;

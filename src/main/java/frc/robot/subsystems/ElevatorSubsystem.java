@@ -28,9 +28,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   private static double kDt = 0.02;
 
   private static final double POSITION_TOLERANCE = 0.01; // meters
-  private double targetPosition = 0.0;
   private Double maxHeight = constElevator.MAX_HEIGHT;
   private Double botHeight = constElevator.MIN_HEIGHT;
+  private double targetPosition = botHeight;
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
   private DigitalInput topLimitSwitch;
@@ -124,7 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       System.out.println("Setting level to: " + lvl);
       switch (lvl) {
         case 0:
-          setPosition(0.0);
+          setPosition(botHeight);
           break;
         case 1:
           setPosition(constElevator.L1);
@@ -139,7 +139,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           setPosition(constElevator.L4);
           break;
         default:
-          setPosition(0.0);
+          setPosition(botHeight);
           break;
       }
     });
@@ -194,7 +194,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPositionInMeters() {
-    return getPosition() * constElevator.SPOOL_CIRCUMFERENCE + constElevator.floorToEvevatorHeight;
+    return (getPosition() * constElevator.SPOOL_CIRCUMFERENCE) + constElevator.floorToEvevatorHeight;
   }
 
   public double getTarget() {
@@ -235,7 +235,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble() + (constElevator.MAX_HEIGHT - constElevator.floorToEvevatorHeight / constElevator.SPOOL_CIRCUMFERENCE) * constElevator.GEAR_RATIO;
+      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble() + ((constElevator.MAX_HEIGHT - constElevator.MIN_HEIGHT) / constElevator.SPOOL_CIRCUMFERENCE) * constElevator.GEAR_RATIO;
     }
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
