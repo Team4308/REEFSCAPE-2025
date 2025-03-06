@@ -6,13 +6,16 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import ca.team4308.absolutelib.control.XBoxWrapper;
 import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Ports;
+import frc.robot.Robot;
 
 public class AlgaeArmSubsystem extends LogSubsystem {
     private TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
@@ -43,7 +46,13 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         stopControllers();
     }
 
+    double tempSim = 0;
+
     public double getAlgaePosition() {
+        if (Robot.isSimulation()) {
+            tempSim -= new XBoxWrapper(1).getRightY() / 10;
+            return tempSim;
+        }
         return algaeMotor.getPosition().getValueAsDouble() * 360d / 5;
         // return canCoder.getPosition().getValueAsDouble() * 360d;
     }
@@ -58,6 +67,12 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
         double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle),
                 Constants.EndEffector.speeds.maxAlgaeVelocity);
+
+        SmartDashboard.putNumber("algaepid", motorVoltage);
+        SmartDashboard.putNumber("algaefeedforward", feedforwardOutput);
+        SmartDashboard.putNumber("totalvoltage", feedforwardOutput + motorVoltage);
+        SmartDashboard.putNumber("encoderalgae", currentAngle);
+        SmartDashboard.putNumber("targetalgae", targetAngle);
 
         // algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
     }
@@ -81,9 +96,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     @Override
     public void periodic() {
-        if (!isAtPosition()) {
-            goToTargetPosition();
-        }
+        goToTargetPosition();
     }
 
     public void stopControllers() {
