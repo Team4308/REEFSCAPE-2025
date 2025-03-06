@@ -16,7 +16,7 @@ public class FastL1 extends SequentialCommandGroup {
     public FastL1(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
             AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
-                new SimpleAlgae(() -> Constants.EndEffector.algaePositions.restPosition, algaeArmSubsystem),
+                //new SimpleAlgae(() -> Constants.EndEffector.algaePositions.restPosition, algaeArmSubsystem),
                 new ParallelCommandGroup(
                         new ElevatorwithVelocity(() -> Constants.constElevator.L1,
                                 () -> Constants.constElevator.L1Velocity, elevatorSubsystem),

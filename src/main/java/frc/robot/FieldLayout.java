@@ -49,20 +49,25 @@ public class FieldLayout {
         public static final Pose2d L = new Pose2d(Units.inchesToMeters(150.348580), Units.inchesToMeters(201.073852),
                 Rotation2d.fromDegrees(-60));
 
-        private static final List<Pose2d> BLUE_REEF_POSES = List.of(A, B, C, D, E, F, G, H, I, J, K, L);
-        private static final List<Pose2d> RED_REEF_POSES = getRedReefPoses();
+        // public static final List<Pose2d> BLUE_REEF_POSES = List.of(A, B, C, D, E, F, G, H, I, J, K, L);
+        // public static final List<Pose2d> RED_REEF_POSES = getRedReefPoses();
+        public static final List<Pose2d> BLUE_LEFT_REEF_POSES = List.of(A, C, E, G, I, K);
+        public static final List<Pose2d> BLUE_RIGHT_REEF_POSES = List.of(B, D, F, H, J, L);
+
+        public static final List<Pose2d> RED_LEFT_REEF_POSES = getRedLeftReefPoses();
+        public static final List<Pose2d> RED_RIGHT_REEF_POSES = getRedRightReefPoses();
+        
 
         // CORAL STATION POSES
-        public static final Pose2d LEFT_CORAL_STATION_FAR = new Pose2d(0, 0, Rotation2d.fromDegrees(-54.5)); // or 36??
+        public static final Pose2d LEFT_CORAL_STATION_FAR = new Pose2d(Units.inchesToMeters(28.7), Units.inchesToMeters(59.037), Rotation2d.fromDegrees(-54.5)); // or 36??
                                                                                                              // idek
-        public static final Pose2d LEFT_CORAL_STATION_NEAR = new Pose2d(0, 0, Rotation2d.fromDegrees(-54.5));
+        public static final Pose2d LEFT_CORAL_STATION_NEAR = new Pose2d(Units.inchesToMeters(52.059), Units.inchesToMeters(26.566), Rotation2d.fromDegrees(-54.5));
         public static final Pose2d RIGHT_CORAL_STATION_FAR = new Pose2d(0, 0, Rotation2d.fromDegrees(55));
         public static final Pose2d RIGHT_CORAL_STATION_NEAR = new Pose2d(0, 0, Rotation2d.fromDegrees(55));
 
-        private static final List<Pose2d> BLUE_CORAL_STATION_POSES = List.of(LEFT_CORAL_STATION_FAR,
-                LEFT_CORAL_STATION_NEAR,
-                RIGHT_CORAL_STATION_FAR, RIGHT_CORAL_STATION_NEAR);
-        private static final List<Pose2d> RED_CORAL_STATION_POSES = getRedCoralStationPoses();
+        public static final List<Pose2d> BLUE_CORAL_STATION_POSES = List.of(LEFT_CORAL_STATION_FAR,
+                LEFT_CORAL_STATION_NEAR, RIGHT_CORAL_STATION_FAR, RIGHT_CORAL_STATION_NEAR);
+        public static final List<Pose2d> RED_CORAL_STATION_POSES = getRedCoralStationPoses();
     }
 
     public static Pose2d getRedAlliancePose(Pose2d bluePose) {
@@ -71,12 +76,20 @@ public class FieldLayout {
                 bluePose.getRotation().plus(Rotation2d.fromDegrees(180)));
     }
 
-    public static List<Pose2d> getRedReefPoses() {
-        Pose2d[] RED_REEF_POSES = new Pose2d[Reef.BLUE_REEF_POSES.size()];
-        for (int i = 0; i < Reef.BLUE_REEF_POSES.size(); i++) {
-            RED_REEF_POSES[i] = getRedAlliancePose(Reef.BLUE_REEF_POSES.get(i));
+    public static List<Pose2d> getRedLeftReefPoses() {
+        Pose2d[] RED_LEFT_REEF_POSES = new Pose2d[Reef.BLUE_LEFT_REEF_POSES.size()];
+        for (int i = 0; i < Reef.BLUE_LEFT_REEF_POSES.size(); i++) {
+            RED_LEFT_REEF_POSES[i] = getRedAlliancePose(Reef.BLUE_LEFT_REEF_POSES.get(i));
         }
-        return List.of(RED_REEF_POSES);
+        return List.of(RED_LEFT_REEF_POSES);
+    }
+
+    public static List<Pose2d> getRedRightReefPoses() {
+        Pose2d[] RED_RIGHT_REEF_POSES = new Pose2d[Reef.BLUE_RIGHT_REEF_POSES.size()];
+        for (int i = 0; i < Reef.BLUE_RIGHT_REEF_POSES.size(); i++) {
+            RED_RIGHT_REEF_POSES[i] = getRedAlliancePose(Reef.BLUE_RIGHT_REEF_POSES.get(i));
+        }
+        return List.of(RED_RIGHT_REEF_POSES);
     }
 
     public static List<Pose2d> getRedCoralStationPoses() {
@@ -86,6 +99,14 @@ public class FieldLayout {
         }
         return List.of(RED_CORAL_STATION_POSES);
     }
+
+//     public static List<Pose2d> getRedReefPoses() {
+//         Pose2d[] RED_REEF_POSES = new Pose2d[Reef.BLUE_REEF_POSES.size()];
+//         for (int i = 0; i < Reef.BLUE_REEF_POSES.size(); i++) {
+//             RED_REEF_POSES[i] = getRedAlliancePose(Reef.BLUE_REEF_POSES.get(i));
+//         }
+//         return List.of(RED_REEF_POSES);
+//     }
 
     // AprilTag locations
     /*

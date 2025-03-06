@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
+import frc.robot.FieldLayout;
 import ca.team4308.absolutelib.wrapper.LoggedTunableNumber;
 import java.io.File;
 import java.io.IOException;
@@ -213,26 +214,42 @@ public class SwerveSubsystem extends SubsystemBase {
     }
   }
 
-  public double getDistanceToReef() {
-    Pose3d reefCenterPose = getReefCenterPose();
-    return getPose().getTranslation().getDistance(reefCenterPose.toPose2d().getTranslation());
+  // public double getDistanceToReef() {
+  //   Pose3d reefCenterPose = getReefCenterPose();
+  //   return getPose().getTranslation().getDistance(reefCenterPose.toPose2d().getTranslation());
+  // }
+
+  // public Rotation2d getYawToClosestReef() {
+  //   Rotation2d reefRotation = getClosestReefPose().getRotation();
+  //   return reefRotation.plus(swerveDrive.getOdometryHeading());
+  // } // dont use? use direct angle method and pass in 55 deg
+
+
+  public Pose2d getClosestLeftReefPose() {
+    if (isRedAlliance()) {
+      return getPose().nearest(FieldLayout.Reef.RED_LEFT_REEF_POSES);
+    } else {
+      return getPose().nearest(FieldLayout.Reef.BLUE_LEFT_REEF_POSES);
+    }
   }
 
-  public Rotation2d getYawToReef() {
-    Pose3d reefCenterPose = getReefCenterPose();
-    Translation2d relativeTrl = reefCenterPose.toPose2d().relativeTo(getPose()).getTranslation();
-    return new Rotation2d(relativeTrl.getX(), relativeTrl.getY()).plus(swerveDrive.getOdometryHeading());
+  public Pose2d getClosestRightReefPose() {
+    if (isRedAlliance()) {
+      return getPose().nearest(FieldLayout.Reef.RED_RIGHT_REEF_POSES);
+    } else {
+      return getPose().nearest(FieldLayout.Reef.BLUE_RIGHT_REEF_POSES);
+    }
   }
 
-  public Command aimAtReef(double tolerance) {
-    return run(
-        () -> {
-          drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
-              reefHeadingAlignController.calculate(getHeading().getRadians(),
-                  getYawToReef().getRadians()),
-              getHeading()));
-        }).until(() -> Math.abs(getYawToReef().minus(getHeading()).getDegrees()) < tolerance);
-  }
+  // public Command aimAtReef(double tolerance) {
+  //   return run(
+  //       () -> {
+  //         drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
+  //             reefHeadingAlignController.calculate(getHeading().getRadians(),
+  //                 getYawToReef().getRadians()),
+  //             getHeading()));
+  //       }).until(() -> Math.abs(getYawToReef().minus(getHeading()).getDegrees()) < tolerance);
+  // }
 
   public Command aimAtTarget(Cameras camera) {
     return run(() -> {
