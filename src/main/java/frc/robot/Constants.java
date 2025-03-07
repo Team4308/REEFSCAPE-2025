@@ -60,7 +60,7 @@ public final class Constants {
 
     public static class constLED {
         public static final int LED_PORT = 0;
-        public static final int LED_LENGTH = 60;
+        public static final int LED_LENGTH = 44;
         public static final double SIM_UPDATE_RATE = 0.02;
     }
 

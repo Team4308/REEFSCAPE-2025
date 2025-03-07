@@ -64,6 +64,7 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // led_status = "";
     switch (led_status) {
       case "Idle":
         for (int i = 0; i < m_buffer.getLength(); i++) {
@@ -82,13 +83,13 @@ public class LEDSystem extends SubsystemBase {
             m_buffer.setLED(i, new Color(fade, fade, fade));
           }
         }
-        scrollOffset = (scrollOffset + SCROLL_SPEED) % (PATTERN_LENGTH * 3);
+        scrollOffset = (scrollOffset + SCROLL_SPEED ) % (PATTERN_LENGTH * 3);
         break;
 
       case "Auto":
         LEDPattern basePattern = LEDPattern.rainbow(180, 240)  
             .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.5), Meters.of(1.0/60.0));
-                LEDPattern maskPattern = LEDPattern.rainbow(200, 220)  
+                LEDPattern maskPattern = LEDPattern.rainbow(180, 240)  
             .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.3), Meters.of(1.0/60.0));
         
         basePattern.mask(maskPattern)
@@ -97,12 +98,11 @@ public class LEDSystem extends SubsystemBase {
         break;
 
       case "Teleop":
-        LEDPattern teleopBase = LEDPattern.rainbow(90, 150)  
+        LEDPattern teleopBase = LEDPattern.rainbow(255, 128)  
             .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.7), Meters.of(1.0/60.0));
         
         LEDPattern heightMask = LEDPattern.progressMaskLayer(() -> 
-            m_elevator.getPositionInMeters() / m_elevator.getMaxHeight())
-            .breathe(Seconds.of(1.5));  
+            m_elevator.getPositionInMeters() - 0.1 / m_elevator.getMaxHeight());  
         
         teleopBase.mask(heightMask).applyTo(m_buffer);
         break;
