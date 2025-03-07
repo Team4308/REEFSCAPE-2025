@@ -136,7 +136,7 @@ public final class Constants {
             public static final double removeBargePosition = 45;
         }
 
-        public static final double algaeArmTolerance = 3;
+        public static final double algaeArmTolerance = 5;
 
         public static class speeds {
             // arbitray values
@@ -152,7 +152,7 @@ public final class Constants {
 
         // PID
         public static class PID {
-            public static final double kP = 0;
+            public static final double kP = 0.005;
             public static final double kI = 0;
             public static final double kD = 0;
         }
@@ -160,8 +160,8 @@ public final class Constants {
         // FeedForward
         public static class FeedForward {
             public static final double kS = 0;
-            public static final double kG = 0.33;
-            public static final double kV = 0.004;
+            public static final double kG = 0.32;
+            public static final double kV = 0.0035;
             public static final double kA = 0.0;
         }
     }
