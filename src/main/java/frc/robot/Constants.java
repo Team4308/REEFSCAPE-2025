@@ -60,7 +60,7 @@ public final class Constants {
 
     public static class constLED {
         public static final int LED_PORT = 0;
-        public static final int LED_LENGTH = 44;
+        public static final int LED_LENGTH = 56;
         public static final double SIM_UPDATE_RATE = 0.02;
     }
 
@@ -99,8 +99,8 @@ public final class Constants {
         public static final double L2 = Units.inchesToMeters(20.0);
         public static final double L3 = Units.inchesToMeters(39.0);
         public static final double L4 = MAX_HEIGHT;
-        public static double ALGAE1 = Units.inchesToMeters(1); // idk bro
-        public static double ALGAE2 = Units.inchesToMeters(1); // idk bro
+        public static double ALGAE1 = Units.inchesToMeters(39.0); // idk bro
+        public static double ALGAE2 = Units.inchesToMeters(60.0); // idk bro
 
         // Speed constants (in meters per second)
         public static final double L1Velocity = 1; // Custom speed for L1

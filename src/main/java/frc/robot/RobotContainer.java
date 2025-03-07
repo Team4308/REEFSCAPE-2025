@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.Operator;
 import frc.robot.commands.Intake;
+import frc.robot.commands.AlgaeRemoval.AlgaeRoller;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
 import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
@@ -227,17 +228,19 @@ public class RobotContainer {
                                 () -> m_AlgaeArmSubsystem.setAlgaePosition(
                                                 Constants.EndEffector.algaePositions.removeAlgaePosition)));// Set
                                                                                                             // position
+                                                              
                                                                                                             // to
                                                                                                             // remove
                                                                                                             // algae
-                operator.RB.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(-15)));// Spins
+                operator.RB.onTrue(new AlgaeRoller(() -> 50.0, m_CoralRollerSubsystem)); // Spins
                                                                                                           // Rollers to
                                                                                                           // remove
                                                                                                           // algae
                 operator.RB.onFalse((new InstantCommand(
+
                                 () -> m_AlgaeArmSubsystem
                                                 .setAlgaePosition(Constants.EndEffector.algaePositions.minPosition))));
-                operator.RB.onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers()));
+                operator.RB.onFalse(new AlgaeRoller(() -> 0.0, m_CoralRollerSubsystem));
 
                 // Elevator
                 operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(1));

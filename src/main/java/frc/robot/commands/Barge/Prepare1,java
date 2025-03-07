@@ -18,7 +18,7 @@ public class Prepare2 extends SequentialCommandGroup {
             new SimpleElevator(() -> Constants.constElevator.ALGAE1 - 0.5, elevatorSubsystem),
             new ParallelDeadlineGroup(
                 new ElevatorwithVelocity(() -> Constants.constElevator.ALGAE1, () -> Constants.constElevator.ALGAE_REMOVAL_SPEED, elevatorSubsystem),
-                new AlgaeRoller(true, rollerSubsystem)
+                new AlgaeRoller(() -> 10.0, rollerSubsystem)
             ),
             new SimpleAlgae(() -> Constants.EndEffector.algaePositions.holdBargePosition, algaeArmSubsystem)
         );

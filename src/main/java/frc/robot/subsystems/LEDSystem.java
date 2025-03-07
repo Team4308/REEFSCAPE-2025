@@ -25,9 +25,9 @@ public class LEDSystem extends SubsystemBase {
   private String led_status = "Idle";
   private int scrollOffset = 0;
   private static final int SCROLL_SPEED = 1;
-  private static final int PATTERN_LENGTH = 10; 
-  private static final int TRAIL_LENGTH = 5;  
-  
+  private static final int PATTERN_LENGTH = 7; 
+  private static final int TRAIL_LENGTH = 3;  
+
   private SimDevice m_simDevice;
   private SimDouble m_simR;
   private SimDouble m_simG;
@@ -68,6 +68,9 @@ public class LEDSystem extends SubsystemBase {
     switch (led_status) {
       case "Idle":
         for (int i = 0; i < m_buffer.getLength(); i++) {
+          
+
+          
           int position = (i + scrollOffset) % (PATTERN_LENGTH * 3); 
           
           if (position < PATTERN_LENGTH) {
@@ -81,8 +84,9 @@ public class LEDSystem extends SubsystemBase {
           else {
             double fade = 1.0 - getFadeValue(position - (PATTERN_LENGTH * 2), PATTERN_LENGTH);
             m_buffer.setLED(i, new Color(fade, fade, fade));
-          }
+          
         }
+      }
         scrollOffset = (scrollOffset + SCROLL_SPEED ) % (PATTERN_LENGTH * 3);
         break;
 
@@ -128,7 +132,7 @@ public class LEDSystem extends SubsystemBase {
         algaePattern.breathe(Seconds.of(1.0));
         algaePattern.applyTo(m_buffer);
         break;
-
+// One color for Idle (In game), One color for when not allgined for anything but has coral, Another color for Allinged to the reef (Doesnt matter iwth or without coral ) While allginng blink while not soild green 
       case "Coral":
         LEDPattern coralPattern = LEDPattern.solid(Color.kWhite);
         coralPattern.breathe(Seconds.of(1.0));

@@ -76,7 +76,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         -12.0,
         12.0);
 
-    System.out.print(getPositionInMeters());
+    /*System.out.print(getPositionInMeters());
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
     System.out.print(", ");
     System.out.print(targetPosition);
@@ -85,7 +85,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     System.out.print(pidOutput);
     SmartDashboard.putNumber("pid output", pidOutput);
     System.out.print(", ");
-    System.out.println(constElevator.pidController.getSetpoint().velocity);
+    System.out.println(constElevator.pidController.getSetpoint().velocity);*/
     SmartDashboard.putNumber("Setpoint Position", constElevator.pidController.getSetpoint().position);
     SmartDashboard.putNumber("Setpoint Velocity", constElevator.pidController.getSetpoint().velocity);
 
@@ -120,7 +120,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command goToLevel(int lvl) {
     return runOnce(() -> {
-      System.out.println("Setting level to: " + lvl);
+      //System.out.println("Setting level to: " + lvl);
       switch (lvl) {
         case 0:
           setPosition(botHeight);
@@ -229,6 +229,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     double voltage = calculateVoltage();
+    if (targetPosition == constElevator.MIN_HEIGHT && getPositionInMeters() < 0.15) {
+      voltage = 0.0;
+    }
     rightMotorLeader.setVoltage(voltage);
     leftMotorFollower.setVoltage(voltage);
 

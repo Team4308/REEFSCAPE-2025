@@ -20,6 +20,6 @@ public class RemoveL2 extends SequentialCommandGroup {
                 new ParallelDeadlineGroup(
                         new ElevatorwithVelocity(() -> Constants.constElevator.MIN_HEIGHT,
                                 () -> Constants.constElevator.ALGAE_REMOVAL_SPEED, elevatorSubsystem),
-                        new AlgaeRoller(false, rollerSubsystem)));
+                        new AlgaeRoller(() -> 50.0, rollerSubsystem)));
     }
 }

@@ -22,7 +22,7 @@ public class Prepare2 extends SequentialCommandGroup {
                                                 new ElevatorwithVelocity(() -> Constants.constElevator.ALGAE2,
                                                                 () -> Constants.constElevator.ALGAE_REMOVAL_SPEED,
                                                                 elevatorSubsystem),
-                                                new AlgaeRoller(true, rollerSubsystem)),
+                                                new AlgaeRoller(() -> 10.0, rollerSubsystem)),
                                 new SimpleAlgae(() -> Constants.EndEffector.algaePositions.holdBargePosition,
                                                 algaeArmSubsystem));
         }

@@ -1,17 +1,19 @@
 
 package frc.robot.commands.AlgaeRemoval;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
 public class AlgaeRoller extends Command {
     private final CoralRollerSubsystem subsystem;
-    private final boolean reversed;
+    private final Supplier<Double> control;
 
-    public AlgaeRoller(boolean reversed, CoralRollerSubsystem rollerSubsystem) {
+    public AlgaeRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
         this.subsystem = rollerSubsystem;
-        this.reversed = reversed;
+        this.control = control;
         addRequirements(rollerSubsystem);
     }
 
@@ -22,11 +24,7 @@ public class AlgaeRoller extends Command {
 
     @Override
     public void execute() {
-        double speed = -Constants.EndEffector.speeds.removeAlgae;
-        if (reversed) {
-            speed *= -1;
-        }
-        subsystem.setRollerOutput(speed);
+        subsystem.setRollerOutput(control.get());
     }
 
     @Override
