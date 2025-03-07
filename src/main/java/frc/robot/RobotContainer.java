@@ -232,7 +232,7 @@ public class RobotContainer {
                                                                                                             // to
                                                                                                             // remove
                                                                                                             // algae
-                operator.RB.onTrue(new AlgaeRoller(() -> 50.0, m_CoralRollerSubsystem)); // Spins
+                operator.RB.onTrue(new AlgaeRoller(() -> -50.0, m_CoralRollerSubsystem)); // Spins
                                                                                                           // Rollers to
                                                                                                           // remove
                                                                                                           // algae

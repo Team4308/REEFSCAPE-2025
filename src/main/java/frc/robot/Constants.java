@@ -99,8 +99,8 @@ public final class Constants {
         public static final double L2 = Units.inchesToMeters(20.0);
         public static final double L3 = Units.inchesToMeters(39.0);
         public static final double L4 = MAX_HEIGHT;
-        public static double ALGAE1 = Units.inchesToMeters(39.0); // idk bro
-        public static double ALGAE2 = Units.inchesToMeters(60.0); // idk bro
+        public static final double ALGAE1 = Units.inchesToMeters(39.0); // idk bro
+        public static final double ALGAE2 = Units.inchesToMeters(60.0); // idk bro
 
         // Speed constants (in meters per second)
         public static final double L1Velocity = 1; // Custom speed for L1
@@ -131,12 +131,12 @@ public final class Constants {
             public static final double minPosition = -90.0;
             public static final double maxPosition = 120;
             public static final double restPosition = -90;
-            public static final double removeAlgaePosition = -45;
+            public static final double removeAlgaePosition = -30;
             public static final double holdBargePosition = 110;
             public static final double removeBargePosition = 45;
         }
 
-        public static final double algaeArmTolerance = 5;
+        public static final double algaeArmTolerance = 30;
 
         public static class speeds {
             // arbitray values
