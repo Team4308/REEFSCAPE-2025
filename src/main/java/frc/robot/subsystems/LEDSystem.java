@@ -1,136 +1,121 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.concurrent.TimeUnit;
-
-import edu.wpi.first.units.Units;
+import edu.wpi.first.math.util.Units.*;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.Robot;
+import frc.robot.Constants.constElevator;
+import frc.robot.Constants.constLED;
 
 public class LEDSystem extends SubsystemBase {
   private ElevatorSubsystem m_elevator;
   private final AddressableLED m_led;
   private final AddressableLEDBuffer m_buffer;
-  private String ledState = "Idle";
-  private Color currentColor = Color.kBlack;
-  private double patternValue = 0.0;
+  private String led_status = "Idle";
+  private int scrollOffset = 0;
+  private static final int SCROLL_SPEED = 1;
+  private static final int PATTERN_LENGTH = 2;
 
   public LEDSystem() {
     m_led = new AddressableLED(Constants.constLED.LED_PORT);
     m_buffer = new AddressableLEDBuffer(Constants.constLED.LED_LENGTH);
     m_led.setLength(Constants.constLED.LED_LENGTH);
     m_led.start();
-
-    setDefaultCommand(runPattern(LEDPattern.solid(Color.kBlack)).withName("Idle")); // Set it to default
-
-    // Initialize simulation
-    if (Robot.isSimulation()) {
-      SmartDashboard.putNumber("LED Pattern Value", 0.0);
-      SmartDashboard.putNumber("LED R", 0.0);
-      SmartDashboard.putNumber("LED G", 0.0);
-      SmartDashboard.putNumber("LED B", 0.0);
-    }
-  }
+  } 
 
   public void setElevator(ElevatorSubsystem elevator) {
     this.m_elevator = elevator;
   }
 
   public String getLedState() {
-    return ledState;
+    return led_status;
   }
 
-  // Color Map
-
-  // Red Fault, Error, or other critical issuse
-  // Yellow, Test, Debug, Etc
-  // Orange Zeroing, Calibrating, etc ( Do not interrupt )
-
-  // Green, Game Peice
-  // White Game Peice
-
-  // Blinking Auto (Any Color)
-  // Anything else just Teleop (MaskedLayer , Graident, Rainbow, etc)
 
   public void setLedState(String status) {
-    System.out.println("Setting LED State to: " + status);
-    ledState = status;
-    LEDPattern pattern;
-    switch (status) {
-      case "Idle":
-        currentColor = Color.kRed;
-        runPattern(LEDPattern.solid(currentColor));
-        break;
-      case "Auto":
-        currentColor = Color.kOrangeRed;
-        pattern = LEDPattern.progressMaskLayer(() -> {
-          patternValue = m_elevator.getPositionInMeters() / m_elevator.getMaxHeight();
-          return patternValue;
-        });
-        pattern.blink(Units.Seconds.of(1));
-        runPattern(pattern);
-        break;
-      case "Teleop":
-        runPattern(LEDPattern.progressMaskLayer(() -> m_elevator.getPosition() / m_elevator.getMaxHeight()));
-        break;
-      case "Test":
-        runPattern(LEDPattern.solid(Color.kYellow));
-        break;
-      case "Fault":
-        runPattern(LEDPattern.solid(Color.kRed));
-        break;
-      case "Zeroing":
-        runPattern(LEDPattern.solid(Color.kOrange));
-        break;
-      case "Algae":
-        runPattern(LEDPattern.solid(Color.kSeaGreen));
-        break;
-      case "Coral":
-        runPattern(LEDPattern.solid(Color.kWhiteSmoke));
-        break;
-      default:
-        // Idk if this works
-        runPattern(LEDPattern.progressMaskLayer(() -> m_elevator.getPosition() / m_elevator.getMaxHeight()));
-        break;
-    }
-
-    if (Robot.isSimulation()) {
-      SmartDashboard.putString("LED State", ledState);
-    }
+    led_status = status;
   }
 
   @Override
   public void periodic() {
-    LEDPattern base = LEDPattern.solid(Color.kRed);
-    LEDPattern mask = LEDPattern.progressMaskLayer(() -> m_elevator.getPositionInMeters() / m_elevator.getMaxHeight());
-    LEDPattern heightDisplay = base.mask(mask);
-    heightDisplay.applyTo(m_buffer);
-    m_led.setData(m_buffer);
-    SmartDashboard.putString("LED State", ledState);
+    switch (led_status) {
+      case "Idle":
+        for (int i = 0; i < m_buffer.getLength(); i++) {
+          int patternPosition = (i + scrollOffset) % (PATTERN_LENGTH * 2);
+          if (patternPosition < PATTERN_LENGTH) {
+            m_buffer.setLED(i, Color.kRed);
+          } else {
+            m_buffer.setLED(i, Color.kWhite);
+          }
+        }
+        scrollOffset = (scrollOffset + SCROLL_SPEED) % (PATTERN_LENGTH * 2);
+        break;
 
-    if (Robot.isSimulation()) {
-      // Update pattern value for progress indicators
-      if (ledState.equals("Auto") || ledState.equals("Teleop")) {
-        patternValue = m_elevator.getPosition() / m_elevator.getMaxHeight();
-        SmartDashboard.putNumber("LED Pattern Value", patternValue);
-      }
+      case "Auto":
+        LEDPattern autoPattern = LEDPattern.solid(Color.kBlue);
+        autoPattern.blink(Seconds.of(0.5));
+        autoPattern.applyTo(m_buffer);
+        break;
 
-      // Force dashboard updates
-      SmartDashboard.putNumber("LED R", currentColor.red);
-      SmartDashboard.putNumber("LED G", currentColor.green);
-      SmartDashboard.putNumber("LED B", currentColor.blue);
+      case "Teleop":
+        LEDPattern teleopBase = LEDPattern.solid(Color.kGreen);
+        LEDPattern heightMask = LEDPattern.progressMaskLayer(() -> 
+            m_elevator.getPositionInMeters() / m_elevator.getMaxHeight());
+        teleopBase.mask(heightMask).applyTo(m_buffer);
+        break;
+
+      case "Test":
+        LEDPattern testPattern = LEDPattern.solid(Color.kYellow);
+        testPattern.blink(Seconds.of(0.2));
+        testPattern.applyTo(m_buffer);
+        break;
+
+      case "Fault":
+        LEDPattern.solid(Color.kRed).applyTo(m_buffer);
+        break;
+
+      case "Homing":
+        LEDPattern homingPattern = LEDPattern.solid(Color.kOrange);
+        homingPattern.breathe(Seconds.of(1.0));
+        homingPattern.applyTo(m_buffer);
+        break;
+
+      case "Algae":
+        LEDPattern algaePattern = LEDPattern.solid(Color.kGreen);
+        algaePattern.breathe(Seconds.of(1.0));
+        algaePattern.applyTo(m_buffer);
+        break;
+
+      case "Coral":
+        // White breathing pattern
+        LEDPattern coralPattern = LEDPattern.solid(Color.kWhite);
+        coralPattern.breathe(Seconds.of(1.0));
+        coralPattern.applyTo(m_buffer);
+        break;
+
+      case "Ready":
+        // Rainbow pattern
+        LEDPattern.rainbow(255, 128).scrollAtAbsoluteSpeed(MetersPerSecond.of(1), Meters.of(1 / 60.0)).applyTo(m_buffer);;
+        break;
+
+      default:
+        // Default progress bar with blue base
+        LEDPattern defaultBase = LEDPattern.solid(Color.kBlue);
+        LEDPattern defaultMask = LEDPattern.progressMaskLayer(() -> 
+            m_elevator.getPositionInMeters() / m_elevator.getMaxHeight());
+        defaultBase.mask(defaultMask).applyTo(m_buffer);
+        break;
     }
-  }
 
-  public Command runPattern(LEDPattern pattern) {
-    return run(() -> pattern.applyTo(m_buffer));
+    m_led.setData(m_buffer);
+    SmartDashboard.putString("LED State", led_status);
   }
 }
