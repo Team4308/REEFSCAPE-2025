@@ -36,8 +36,8 @@ public class Ports {
 
     // Elevator
     public static class Elevator {
-        public static final int ELEVATOR_MASTER = 2;
-        public static final int ELEVATOR_FOLLOWER = 1;
+        public static final int ELEVATOR_MASTER = 10;
+        public static final int ELEVATOR_FOLLOWER = 11;
         public static final int LIMIT_SWITCH_TOP = 0;
         public static final int LIMIT_SWITCH_BOTTOM = 1;
         public static final int ELEVATOR_CANCODER = 166;
@@ -45,9 +45,9 @@ public class Ports {
 
     // End effector
     public static class EndEffector {
-        public static final int CORAL_MOTOR = 3;
+        public static final int CORAL_MOTOR = 12;
         public static final int INDEX_BEAM_BREAK = 2;
-        public static final int ALGAE_MOTOR = 4;
+        public static final int ALGAE_MOTOR = 13;
     }
 
     // Algae Slapdown

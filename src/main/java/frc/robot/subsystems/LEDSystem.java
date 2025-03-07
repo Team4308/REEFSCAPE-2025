@@ -1,5 +1,9 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Seconds;
+
+import java.util.concurrent.TimeUnit;
+
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -105,7 +109,10 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    runPattern(LEDPattern.solid(currentColor));
+    LEDPattern base = LEDPattern.solid(Color.kRed);
+    LEDPattern mask = LEDPattern.progressMaskLayer(() -> m_elevator.getPositionInMeters() / m_elevator.getMaxHeight());
+    LEDPattern heightDisplay = base.mask(mask);
+    heightDisplay.applyTo(m_buffer);
     m_led.setData(m_buffer);
     SmartDashboard.putString("LED State", ledState);
 

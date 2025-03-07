@@ -97,7 +97,7 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.setCosineCompensator(false);
     // Correct for skew that gets worse as angular velocity increases. Start with a
     // coefficient of 0.1. Could be negative
-    swerveDrive.setAngularVelocityCompensation(true, true, 0.1);
+    swerveDrive.setAngularVelocityCompensation(false, false, 0.1);
     // Resync absolute encoders and motor encoders periodically when they are not
     // moving.
     swerveDrive.setModuleEncoderAutoSynchronize(false, 1);

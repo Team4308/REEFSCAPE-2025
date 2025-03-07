@@ -95,7 +95,7 @@ public final class Constants {
         public static double MAX_HEIGHT = Units.inchesToMeters(64);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
         // Reef Zone heights inches
-        public static final double L1 = Units.inchesToMeters(8.0);
+        public static final double L1 = Units.inchesToMeters(8.0+8);
         public static final double L2 = Units.inchesToMeters(20.0);
         public static final double L3 = Units.inchesToMeters(39.0);
         public static final double L4 = MAX_HEIGHT;
@@ -140,27 +140,28 @@ public final class Constants {
 
         public static class speeds {
             // arbitray values
-            public static final double L1 = 5;
+            public static final double L1 = 3;
             public static final double L23 = 50;
             public static final double L4 = 10;
 
-            public static final double maxAlgaeVelocity = 15;
+            public static final double maxAlgaeVelocity = 180;
+            public static final double maxAlgaeAcceleration = 360;
             public static final double intake = 10;
             public static final double removeAlgae = -50;
         }
 
         // PID
         public static class PID {
-            public static final double kP = 0.001;
+            public static final double kP = 0;
             public static final double kI = 0;
             public static final double kD = 0;
         }
 
         // FeedForward
         public static class FeedForward {
-            public static final double kS = 1;
-            public static final double kG = 0.27;
-            public static final double kV = 0.18;
+            public static final double kS = 0;
+            public static final double kG = 0.33;
+            public static final double kV = 0.004;
             public static final double kA = 0.0;
         }
     }

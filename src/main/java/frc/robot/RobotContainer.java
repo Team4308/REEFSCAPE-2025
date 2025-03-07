@@ -63,7 +63,7 @@ public class RobotContainer {
     SwerveInputStream driveAngularVelocity = SwerveInputStream.of(drivebase.getSwerveDrive(),
             () -> driver.getLeftY() * -1,
             () -> driver.getLeftX() * -1)
-            .withControllerRotationAxis(driver::getRightX)
+            .withControllerRotationAxis(() -> driver.getRightX() * -1)
             .deadband(Operator.DEADBAND)
             .scaleTranslation(1.0)
             .allianceRelativeControl(true);
@@ -263,7 +263,7 @@ public class RobotContainer {
     }
 
     private double joystickElevatorControl() {
-        return deadZone(operator.getRightY()) / 20;
+        return -deadZone(operator.getRightY()) / 20;
     }
 
     private double triggerRollerControl() {

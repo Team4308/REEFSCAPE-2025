@@ -38,7 +38,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private CANcoder cancoder;
   private Double encoderOffset = 0.0;
 
-  private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
+  private double currentVelocityLimit = 9999;
 
   public ElevatorSubsystem() {
     leftMotorFollower = new TalonFX(Ports.Elevator.ELEVATOR_FOLLOWER);
@@ -70,28 +70,15 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     double pidOutput = constElevator.pidController.calculate(getPositionInMeters(), targetPosition);
 
-    double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
+    double feedforwardVoltage = constElevator.feedforward.calculate(Math.min(constElevator.pidController.getSetpoint().velocity, currentVelocityLimit));
 
     double totalVoltage = DoubleUtils.clamp(
         pidOutput + feedforwardVoltage,
         -12.0,
         12.0);
 
-    System.out.print(getPositionInMeters());
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
-    System.out.print(", ");
-    System.out.print(targetPosition);
-    SmartDashboard.putNumber("target", targetPosition);
-    System.out.print(", ");
-    System.out.print(pidOutput);
-    SmartDashboard.putNumber("pid output", pidOutput);
-    System.out.print(", ");
-    System.out.println(constElevator.pidController.getSetpoint().velocity);
     SmartDashboard.putNumber("Setpoint Position", constElevator.pidController.getSetpoint().position);
-    SmartDashboard.putNumber("Setpoint Velocity", constElevator.pidController.getSetpoint().velocity);
-
-    SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
-    SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
     if (bottomLimitSwitch.get()) {
       return Math.max(0, totalVoltage);
@@ -160,7 +147,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setCustomSpeed(double speedMetersPerSecond) {
-    currentVelocityLimit = speedMetersPerSecond * constElevator.GEAR_RATIO;
+    currentVelocityLimit = speedMetersPerSecond;
   }
 
   public double getCurrentSpeed() {
@@ -242,11 +229,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     SmartDashboard.putNumber("Elevator Encoder Offset", encoderOffset);
     SmartDashboard.putNumber("Elevator Target", targetPosition);
-    SmartDashboard.putNumber("Elevator Error", targetPosition - getPositionInMeters());
-    SmartDashboard.putBoolean("At Position", isAtPosition());
-    SmartDashboard.putNumber("Elevator Current", rightMotorLeader.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Elevator Voltage", voltage);
-
   }
 
   /**

@@ -11,6 +11,8 @@ import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
@@ -20,9 +22,11 @@ import frc.robot.Robot;
 public class AlgaeArmSubsystem extends LogSubsystem {
     private TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
 
-    private PIDController algaepidController = new PIDController(Constants.EndEffector.PID.kP,
+    private ProfiledPIDController algaepidController = new ProfiledPIDController(Constants.EndEffector.PID.kP,
             Constants.EndEffector.PID.kI,
-            Constants.EndEffector.PID.kD);
+            Constants.EndEffector.PID.kD, 
+            new TrapezoidProfile.Constraints(Constants.EndEffector.speeds.maxAlgaeVelocity, Constants.EndEffector.speeds.maxAlgaeAcceleration), 
+            0.02);
     private ArmFeedforward algaeFeedForward = new ArmFeedforward(Constants.EndEffector.FeedForward.kS,
             Constants.EndEffector.FeedForward.kG, Constants.EndEffector.FeedForward.kV,
             Constants.EndEffector.FeedForward.kA);
@@ -43,19 +47,15 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         algaeMotor.getConfigurator().apply(configuration);
         algaeMotor.getConfigurator().apply(config);
 
-        offset = -algaeMotor.getPosition().getValueAsDouble() - 90;
+        offset = -algaeMotor.getPosition().getValueAsDouble()/4.5*180 - 90;
 
         stopControllers();
     }
 
-    double tempSim = 0;
 
     public double getAlgaePosition() {
-        if (Robot.isSimulation()) {
-            tempSim -= new XBoxWrapper(1).getRightY() / 10;
-            return tempSim;
-        }
-        return (algaeMotor.getPosition().getValueAsDouble() - offset) * 360d / 10;
+        System.out.println(algaeMotor.getPosition().getValueAsDouble()/ 4.5*180 + offset);
+        return (algaeMotor.getPosition().getValueAsDouble()) / 4.5*180 + offset;
         // return canCoder.getPosition().getValueAsDouble() * 360d;
     }
 
@@ -67,16 +67,15 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         motorVoltage = DoubleUtils.clamp(motorVoltage, -Constants.EndEffector.speeds.maxAlgaeVelocity,
                 Constants.EndEffector.speeds.maxAlgaeVelocity);
 
-        double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle),
-                Constants.EndEffector.speeds.maxAlgaeVelocity);
+        double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle), algaepidController.getSetpoint().velocity);
 
         SmartDashboard.putNumber("algaepid", motorVoltage);
         SmartDashboard.putNumber("algaefeedforward", feedforwardOutput);
         SmartDashboard.putNumber("totalvoltage", feedforwardOutput + motorVoltage);
         SmartDashboard.putNumber("encoderalgae", currentAngle);
-        SmartDashboard.putNumber("targetalgae", targetAngle);
+        SmartDashboard.putNumber("targetalgae", algaepidController.getSetpoint().position);
 
-        // algaeMotor.setVoltage(feedforwardOutput + motorVoltage);
+        algaeMotor.setVoltage(DoubleUtils.clamp(feedforwardOutput + motorVoltage, -12, 12));
     }
 
     public void setAlgaePosition(double degree) {
