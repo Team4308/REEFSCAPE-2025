@@ -14,6 +14,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.constElevator;
 import frc.robot.Constants.constLED;
+import edu.wpi.first.hal.SimDevice;
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 
 public class LEDSystem extends SubsystemBase {
   private ElevatorSubsystem m_elevator;
@@ -22,13 +25,28 @@ public class LEDSystem extends SubsystemBase {
   private String led_status = "Idle";
   private int scrollOffset = 0;
   private static final int SCROLL_SPEED = 1;
-  private static final int PATTERN_LENGTH = 2;
+  private static final int PATTERN_LENGTH = 10; 
+  private static final int TRAIL_LENGTH = 5;  
+  
+  private SimDevice m_simDevice;
+  private SimDouble m_simR;
+  private SimDouble m_simG;
+  private SimDouble m_simB;
+  private SimDouble m_simBrightness;
 
   public LEDSystem() {
     m_led = new AddressableLED(Constants.constLED.LED_PORT);
     m_buffer = new AddressableLEDBuffer(Constants.constLED.LED_LENGTH);
     m_led.setLength(Constants.constLED.LED_LENGTH);
     m_led.start();
+
+    m_simDevice = SimDevice.create("LED_System");
+    if (m_simDevice != null) {
+      m_simR = m_simDevice.createDouble("R", SimDevice.Direction.kOutput, 0.0);
+      m_simG = m_simDevice.createDouble("G", SimDevice.Direction.kOutput, 0.0);
+      m_simB = m_simDevice.createDouble("B", SimDevice.Direction.kOutput, 0.0);
+      m_simBrightness = m_simDevice.createDouble("Brightness", SimDevice.Direction.kOutput, 0.0);
+    }
   } 
 
   public void setElevator(ElevatorSubsystem elevator) {
@@ -49,26 +67,43 @@ public class LEDSystem extends SubsystemBase {
     switch (led_status) {
       case "Idle":
         for (int i = 0; i < m_buffer.getLength(); i++) {
-          int patternPosition = (i + scrollOffset) % (PATTERN_LENGTH * 2);
-          if (patternPosition < PATTERN_LENGTH) {
-            m_buffer.setLED(i, Color.kRed);
-          } else {
-            m_buffer.setLED(i, Color.kWhite);
+          int position = (i + scrollOffset) % (PATTERN_LENGTH * 3); 
+          
+          if (position < PATTERN_LENGTH) {
+            double fade = getFadeValue(position, PATTERN_LENGTH);
+            m_buffer.setLED(i, new Color(fade * 1.0, 0, 0));
+          } 
+          else if (position < PATTERN_LENGTH * 2) {
+            double fade = getFadeValue(position - PATTERN_LENGTH, PATTERN_LENGTH);
+            m_buffer.setLED(i, new Color(1.0, fade, fade));
+          }
+          else {
+            double fade = 1.0 - getFadeValue(position - (PATTERN_LENGTH * 2), PATTERN_LENGTH);
+            m_buffer.setLED(i, new Color(fade, fade, fade));
           }
         }
-        scrollOffset = (scrollOffset + SCROLL_SPEED) % (PATTERN_LENGTH * 2);
+        scrollOffset = (scrollOffset + SCROLL_SPEED) % (PATTERN_LENGTH * 3);
         break;
 
       case "Auto":
-        LEDPattern autoPattern = LEDPattern.solid(Color.kBlue);
-        autoPattern.blink(Seconds.of(0.5));
-        autoPattern.applyTo(m_buffer);
+        LEDPattern basePattern = LEDPattern.rainbow(180, 240)  
+            .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.5), Meters.of(1.0/60.0));
+                LEDPattern maskPattern = LEDPattern.rainbow(200, 220)  
+            .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.3), Meters.of(1.0/60.0));
+        
+        basePattern.mask(maskPattern)
+            .blink(Seconds.of(0.5))
+            .applyTo(m_buffer);
         break;
 
       case "Teleop":
-        LEDPattern teleopBase = LEDPattern.solid(Color.kGreen);
+        LEDPattern teleopBase = LEDPattern.rainbow(90, 150)  
+            .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.7), Meters.of(1.0/60.0));
+        
         LEDPattern heightMask = LEDPattern.progressMaskLayer(() -> 
-            m_elevator.getPositionInMeters() / m_elevator.getMaxHeight());
+            m_elevator.getPositionInMeters() / m_elevator.getMaxHeight())
+            .breathe(Seconds.of(1.5));  
+        
         teleopBase.mask(heightMask).applyTo(m_buffer);
         break;
 
@@ -95,19 +130,16 @@ public class LEDSystem extends SubsystemBase {
         break;
 
       case "Coral":
-        // White breathing pattern
         LEDPattern coralPattern = LEDPattern.solid(Color.kWhite);
         coralPattern.breathe(Seconds.of(1.0));
         coralPattern.applyTo(m_buffer);
         break;
 
       case "Ready":
-        // Rainbow pattern
         LEDPattern.rainbow(255, 128).scrollAtAbsoluteSpeed(MetersPerSecond.of(1), Meters.of(1 / 60.0)).applyTo(m_buffer);;
         break;
 
       default:
-        // Default progress bar with blue base
         LEDPattern defaultBase = LEDPattern.solid(Color.kBlue);
         LEDPattern defaultMask = LEDPattern.progressMaskLayer(() -> 
             m_elevator.getPositionInMeters() / m_elevator.getMaxHeight());
@@ -117,5 +149,26 @@ public class LEDSystem extends SubsystemBase {
 
     m_led.setData(m_buffer);
     SmartDashboard.putString("LED State", led_status);
+
+    if (m_simDevice != null) {
+      double totalR = 0, totalG = 0, totalB = 0;
+      for (int i = 0; i < m_buffer.getLength(); i++) {
+        Color color = m_buffer.getLED(i);
+        totalR += color.red;
+        totalG += color.green;
+        totalB += color.blue;
+      }
+      
+      double length = m_buffer.getLength();
+      m_simR.set(totalR / length);
+      m_simG.set(totalG / length);
+      m_simB.set(totalB / length);      m_simBrightness.set(Math.max(Math.max(totalR, totalG), totalB) / length);    }  }
+  private double getFadeValue(int position, int patternLength) {
+    if (position < TRAIL_LENGTH) {
+      return (double)position / TRAIL_LENGTH;
+    } else if (position >= patternLength - TRAIL_LENGTH) {
+      return (double)(patternLength - position) / TRAIL_LENGTH;
+    }
+    return 1.0;
   }
 }

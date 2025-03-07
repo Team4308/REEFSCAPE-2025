@@ -1,5 +1,13 @@
 {
   "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "columns": 61
+      },
+      "window": {
+        "visible": true
+      }
+    },
     "DIO": {
       "window": {
         "visible": true
@@ -73,7 +81,9 @@
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/IMU": "Alerts",
       "/SmartDashboard/JSON": "Alerts",
+      "/SmartDashboard/LED Display": "Mechanism2d",
       "/SmartDashboard/Motors": "Alerts",
+      "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/Pigeon 2 (v6) [0]": "Gyro",
       "/SmartDashboard/Pigeon 2 (v6) [13]": "Gyro",
       "/SmartDashboard/Pigeon 2 [13]": "Gyro",
@@ -134,6 +144,9 @@
         "open": true
       },
       "SmartDashboard": {
+        "BatterySim": {
+          "open": true
+        },
         "Field": {
           "open": true
         },
@@ -162,7 +175,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 372,
+          "height": 0,
           "series": [
             {
               "color": [
@@ -227,7 +240,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 338,
+          "height": 342,
           "series": [
             {
               "color": [
@@ -287,7 +300,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 338
+          "height": 262
         }
       ],
       "window": {
