@@ -24,8 +24,9 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     private ProfiledPIDController algaepidController = new ProfiledPIDController(Constants.EndEffector.PID.kP,
             Constants.EndEffector.PID.kI,
-            Constants.EndEffector.PID.kD, 
-            new TrapezoidProfile.Constraints(Constants.EndEffector.speeds.maxAlgaeVelocity, Constants.EndEffector.speeds.maxAlgaeAcceleration), 
+            Constants.EndEffector.PID.kD,
+            new TrapezoidProfile.Constraints(Constants.EndEffector.speeds.maxAlgaeVelocity,
+                    Constants.EndEffector.speeds.maxAlgaeAcceleration),
             0.02);
     private ArmFeedforward algaeFeedForward = new ArmFeedforward(Constants.EndEffector.FeedForward.kS,
             Constants.EndEffector.FeedForward.kG, Constants.EndEffector.FeedForward.kV,
@@ -47,15 +48,13 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         algaeMotor.getConfigurator().apply(configuration);
         algaeMotor.getConfigurator().apply(config);
 
-        offset = -algaeMotor.getPosition().getValueAsDouble()/4.5*180 - 90;
+        offset = -algaeMotor.getPosition().getValueAsDouble() / 4.5 * 180 - 90;
 
         stopControllers();
     }
 
-
     public double getAlgaePosition() {
-        System.out.println(algaeMotor.getPosition().getValueAsDouble()/ 4.5*180 + offset);
-        return (algaeMotor.getPosition().getValueAsDouble()) / 4.5*180 + offset;
+        return (algaeMotor.getPosition().getValueAsDouble()) / 4.5 * 180 + offset;
         // return canCoder.getPosition().getValueAsDouble() * 360d;
     }
 
@@ -67,7 +66,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         motorVoltage = DoubleUtils.clamp(motorVoltage, -Constants.EndEffector.speeds.maxAlgaeVelocity,
                 Constants.EndEffector.speeds.maxAlgaeVelocity);
 
-        double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle), algaepidController.getSetpoint().velocity);
+        double feedforwardOutput = algaeFeedForward.calculate(Math.toRadians(currentAngle),
+                algaepidController.getSetpoint().velocity);
 
         SmartDashboard.putNumber("algaepid", motorVoltage);
         SmartDashboard.putNumber("algaefeedforward", feedforwardOutput);

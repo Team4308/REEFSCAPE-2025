@@ -23,7 +23,6 @@ public class SimpleElevator extends Command {
 
     @Override
     public void execute() {
-        System.err.println("AFDG");
         subsystem.setPosition(control.get());
     }
 
