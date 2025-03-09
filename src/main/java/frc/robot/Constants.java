@@ -103,7 +103,9 @@ public final class Constants {
             new TrapezoidProfile.Constraints(180, 360), 0.02);
         public static final ArmFeedforward algaeFeedforward = new ArmFeedforward(0.0, 0.32, 0.0035, 0.0);
 
-        public static final double algaeArmTolerance = 15;
+        public static final double algaeArmTolerance = 15.0;
+
+        public static final double rotationToAngleRatio = 40.0;
 
         public static class algaePositions {
             public static final double minPosition = -90.0;
@@ -111,7 +113,7 @@ public final class Constants {
             public static final double removeAlgaePosition = -30;
         }
 
-        public static class speeds {
+        public static class speeds {    // m/s
             public static final double L1 = 3;
             public static final double L23 = 50;
             public static final double L4 = 10;
@@ -123,12 +125,12 @@ public final class Constants {
 
     public static class Slapdown {
         // The angle that the pivot motor should be at when the arm is at the top.
-        public static final double PIVOT_TOP_ANGLE = 0.0; // revolutions
+        public static final double PIVOT_TOP_ANGLE = 90.0; // degrees
 
         // The angle that the pivot motor should be at when the arm is at the bottom.
-        public static final double PIVOT_BOTTOM_ANGLE = 0.2; // revolutions
+        public static final double PIVOT_BOTTOM_ANGLE = 45.0; // degrees
 
-        // The rotation rate of the intake motor while it is running.
-        public static final double INTAKE_SPEED = 0.2; // rotations per second
+        // The precentage output of the intake motor while it is running.
+        public static final double INTAKE_SPEED = 0.2; // precentage
     }
 }

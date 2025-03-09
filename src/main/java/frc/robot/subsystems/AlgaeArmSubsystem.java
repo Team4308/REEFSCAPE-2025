@@ -18,7 +18,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     private double targetAngle = Constants.EndEffector.algaePositions.minPosition;
 
-    private double offset = 0.0;
+    private double encoderOffset = 0.0;
 
     public AlgaeArmSubsystem() {
         var config = new Slot0Configs();
@@ -32,7 +32,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         algaeMotor.getConfigurator().apply(configuration);
         algaeMotor.getConfigurator().apply(config);
 
-        offset = -algaeMotor.getPosition().getValueAsDouble() / 4.5 * 180 - 90;
+        encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
 
         EndEffector.algaePID.setTolerance(EndEffector.algaeArmTolerance);
 
@@ -40,11 +40,10 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public double getAlgaePosition() {
-        return (algaeMotor.getPosition().getValueAsDouble()) / 4.5 * 180 + offset;
+        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset) * EndEffector.rotationToAngleRatio - 90;
     }
 
     public void goToTargetPosition() {
-        // 0 Degrees is always parallel to the ground
         double currentAngle = getAlgaePosition();
 
         double motorVoltage = EndEffector.algaePID.calculate(currentAngle, targetAngle);
