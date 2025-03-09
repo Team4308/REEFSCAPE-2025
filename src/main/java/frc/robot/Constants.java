@@ -97,7 +97,7 @@ public final class Constants {
         public static final double ALGAE_REMOVAL_SPEED = 1;
     }
 
-    public static class EndEffector {
+    public static class constEndEffector {
 
         public static final ProfiledPIDController algaePID = new ProfiledPIDController(0.005, 0.0, 0.0,
             new TrapezoidProfile.Constraints(180, 360), 0.02);

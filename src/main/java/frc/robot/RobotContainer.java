@@ -227,8 +227,8 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers())); // SHOOTING
 
                 // Algae
-                operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)))
-                                .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition)))); // Set position to remove algae
+                operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePositions.removeAlgaePosition)))
+                                .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePositions.minPosition)))); // Set position to remove algae
                 operator.RB.onTrue(new AlgaeRoller(() -> -50.0, m_CoralRollerSubsystem))
                                 .onFalse(new AlgaeRoller(() -> 0.0, m_CoralRollerSubsystem));
 

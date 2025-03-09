@@ -20,7 +20,7 @@ public class Intake extends Command {
 
     @Override
     public void execute() {
-        subsystem.setRollerOutput(Constants.EndEffector.speeds.intake);
+        subsystem.setRollerOutput(Constants.constEndEffector.speeds.intake);
     }
 
     @Override
