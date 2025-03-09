@@ -20,7 +20,7 @@ public class Intake extends Command {
 
     @Override
     public void execute() {
-        subsystem.setRollerOutput(Constants.constEndEffector.speeds.intake);
+        subsystem.setRollerOutput(Constants.constEndEffector.rollerSpeeds.CORAL_INTAKE);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class Intake extends Command {
 
     @Override
     public boolean isFinished() {
-        return !subsystem.getBeamBreak();
+        return !subsystem.beamBreak.get();
     }
 
 }

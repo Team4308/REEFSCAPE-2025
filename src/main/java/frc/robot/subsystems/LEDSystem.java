@@ -10,8 +10,9 @@ import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
 import frc.robot.Constants.constElevator;
+import frc.robot.Constants.constLED;
+import frc.robot.Ports.LED;
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
 
@@ -21,9 +22,6 @@ public class LEDSystem extends SubsystemBase {
   private final AddressableLEDBuffer m_buffer;
   private String led_status = "Idle";
   private int scrollOffset = 0;
-  private static final int SCROLL_SPEED = 1;
-  private static final int PATTERN_LENGTH = 7; 
-  private static final int TRAIL_LENGTH = 3;  
 
   private SimDevice m_simDevice;
   private SimDouble m_simR;
@@ -32,9 +30,9 @@ public class LEDSystem extends SubsystemBase {
   private SimDouble m_simBrightness;
 
   public LEDSystem() {
-    m_led = new AddressableLED(Constants.constLED.LED_PORT);
-    m_buffer = new AddressableLEDBuffer(Constants.constLED.LED_LENGTH);
-    m_led.setLength(Constants.constLED.LED_LENGTH);
+    m_led = new AddressableLED(LED.PORT);
+    m_buffer = new AddressableLEDBuffer(constLED.LED_LENGTH);
+    m_led.setLength(constLED.LED_LENGTH);
     m_led.start();
 
     m_simDevice = SimDevice.create("LED_System");
@@ -68,23 +66,23 @@ public class LEDSystem extends SubsystemBase {
           
 
           
-          int position = (i + scrollOffset) % (PATTERN_LENGTH * 3); 
+          int position = (i + scrollOffset) % (constLED.PATTERN_LENGTH * 3); 
           
-          if (position < PATTERN_LENGTH) {
-            double fade = getFadeValue(position, PATTERN_LENGTH);
+          if (position < constLED.PATTERN_LENGTH) {
+            double fade = getFadeValue(position, constLED.PATTERN_LENGTH);
             m_buffer.setLED(i, new Color(fade * 1.0, 0, 0));
           } 
-          else if (position < PATTERN_LENGTH * 2) {
-            double fade = getFadeValue(position - PATTERN_LENGTH, PATTERN_LENGTH);
+          else if (position < constLED.PATTERN_LENGTH * 2) {
+            double fade = getFadeValue(position - constLED.PATTERN_LENGTH, constLED.PATTERN_LENGTH);
             m_buffer.setLED(i, new Color(1.0, fade, fade));
           }
           else {
-            double fade = 1.0 - getFadeValue(position - (PATTERN_LENGTH * 2), PATTERN_LENGTH);
+            double fade = 1.0 - getFadeValue(position - (constLED.PATTERN_LENGTH * 2), constLED.PATTERN_LENGTH);
             m_buffer.setLED(i, new Color(fade, fade, fade));
           
         }
       }
-        scrollOffset = (scrollOffset + SCROLL_SPEED ) % (PATTERN_LENGTH * 3);
+        scrollOffset = (scrollOffset + constLED.SCROLL_SPEED ) % (constLED.PATTERN_LENGTH * 3);
         break;
 
       case "Auto":
@@ -165,10 +163,10 @@ public class LEDSystem extends SubsystemBase {
       m_simG.set(totalG / length);
       m_simB.set(totalB / length);      m_simBrightness.set(Math.max(Math.max(totalR, totalG), totalB) / length);    }  }
   private double getFadeValue(int position, int patternLength) {
-    if (position < TRAIL_LENGTH) {
-      return (double)position / TRAIL_LENGTH;
-    } else if (position >= patternLength - TRAIL_LENGTH) {
-      return (double)(patternLength - position) / TRAIL_LENGTH;
+    if (position < constLED.TRAIL_LENGTH) {
+      return (double)position / constLED.TRAIL_LENGTH;
+    } else if (position >= patternLength - constLED.TRAIL_LENGTH) {
+      return (double)(patternLength - position) / constLED.TRAIL_LENGTH;
     }
     return 1.0;
   }

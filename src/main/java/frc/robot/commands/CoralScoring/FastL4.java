@@ -15,9 +15,9 @@ public class FastL4 extends SequentialCommandGroup {
     public FastL4(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
             AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
-                new SimpleAlgae(() -> constEndEffector.algaePositions.minPosition, algaeArmSubsystem),
+                new SimpleAlgae(() -> constEndEffector.algaePivot.MIN_ANGLE, algaeArmSubsystem),
                 new SimpleElevator(() -> constElevator.MAX_HEIGHT, elevatorSubsystem),
-                new SimpleRoller(() -> constEndEffector.speeds.L4, rollerSubsystem),
+                new SimpleRoller(() -> constEndEffector.rollerSpeeds.L4, rollerSubsystem),
                 new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem));
     }
 }

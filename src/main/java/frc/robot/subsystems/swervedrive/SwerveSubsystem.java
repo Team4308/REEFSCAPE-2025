@@ -139,7 +139,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void checkTunableValues() {
-    if (!Constants.LoggedDashboard.tuningMode) {
+    if (!Constants.LoggedDashboard.TUNING_MODE) {
       return;
     }
     // Only update LoggedTunableNumbers when enabled
@@ -252,8 +252,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.ReefHeadingAlign.alignTolerance && aligningToLeft) 
-      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.ReefHeadingAlign.alignTolerance && aligningToRight)) 
+    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.ReefHeadingAlign.TOLERANCE && aligningToLeft) 
+      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.ReefHeadingAlign.TOLERANCE && aligningToRight)) 
     {
       return true;
     } 

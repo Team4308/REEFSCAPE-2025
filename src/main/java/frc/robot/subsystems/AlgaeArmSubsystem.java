@@ -13,7 +13,7 @@ import frc.robot.Ports.EndEffector;
 public class AlgaeArmSubsystem extends LogSubsystem {
     private TalonFX algaeMotor = new TalonFX(EndEffector.ALGAE_MOTOR);
 
-    private double targetAngle = constEndEffector.algaePositions.minPosition;
+    public double targetAngle = constEndEffector.algaePivot.MIN_ANGLE;
 
     private double encoderOffset = 0.0;
 
@@ -22,36 +22,31 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
         encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
 
-        constEndEffector.algaePID.setTolerance(constEndEffector.algaeArmTolerance);
+        constEndEffector.algaePivot.PID_CONTROLLER.setTolerance(constEndEffector.algaePivot.TOLERANCE);
 
         stopControllers();
     }
 
     public double getAlgaePosition() {
-        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset) * constEndEffector.rotationToAngleRatio + constEndEffector.algaePositions.minPosition;
+        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset) * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.MIN_ANGLE;
     }
 
     public void goToTargetPosition() {
         double currentAngle = getAlgaePosition();
 
-        double motorVoltage = constEndEffector.algaePID.calculate(currentAngle, targetAngle);
+        double motorVoltage = constEndEffector.algaePivot.PID_CONTROLLER.calculate(currentAngle, targetAngle);
 
-        double feedforwardOutput = constEndEffector.algaeFeedforward.calculate(Math.toRadians(currentAngle),
-                constEndEffector.algaePID.getSetpoint().velocity);
+        double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
+                constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
         SmartDashboard.putNumber("Algae Arm Angle", currentAngle);
-        SmartDashboard.putNumber("Algae Arm Target", constEndEffector.algaePID.getSetpoint().position);
+        SmartDashboard.putNumber("Algae Arm Target", constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
 
         algaeMotor.setVoltage(DoubleUtils.clamp(feedforwardOutput + motorVoltage, -12, 12));
     }
 
     public void setAlgaePosition(double degree) {
-        targetAngle = DoubleUtils.clamp(degree, constEndEffector.algaePositions.minPosition,
-                constEndEffector.algaePositions.maxPosition);
-    }
-
-    public double getCurrentTarget() {
-        return targetAngle;
+        targetAngle = DoubleUtils.clamp(degree, constEndEffector.algaePivot.MIN_ANGLE, constEndEffector.algaePivot.MAX_ANGLE);
     }
 
     @Override

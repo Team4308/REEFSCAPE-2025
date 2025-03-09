@@ -33,7 +33,7 @@ public class SimpleAlgae extends Command {
 
     @Override
     public boolean isFinished() {
-        return constEndEffector.algaePID.atSetpoint();
+        return constEndEffector.algaePivot.PID_CONTROLLER.atSetpoint();
     }
 
 }

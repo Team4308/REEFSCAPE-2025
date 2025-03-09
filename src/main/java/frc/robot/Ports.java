@@ -9,6 +9,11 @@ public class Ports {
         public static final int OPERATOR = 1;
     }
 
+    // LED
+    public static class LED {
+        public static final int PORT = 0;
+    }
+
     // Elevator
     public static class Elevator {
         public static final int ELEVATOR_MASTER = 10;

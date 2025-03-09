@@ -10,7 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
-import frc.robot.Constants.Slapdown;
+import frc.robot.Constants.constSlapdown;
 import frc.robot.Ports;
 
 public class SlapdownSubsystem extends SubsystemBase {
@@ -65,7 +65,7 @@ public class SlapdownSubsystem extends SubsystemBase {
     // Starts the intake wheels. While it won't be very effective,
     // this will still work even if the arm is up. Try not to do that.
     public void StartIntake() {
-        intakeMotor.set(Slapdown.INTAKE_SPEED);
+        intakeMotor.set(constSlapdown.INTAKE_SPEED);
     }
 
     // Stops the intake wheels.
@@ -76,6 +76,6 @@ public class SlapdownSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         double power = calculatePower();
-        // pivotMotor.set(TalonSRXControlMode.PercentOutput, power);
+        pivotMotor.set(TalonSRXControlMode.PercentOutput, power);
     }
 }

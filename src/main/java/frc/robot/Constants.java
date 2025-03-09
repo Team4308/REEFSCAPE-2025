@@ -16,14 +16,14 @@ import swervelib.math.Matter;
 
 public final class Constants {
 
-    public static final double ROBOT_MASS = 125 * 0.453592; // 32lbs * kg per pound
+    public static final double ROBOT_MASS = 100 * 0.453592;
     public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
     public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED = Units.feetToMeters(14.5);
+    public static final double MAX_SPEED = Units.feetToMeters(15.1);
     // Maximum speed of the robot in meters per second, used to limit acceleration.
 
     public static final class LoggedDashboard {
-        public static final boolean tuningMode = false;
+        public static final boolean TUNING_MODE = false;
     }
 
     // public static final class AutonConstants
@@ -41,7 +41,7 @@ public final class Constants {
             public static double kI = 0.0;
             public static double kD = 0.0;
 
-            public static final double alignTolerance = 1.0;
+            public static final double TOLERANCE = 1.0;
         }
     }
 
@@ -59,8 +59,10 @@ public final class Constants {
     }
 
     public static class constLED {
-        public static final int LED_PORT = 0;
         public static final int LED_LENGTH = 56;
+        public static final int SCROLL_SPEED = 1;
+        public static final int PATTERN_LENGTH = 7; 
+        public static final int TRAIL_LENGTH = 3;
         public static final double SIM_UPDATE_RATE = 0.02;
     }
 
@@ -71,14 +73,14 @@ public final class Constants {
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         }
 
-        public static final double tolerance = 0.01; // meters
-        public static final double maxVelocity = 5.42; // m/s
-        public static final double maxAcceleration = 11.91; // m/s^2
+        public static final double TOLERANCE = 0.01; // m
+        public static final double MAX_VELOCITY = 5.42; // m/s
+        public static final double MAX_ACCELERATION = 11.91; // m/s^2
 
         // Tuning
-        public static final ProfiledPIDController pidController = new ProfiledPIDController(1.5, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 0.02);
-        public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.40, 2.0, 0.0);
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.5, 0.0, 0.00,
+                new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION), 0.02);
+        public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.40, 2.0, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 175/36;
@@ -98,32 +100,31 @@ public final class Constants {
     }
 
     public static class constEndEffector {
+        public static class algaePivot {
+            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.005, 0.0, 0.0,
+                    new TrapezoidProfile.Constraints(180, 360), 0.02);
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.32, 0.0035, 0.0);
 
-        public static final ProfiledPIDController algaePID = new ProfiledPIDController(0.005, 0.0, 0.0,
-            new TrapezoidProfile.Constraints(180, 360), 0.02);
-        public static final ArmFeedforward algaeFeedforward = new ArmFeedforward(0.0, 0.32, 0.0035, 0.0);
+            public static final double TOLERANCE = 15.0;
 
-        public static final double algaeArmTolerance = 15.0;
+            public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
-        public static final double rotationToAngleRatio = 40.0;
-
-        public static class algaePositions {
-            public static final double minPosition = -90.0;
-            public static final double maxPosition = 120;
-            public static final double removeAlgaePosition = -30;
+            public static final double MIN_ANGLE = -90.0;
+            public static final double MAX_ANGLE = 120;
+            public static final double REMOVAL_ANGLE = -30;
         }
 
-        public static class speeds {    // m/s
+        public static class rollerSpeeds {    // m/s
             public static final double L1 = 3;
             public static final double L23 = 50;
             public static final double L4 = 10;
 
-            public static final double intake = 10;
-            public static final double removeAlgae = -50;
+            public static final double CORAL_INTAKE = 10;
+            public static final double ALGAE_REMOVAL = -50;
         }
     }
 
-    public static class Slapdown {
+    public static class constSlapdown {
         // The angle that the pivot motor should be at when the arm is at the top.
         public static final double PIVOT_TOP_ANGLE = 90.0; // degrees
 
