@@ -159,6 +159,12 @@ public class RobotContainer {
                                 () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
                 driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
                                 () -> driveToClosestRightReef.driveToPoseEnabled(false)));
+                driver.LB.whileTrue(Commands.runEnd(() -> driveToClosestLeftReef.driveToPoseEnabled(true),
+                                () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
+                driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
+                                () -> driveToClosestRightReef.driveToPoseEnabled(false)));
+                driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToLeft(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToLeft(false)));
+                driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToRight(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToRight(false)));
 
                 driver.povDown.whileTrue(Commands.run(drivebase::lock, drivebase));
                 driver.povUp.onTrue(Commands.runOnce(drivebase::zeroGyro, drivebase));
@@ -236,10 +242,6 @@ public class RobotContainer {
 
         public LEDSystem getLEDSystem() {
                 return m_ledSubsystem;
-        }
-
-        public ElevatorSubsystem getElevator() {
-                return m_ElevatorSubsystem;
         }
 
         /**

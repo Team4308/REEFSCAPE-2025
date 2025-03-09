@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import frc.robot.FieldLayout;
+import frc.robot.Constants.Swerve;
 import ca.team4308.absolutelib.wrapper.LoggedTunableNumber;
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +76,9 @@ public class SwerveSubsystem extends SubsystemBase {
   private Vision vision;
 
   private PIDController reefHeadingAlignController = new PIDController(kReefP.get(), kReefI.get(), kReefD.get());
+  
+  private boolean aligningToLeft = false;
+  private boolean aligningToRight = false;
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -238,6 +242,23 @@ public class SwerveSubsystem extends SubsystemBase {
     } else {
       return getPose().nearest(FieldLayout.Reef.BLUE_RIGHT_REEF_POSES);
     }
+  }
+
+  public void setAligningToLeft(boolean value) {
+    aligningToLeft = value;
+  }
+
+  public void setAligningToRight(boolean value) {
+    aligningToRight = value;
+  }
+
+  public boolean isAligned() {
+    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.alignTolerance && aligningToLeft) 
+      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.alignTolerance && aligningToRight)) 
+    {
+      return true;
+    } 
+    return false;
   }
 
   // public Command aimAtReef(double tolerance) {

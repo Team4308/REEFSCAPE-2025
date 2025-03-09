@@ -41,6 +41,8 @@ public final class Constants {
             public static double kI = 0.0;
             public static double kD = 0.0;
         }
+
+        public static final double alignTolerance = 1.0;
     }
 
     public static class Operator {
