@@ -36,7 +36,6 @@ public class CoralRollerSubsystem extends LogSubsystem {
     }
 
     public void setRollerOutput(double velocity) {
-        System.out.println(velocity);
         rollerMotor.setControl(rollerVelocity.withVelocity(velocity));
     }
 

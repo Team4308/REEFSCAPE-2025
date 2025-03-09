@@ -93,7 +93,7 @@ public class ElevatorSubsystem extends SubsystemBase {
           setPosition(constElevator.L3);
           break;
         case 4:
-          setPosition(constElevator.L4);
+          setPosition(constElevator.MAX_HEIGHT);
           break;
         default:
           setPosition(botHeight);

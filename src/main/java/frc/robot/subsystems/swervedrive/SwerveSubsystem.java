@@ -253,8 +253,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.alignTolerance && aligningToLeft) 
-      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.alignTolerance && aligningToRight)) 
+    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.ReefHeadingAlign.alignTolerance && aligningToLeft) 
+      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.ReefHeadingAlign.alignTolerance && aligningToRight)) 
     {
       return true;
     } 

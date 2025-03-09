@@ -21,6 +21,6 @@ public class RemoveL2 extends SequentialCommandGroup {
                 new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.ALGAE_REMOVAL_SPEED, constElevator.maxAcceleration)),
                 new ParallelDeadlineGroup(
                         new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem),
-                        new AlgaeRoller(() -> -50.0, rollerSubsystem)));
+                        new AlgaeRoller(() -> EndEffector.speeds.removeAlgae, rollerSubsystem)));
     }
 }

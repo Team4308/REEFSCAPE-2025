@@ -40,9 +40,9 @@ public final class Constants {
             public static double kP = 0.0;
             public static double kI = 0.0;
             public static double kD = 0.0;
-        }
 
-        public static final double alignTolerance = 1.0;
+            public static final double alignTolerance = 1.0;
+        }
     }
 
     public static class Operator {
@@ -75,7 +75,7 @@ public final class Constants {
         public static final double maxVelocity = 5.42; // m/s
         public static final double maxAcceleration = 11.91; // m/s^2
 
-        // Tunin
+        // Tuning
         public static final ProfiledPIDController pidController = new ProfiledPIDController(1.5, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 0.02);
         public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.40, 2.0, 0.0);
@@ -85,11 +85,11 @@ public final class Constants {
         public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(2 * Math.PI * 1.757);
         public static double MAX_HEIGHT = Units.inchesToMeters(64);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
-        // Reef Zone heights inches
+
+        // Preset heights in inches
         public static final double L1 = Units.inchesToMeters(6.0);
         public static final double L2 = Units.inchesToMeters(20.0);
         public static final double L3 = Units.inchesToMeters(39.0);
-        public static final double L4 = MAX_HEIGHT;
         public static final double ALGAE1 = Units.inchesToMeters(39.0);
         public static final double ALGAE2 = Units.inchesToMeters(60.0);
 
@@ -103,17 +103,15 @@ public final class Constants {
             new TrapezoidProfile.Constraints(180, 360), 0.02);
         public static final ArmFeedforward algaeFeedforward = new ArmFeedforward(0.0, 0.32, 0.0035, 0.0);
 
-        // Positions
+        public static final double algaeArmTolerance = 15;
+
         public static class algaePositions {
             public static final double minPosition = -90.0;
             public static final double maxPosition = 120;
             public static final double removeAlgaePosition = -30;
         }
 
-        public static final double algaeArmTolerance = 15;
-
         public static class speeds {
-            // arbitray values
             public static final double L1 = 3;
             public static final double L23 = 50;
             public static final double L4 = 10;
