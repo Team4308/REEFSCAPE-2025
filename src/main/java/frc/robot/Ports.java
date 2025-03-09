@@ -40,7 +40,6 @@ public class Ports {
         public static final int ELEVATOR_FOLLOWER = 11;
         public static final int LIMIT_SWITCH_TOP = 0;
         public static final int LIMIT_SWITCH_BOTTOM = 1;
-        public static final int ELEVATOR_CANCODER = 166;
     }
 
     // End effector

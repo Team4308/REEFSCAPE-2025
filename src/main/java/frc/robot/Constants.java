@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -10,8 +9,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import swervelib.math.Matter;
 
@@ -30,9 +29,8 @@ public final class Constants {
     // public static final class AutonConstants
     // {
     //
-    // public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0,
-    // 0);
-    // public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
+    //  public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
+    //  public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
     // }
     public static final class Swerve {
         // Hold time on motor brakes when disabled
@@ -69,74 +67,48 @@ public final class Constants {
         static {
             ELEVATOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Units
-            // .radiansPerSecondToRotationsPerMinute(20);
-            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-            // ELEVATOR_CONFIG.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
-            // Units.rotationsToRadians(3);
-            // ELEVATOR_CONFIG.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-            // ELEVATOR_CONFIG.Slot0.kG = 0.3;
-            // ELEVATOR_CONFIG.Slot0.kS = 0.4;
-            ELEVATOR_CONFIG.Slot0.kP = 0.0;
-            ELEVATOR_CONFIG.Slot0.kI = 0.0;
-            ELEVATOR_CONFIG.Slot0.kD = 0.0;
         }
+
+        public static final double tolerance = 0.01; // meters
+        public static final double maxVelocity = 5.42; // m/s
+        public static final double maxAcceleration = 11.91; // m/s^2
 
         // Tunin
         public static final ProfiledPIDController pidController = new ProfiledPIDController(1.5, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(5.42, 11.91), 0.02);
+                new TrapezoidProfile.Constraints(maxVelocity, maxAcceleration), 0.02);
         public static final ElevatorFeedforward feedforward = new ElevatorFeedforward(0.0, 0.40, 2.0, 0.0);
 
         // Elevator physical constants
-        public static final double GEAR_RATIO = 4.8611111111111111111111111111111111;
-        public static final double SPOOL_RADIUS = Units.inchesToMeters(1.757); // INCHES ( CHANGE )
-        public static final double floorToEvevatorHeight = Units.inchesToMeters(4.875); // INCHES (CHANGE )
+        public static final double GEAR_RATIO = 175/36;
+        public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(2 * Math.PI * 1.757);
         public static double MAX_HEIGHT = Units.inchesToMeters(64);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
         // Reef Zone heights inches
-        public static final double L1 = Units.inchesToMeters(8.0+8);
+        public static final double L1 = Units.inchesToMeters(6.0);
         public static final double L2 = Units.inchesToMeters(20.0);
         public static final double L3 = Units.inchesToMeters(39.0);
         public static final double L4 = MAX_HEIGHT;
-        public static final double ALGAE1 = Units.inchesToMeters(39.0); // idk bro
-        public static final double ALGAE2 = Units.inchesToMeters(60.0); // idk bro
+        public static final double ALGAE1 = Units.inchesToMeters(39.0);
+        public static final double ALGAE2 = Units.inchesToMeters(60.0);
 
         // Speed constants (in meters per second)
-        public static final double L1Velocity = 1; // Custom speed for L1
-        public static final double MAX_SPEED = 0.02; // Maximum safe speed: 0.05 m/s
-        public static final double NORMAL_SPEED = 0.01; // Normal operation: 0.03 m/s
-        public static final double SLOW_SPEED = 0.005; // Precise movement: 0.01 m/s
         public static final double ALGAE_REMOVAL_SPEED = 1;
-
-        // Convert speeds to motor RPS using spool circumference
-        public static final double SPOOL_CIRCUMFERENCE = 2 * Math.PI * SPOOL_RADIUS;
-        public static final double MAX_MOTOR_RPS = (MAX_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
-        public static final double NORMAL_MOTOR_RPS = (NORMAL_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
-        public static final double SLOW_MOTOR_RPS = (SLOW_SPEED / SPOOL_CIRCUMFERENCE) * GEAR_RATIO;
-
-        // Calibration constants - also slowed down
-        public static final double CALIBRATION_VOLTAGE_DOWN = -0.3;
-        public static final double CALIBRATION_VOLTAGE_UP = 0.4;
-
-        // Calibration constants
-        public static final double CURRENT_THRESHOLD = 20.0; // Current spike threshold for detecting limits
     }
 
     public static class EndEffector {
-        public static final double algaeDeadZone = 3;
+
+        public static final ProfiledPIDController algaePID = new ProfiledPIDController(0.005, 0.0, 0.0,
+            new TrapezoidProfile.Constraints(180, 360), 0.02);
+        public static final ArmFeedforward algaeFeedforward = new ArmFeedforward(0.0, 0.32, 0.0035, 0.0);
 
         // Positions
         public static class algaePositions {
             public static final double minPosition = -90.0;
             public static final double maxPosition = 120;
-            public static final double restPosition = -90;
             public static final double removeAlgaePosition = -30;
-            public static final double holdBargePosition = 110;
-            public static final double removeBargePosition = 45;
         }
 
-        public static final double algaeArmTolerance = 30;
+        public static final double algaeArmTolerance = 15;
 
         public static class speeds {
             // arbitray values
@@ -144,25 +116,8 @@ public final class Constants {
             public static final double L23 = 50;
             public static final double L4 = 10;
 
-            public static final double maxAlgaeVelocity = 180;
-            public static final double maxAlgaeAcceleration = 360;
             public static final double intake = 10;
             public static final double removeAlgae = -50;
-        }
-
-        // PID
-        public static class PID {
-            public static final double kP = 0.005;
-            public static final double kI = 0;
-            public static final double kD = 0;
-        }
-
-        // FeedForward
-        public static class FeedForward {
-            public static final double kS = 0;
-            public static final double kG = 0.32;
-            public static final double kV = 0.0035;
-            public static final double kA = 0.0;
         }
     }
 

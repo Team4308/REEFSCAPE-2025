@@ -4,6 +4,7 @@ package frc.robot.commands.SimpleControl;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.constElevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class SimpleElevator extends Command {
@@ -33,7 +34,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public boolean isFinished() {
-        return subsystem.isAtPosition();
+        return constElevator.pidController.atSetpoint();
     }
 
 }

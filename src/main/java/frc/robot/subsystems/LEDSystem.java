@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
-import edu.wpi.first.math.util.Units.*;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
@@ -13,10 +12,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Constants.constElevator;
-import frc.robot.Constants.constLED;
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.hal.simulation.SimDeviceDataJNI;
 
 public class LEDSystem extends SubsystemBase {
   private ElevatorSubsystem m_elevator;
@@ -106,7 +103,7 @@ public class LEDSystem extends SubsystemBase {
             .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.7), Meters.of(1.0/60.0));
         
         LEDPattern heightMask = LEDPattern.progressMaskLayer(() -> 
-            m_elevator.getPositionInMeters() - 0.1 / m_elevator.getMaxHeight());  
+            m_elevator.getPositionInMeters() - 0.1 / constElevator.MAX_HEIGHT);  
         
         teleopBase.mask(heightMask).applyTo(m_buffer);
         break;
@@ -146,7 +143,7 @@ public class LEDSystem extends SubsystemBase {
       default:
         LEDPattern defaultBase = LEDPattern.solid(Color.kBlue);
         LEDPattern defaultMask = LEDPattern.progressMaskLayer(() -> 
-            m_elevator.getPositionInMeters() / m_elevator.getMaxHeight());
+            m_elevator.getPositionInMeters() / constElevator.MAX_HEIGHT);
         defaultBase.mask(defaultMask).applyTo(m_buffer);
         break;
     }

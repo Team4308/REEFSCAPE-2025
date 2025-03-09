@@ -1,11 +1,12 @@
 
 package frc.robot.commands.AlgaeRemoval;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.Constants;
-import frc.robot.commands.ElevatorwithVelocity;
+import frc.robot.Constants.EndEffector;
+import frc.robot.Constants.constElevator;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.subsystems.AlgaeArmSubsystem;
@@ -15,12 +16,12 @@ public class RemoveL1 extends SequentialCommandGroup {
         public RemoveL1(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
                         AlgaeArmSubsystem algaeArmSubsystem) {
                 addCommands(
-                                new SimpleElevator(() -> Constants.constElevator.ALGAE1, elevatorSubsystem),
-                                new SimpleAlgae(() -> Constants.EndEffector.algaePositions.removeAlgaePosition,
+                                new SimpleElevator(() -> constElevator.ALGAE1, elevatorSubsystem),
+                                new SimpleAlgae(() -> EndEffector.algaePositions.removeAlgaePosition,
                                                 algaeArmSubsystem),
+                                new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.ALGAE_REMOVAL_SPEED, constElevator.maxAcceleration)),
                                 new ParallelDeadlineGroup(
-                                                new ElevatorwithVelocity(() -> Constants.constElevator.MIN_HEIGHT,
-                                                                () -> 0.25, elevatorSubsystem),
+                                                new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem),
                                                 new AlgaeRoller(() -> -50.0, rollerSubsystem)));
         }
 }

@@ -5,15 +5,11 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.function.DoubleUnaryOperator;
-
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
-import frc.robot.Constants;
 import frc.robot.Constants.Slapdown;
 import frc.robot.Ports;
 
@@ -40,7 +36,7 @@ public class SlapdownSubsystem extends SubsystemBase {
         double pidOut = pidController.calculate(curPoint, setPoint);
 
         double feedforwardOutput = slapdownArmFeedforward.calculate(Math.toRadians(curPoint),
-                Constants.EndEffector.speeds.maxAlgaeVelocity);
+                69.0);  // change
         feedforwardOutput = DoubleUtils.mapRange(feedforwardOutput, -12, 12, -1, 1);
 
         double output = pidOut + feedforwardOutput;

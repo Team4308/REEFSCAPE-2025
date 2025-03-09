@@ -1,32 +1,19 @@
 package frc.robot.subsystems;
 
-
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import ca.team4308.absolutelib.control.JoystickHelper;
 import ca.team4308.absolutelib.control.XBoxWrapper;
 import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.constraint.MaxVelocityConstraint;
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports;
 import frc.robot.Robot;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private static double kDt = 0.02;
-
-  private static final double POSITION_TOLERANCE = 0.01; // meters
   private Double maxHeight = constElevator.MAX_HEIGHT;
   private Double botHeight = constElevator.MIN_HEIGHT;
   private double targetPosition = botHeight;
@@ -34,10 +21,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX rightMotorLeader;
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
-  private CANcoder cancoder;
   private Double encoderOffset = 0.0;
-
-  private double currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
 
   public ElevatorSubsystem() {
     leftMotorFollower = new TalonFX(Ports.Elevator.ELEVATOR_FOLLOWER);
@@ -46,11 +30,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     bottomLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_BOTTOM);
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
-    cancoder = new CANcoder(Ports.Elevator.ELEVATOR_CANCODER);
 
-    cancoder.setPosition(0);
+    constElevator.pidController.setTolerance(constElevator.tolerance);
 
-    constElevator.pidController.setTolerance(POSITION_TOLERANCE);
+    stopControllers();
   }
 
   /**
@@ -76,21 +59,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         -12.0,
         12.0);
 
-    /*System.out.print(getPositionInMeters());
-    SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
-    System.out.print(", ");
-    System.out.print(targetPosition);
-    SmartDashboard.putNumber("target", targetPosition);
-    System.out.print(", ");
-    System.out.print(pidOutput);
-    SmartDashboard.putNumber("pid output", pidOutput);
-    System.out.print(", ");
-    System.out.println(constElevator.pidController.getSetpoint().velocity);*/
     SmartDashboard.putNumber("Setpoint Position", constElevator.pidController.getSetpoint().position);
-    SmartDashboard.putNumber("Setpoint Velocity", constElevator.pidController.getSetpoint().velocity);
-
-    SmartDashboard.putNumber("elevatorFeedforward", feedforwardVoltage);
-    SmartDashboard.putNumber("elevatorFeedback", pidOutput);
 
     if (bottomLimitSwitch.get()) {
       return Math.max(0, totalVoltage);
@@ -99,16 +68,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     return totalVoltage;
-  }
-
-  /**
-   * Checks if the elevator is at the desired position
-   * 
-   * @return Boolean
-   * 
-   */
-  public boolean isAtPosition() {
-    return Math.abs(getPositionInMeters() - targetPosition) < POSITION_TOLERANCE;
   }
 
   // Preset position commands
@@ -120,7 +79,6 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public Command goToLevel(int lvl) {
     return runOnce(() -> {
-      //System.out.println("Setting level to: " + lvl);
       switch (lvl) {
         case 0:
           setPosition(botHeight);
@@ -144,26 +102,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     });
   }
 
-  // Speed control
-
-  public void setNormalSpeed() {
-    currentVelocityLimit = constElevator.NORMAL_MOTOR_RPS;
-  }
-
-  public void setSlowSpeed() {
-    currentVelocityLimit = constElevator.SLOW_MOTOR_RPS;
-  }
-
-  public void setMaxSpeed() {
-    currentVelocityLimit = constElevator.MAX_MOTOR_RPS;
-  }
-
-  public void setCustomSpeed(double speedMetersPerSecond) {
-    currentVelocityLimit = speedMetersPerSecond * constElevator.GEAR_RATIO;
-  }
-
-  public double getCurrentSpeed() {
-    return currentVelocityLimit;
+  // Speed Control
+  public void setConstraints(double velocity, double acceleration) {
+    constElevator.pidController.setConstraints(new TrapezoidProfile.Constraints(velocity, acceleration));
   }
 
   // Elevator data
@@ -183,8 +124,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     double motorRotations = rightMotorLeader.getPosition().getValueAsDouble() + encoderOffset;
     return (motorRotations / constElevator.GEAR_RATIO);
-    // double encoder = cancoder.getPosition().getValueAsDouble() * 360d;
-    // return encoder / constElevator.GEAR_RATIO * 4 ;// needs to be changed
   }
 
   /**
@@ -193,23 +132,13 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPositionInMeters() {
-    return (getPosition() * constElevator.SPOOL_CIRCUMFERENCE) + constElevator.floorToEvevatorHeight;
+    return (getPosition() * constElevator.SPOOL_CIRCUMFERENCE) + constElevator.MIN_HEIGHT;
   }
 
   public double getTarget() {
     return targetPosition;
   }
 
-  /**
-   * Gets the elevators max meight
-   * 
-   * @return Double
-   */
-  public double getMaxHeight() {
-    return constElevator.MAX_HEIGHT;
-  }
-
-  // Stop the controllers
   /**
    * Stops the controllers
    * 
@@ -242,57 +171,9 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
-    SmartDashboard.putNumber("Elevator Encoder Offset", encoderOffset);
     SmartDashboard.putNumber("Elevator Target", targetPosition);
-    SmartDashboard.putNumber("Elevator Error", targetPosition - getPositionInMeters());
-    SmartDashboard.putBoolean("At Position", isAtPosition());
-    SmartDashboard.putNumber("Elevator Current", rightMotorLeader.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Elevator Voltage", voltage);
+    SmartDashboard.putBoolean("At Position", constElevator.pidController.atSetpoint());
 
-  }
-
-  /**
-   * Homes the elevator
-   * 
-   * @return Null
-   */
-  public Command homeElevator() {
-
-    return run(() -> {
-      // Go down until bottom limit
-      rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_DOWN);
-      leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-    })
-        .until(() -> rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD)
-        .beforeStarting(() -> {
-          setSlowSpeed();
-          System.out.println("Starting elevator homing sequence...");
-        })
-        .andThen(() -> {
-          stopControllers();
-          resetSensorPosition(0.0);
-          System.out.println("Found bottom, moving up...");
-        })
-        .andThen(
-            run(() -> {
-              // Go up until top limit
-              rightMotorLeader.setVoltage(constElevator.CALIBRATION_VOLTAGE_UP);
-              leftMotorFollower.setControl(new Follower(rightMotorLeader.getDeviceID(), true));
-            })
-                .until(() -> rightMotorLeader.getStatorCurrent().getValueAsDouble() > constElevator.CURRENT_THRESHOLD))
-        .finallyDo((interrupted) -> {
-          stopControllers();
-          setNormalSpeed();
-          if (!interrupted) {
-            double foundMaxHeight = getPositionInMeters();
-            /// MAX_HEIGHT = foundMaxHeight;
-            System.out.println("Homing done. New max height: " + foundMaxHeight);
-
-          } else {
-            System.out.println("Homing sequence failed!");
-
-          }
-        });
   }
 
 }

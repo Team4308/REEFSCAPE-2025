@@ -23,7 +23,7 @@ public class SimpleRoller extends Command {
 
     @Override
     public void execute() {
-        subsystem.setRollerOutput(control.get() * 15);
+        subsystem.setRollerOutput(control.get());
     }
 
     @Override
