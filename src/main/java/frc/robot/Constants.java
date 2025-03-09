@@ -5,8 +5,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -51,11 +49,6 @@ public final class Constants {
         public static final double LEFT_Y_DEADBAND = 0.1;
         public static final double RIGHT_X_DEADBAND = 0.1;
         public static final double TURN_CONSTANT = 6;
-    }
-
-    public static class GamePieces {
-        public static final Pose3d kReefCenterBlue = new Pose3d(0.0, 0.0, 0.0, new Rotation3d());
-        public static final Pose3d kReefCenterRed = new Pose3d(0.0, 0.0, 0.0, new Rotation3d());
     }
 
     public static class constLED {
