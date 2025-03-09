@@ -1,31 +1,6 @@
 package frc.robot;
 
 public class Ports {
-    /*** SWERVE MODULE PORTS ***/
-
-    /*
-     * Swerve Modules go:
-     * 0 1
-     * 2 3
-     */
-    public class Swerve {
-        public static final int FL_DRIVE = 0;
-        public static final int FL_ROTATION = 0;
-        public static final int FL_ENCODER = 0;
-
-        public static final int FR_DRIVE = 0;
-        public static final int FR_ROTATION = 0;
-        public static final int FR_ENCODER = 0;
-
-        public static final int BL_DRIVE = 0;
-        public static final int BL_ROTATION = 0;
-        public static final int BL_ENCODER = 0;
-
-        public static final int BR_DRIVE = 0;
-        public static final int BR_ROTATION = 0;
-        public static final int BR_ENCODER = 0;
-    }
-
     /*** SUBSYSTEM IDS ***/
 
     // Controllers
@@ -51,13 +26,8 @@ public class Ports {
 
     // Algae Slapdown
     public static class AlgaeSlapdown {
-        public static final int ALGAE_PIVOT = 8;
-        public static final int ALGAE_ROLLER = 9;
-        public static final int ALGAE_ENCODER = 10;
-    }
-
-    // Pigeon
-    public static class Pigeon {
-        public static final int PIGEON = 166;
+        public static final int ALGAE_PIVOT = 14;
+        public static final int ALGAE_ROLLER = 15;
+        public static final int ALGAE_ENCODER = 69; // change
     }
 }
