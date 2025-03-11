@@ -52,11 +52,17 @@ public final class Constants {
     }
 
     public static class constLED {
+        public static final int LED_PORT = 0; 
         public static final int LED_LENGTH = 56;
+
+        // Idle pattern speficly
         public static final int SCROLL_SPEED = 1;
         public static final int PATTERN_LENGTH = 7; 
         public static final int TRAIL_LENGTH = 3;
+        // Sim
         public static final double SIM_UPDATE_RATE = 0.02;
+        
+        public static final double STATUS_LIGHT_DURATION = 2.0; 
     }
 
     public static class constElevator {

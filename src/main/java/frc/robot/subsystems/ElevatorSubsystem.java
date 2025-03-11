@@ -134,6 +134,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotorFollower.setPosition(setpoint);
   }
 
+  /**
+  * Gets the maximum height of the elevator with offset
+  * @return Double
+  * @see constElevator.MAX_HEIGHT 
+  * @see encoderOffset
+  */
+  public double getMaxHeight() {
+    return constElevator.MAX_HEIGHT + encoderOffset;
+  }
+
   @Override
   public void periodic() {
     double voltage = calculateVoltage();

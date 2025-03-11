@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Ports;
 
 public class CoralRollerSubsystem extends LogSubsystem {
@@ -44,4 +45,9 @@ public class CoralRollerSubsystem extends LogSubsystem {
     public Sendable log() {
         return this;
     }
+    @Override
+    public void periodic(){
+        SmartDashboard.putBoolean("Is Coral Intook", !beamBreak.get());
+    }
+
 }
