@@ -95,7 +95,7 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    robotContainer.updateAlginmentStatus();
+    robotContainer.updateAlignmentStatus();
     if (isShowingStatus) {
       statusTimer -= 0.02; 
       if (statusTimer <= 0) {

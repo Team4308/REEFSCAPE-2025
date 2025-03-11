@@ -248,11 +248,11 @@ public class RobotContainer {
         }
 
         public void periodic() {
-               
+
         }
 
         // Dont question it 
-        public void updateAlginmentStatus() { 
+        public void updateAlignmentStatus() { 
                 SmartDashboard.putBoolean("isAligned", drivebase.isAligned());
                 if (drivebase.isAligned()) {
                         m_ledSubsystem.setLedState("Aligned");
