@@ -230,17 +230,17 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public Pose2d getClosestLeftReefPose() {
     if (isRedAlliance()) {
-      return getPose().nearest(FieldLayout.Reef.RED_LEFT_REEF_POSES);
+      return getPose().nearest(FieldLayout.REEF.RED_LEFT_REEF_POSES);
     } else {
-      return getPose().nearest(FieldLayout.Reef.BLUE_LEFT_REEF_POSES);
+      return getPose().nearest(FieldLayout.REEF.BLUE_LEFT_REEF_POSES);
     }
   }
 
   public Pose2d getClosestRightReefPose() {
     if (isRedAlliance()) {
-      return getPose().nearest(FieldLayout.Reef.RED_RIGHT_REEF_POSES);
+      return getPose().nearest(FieldLayout.REEF.RED_RIGHT_REEF_POSES);
     } else {
-      return getPose().nearest(FieldLayout.Reef.BLUE_RIGHT_REEF_POSES);
+      return getPose().nearest(FieldLayout.REEF.BLUE_RIGHT_REEF_POSES);
     }
   }
 

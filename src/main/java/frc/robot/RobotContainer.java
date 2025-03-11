@@ -6,7 +6,7 @@ package frc.robot;
 
 import java.io.File;
 
-import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -18,10 +18,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.Constants.Operator;
 import frc.robot.commands.Intake;
 import frc.robot.commands.AlgaeRemoval.AlgaeRoller;
@@ -59,6 +62,8 @@ public class RobotContainer {
         private final SimpleRoller SimpleRollerCommand;
         private final SimpleAlgae SimpleAlgaeCommand;
         private final SimpleElevator SimpleElevatorCommand;
+
+        private final SendableChooser<Command> autoChooser;
 
         // Converts driver input into a field-relative ChassisSpeeds that is controlled
         // by angular velocity.
@@ -129,7 +134,8 @@ public class RobotContainer {
                 configureDriverBindings();
                 configureOperatorBindings();
                 DriverStation.silenceJoystickConnectionWarning(true);
-                NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto Chooser", autoChooser);
         }
 
         private void configureDriverBindings() {
@@ -250,8 +256,7 @@ public class RobotContainer {
          * @return the command to run in autonomous
          */
         public Command getAutonomousCommand() {
-                // An example command will be run in autonomous
-                return drivebase.getAutonomousCommand("New Auto");
+                return autoChooser.getSelected();
         }
 
         public void periodic() {

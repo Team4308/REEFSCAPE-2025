@@ -94,11 +94,6 @@
       "/SmartDashboard/navX-Sensor[4]": "Gyro"
     },
     "windows": {
-      "/SmartDashboard/Encoders": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Field": {
         "OdometryPose": {
           "arrowColor": [
@@ -131,7 +126,10 @@
         "left": 534,
         "right": 3466,
         "top": 291,
-        "width": 17.54825210571289
+        "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
       }
     }
   },
@@ -156,6 +154,9 @@
   },
   "NetworkTables Info": {
     "visible": true
+  },
+  "NetworkTables View": {
+    "visible": false
   },
   "Plot": {
     "Plot <0>": {
