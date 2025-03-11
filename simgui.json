@@ -2,7 +2,7 @@
   "HALProvider": {
     "Addressable LEDs": {
       "0": {
-        "columns": 61
+        "columns": 39
       },
       "window": {
         "visible": true
@@ -67,6 +67,11 @@
       "window": {
         "visible": false
       }
+    },
+    "RoboRIO": {
+      "window": {
+        "visible": true
+      }
     }
   },
   "NTProvider": {
@@ -94,11 +99,6 @@
       "/SmartDashboard/navX-Sensor[4]": "Gyro"
     },
     "windows": {
-      "/SmartDashboard/Encoders": {
-        "window": {
-          "visible": true
-        }
-      },
       "/SmartDashboard/Field": {
         "OdometryPose": {
           "arrowColor": [
@@ -292,7 +292,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <2>": {
       "plots": [

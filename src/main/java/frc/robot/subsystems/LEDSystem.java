@@ -3,18 +3,20 @@ package frc.robot.subsystems;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Swerve;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.constElevator;
 import frc.robot.Constants.constLED;
-import frc.robot.subsystems.swervedrive.SwerveSubsystem;
-
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+
+import java.util.Optional;
+
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
 
@@ -23,14 +25,11 @@ public class LEDSystem extends SubsystemBase {
 
   private final AddressableLED m_led;
   private final AddressableLEDBuffer m_buffer;
+  private final RobotContainer robotContainer;
 
   private String led_status = "Idle";
   public String robot_status = "A";
   private int scrollOffset = 0;
-  private Color statusColor;
-  private double statusLightTimer = 0;
-  private boolean showingStatus = false;
- 
 
   private SimDevice m_simDevice;
   private SimDouble m_simR;
@@ -38,7 +37,14 @@ public class LEDSystem extends SubsystemBase {
   private SimDouble m_simB;
   private SimDouble m_simBrightness;
 
-  public LEDSystem() {
+  public String previousState = "Idle";
+  public String currentState = "Idle";
+  private boolean isShowingStatus = false;
+  private double statusTimer = 0;
+  private static final double STATUS_DURATION = 1.0; 
+
+  public LEDSystem(RobotContainer robotContainer) {
+    this.robotContainer = robotContainer;
     m_led = new AddressableLED(Constants.constLED.LED_PORT);
     m_buffer = new AddressableLEDBuffer(Constants.constLED.LED_LENGTH);
     
@@ -80,17 +86,31 @@ public class LEDSystem extends SubsystemBase {
   * @param status
   */
   public void setLedState(String status) {
-    led_status = status;
+    if (!status.equals(currentState)) {
+      previousState = currentState;
+      currentState = status;
+    }
   }
 
 
   @Override
   public void periodic() {
-  
+    robotContainer.updateAlginmentStatus();
+    if (isShowingStatus) {
+      statusTimer -= 0.02; 
+      if (statusTimer <= 0) {
+        isShowingStatus = false;
+        led_status = previousState;
+      }
+    } else if (!currentState.equals(led_status)) {
+      isShowingStatus = true;
+      statusTimer = STATUS_DURATION;
+      led_status = currentState;
+    }
+
     applyPattern(led_status);
     m_led.setData(m_buffer);
     updateSimulation();
-    
   }
 
 
@@ -100,14 +120,41 @@ public class LEDSystem extends SubsystemBase {
    */
 
   private void applyPattern(String state) {
+    // Show brief status indication by modifying the normal patterns
+    if (isShowingStatus) {
+      switch (state) {
+        case "Aligned":
+          LEDPattern.solid(Color.kGreen)
+              .blink(Units.Seconds.of(0.2))
+              .applyTo(m_buffer);
+          return;
+        case "Fault":
+          LEDPattern.solid(Color.kRed)
+              .blink(Units.Seconds.of(0.2))
+              .applyTo(m_buffer);
+          return;
+      }
+    }
+
+    // Normal pattern handling
     switch (state) {
       case "Idle":
         for (int i = 0; i < Constants.constLED.LED_LENGTH; i++) {
           int position = (i + scrollOffset) % (constLED.PATTERN_LENGTH * 3);
-          setIdlePattern(m_buffer, i, position);
+          Optional<Alliance> alliance = DriverStation.getAlliance();
+          double r = 1.0, g = 0.0, b = 0.0; // Default to red
+          
+          if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+            r = 0.0;
+            g = 0.0;
+            b = 1.0;
+          }
+          
+          setIdlePattern(m_buffer, i, position, r, g, b);
         }
         scrollOffset = (scrollOffset + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
         break;
+
         
       case "Auto":
         LEDPattern basePattern = LEDPattern.rainbow(180, 240)
@@ -121,13 +168,16 @@ public class LEDSystem extends SubsystemBase {
       LEDPattern teleopBase = LEDPattern.rainbow(255, 128)  
             .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.7), Meters.of(1.0/constLED.LED_LENGTH));
         LEDPattern heightMask = LEDPattern.progressMaskLayer(() -> 
-           m_elevator.getPositionInMeters() - 0.1 / m_elevator.getMaxHeight());  
+           m_elevator.getPositionInMeters() - 0.1 / constElevator.MAX_HEIGHT);  
         teleopBase.mask(heightMask).applyTo(m_buffer);
       break;
 
-      // Test state of Robot idk when this is used tbh
       case "Aligned":
         LEDPattern.solid(Color.kGreen).applyTo(m_buffer);
+      break;
+      
+      case "Coral":
+        LEDPattern.solid(Color.kYellow).applyTo(m_buffer);
       break;
 
       case "Test":
@@ -144,30 +194,51 @@ public class LEDSystem extends SubsystemBase {
       default:
         LEDPattern.solid(Color.kBlue)
             .mask(LEDPattern.progressMaskLayer(() -> 
-                m_elevator.getPositionInMeters() / m_elevator.getMaxHeight()))
+                m_elevator.getPositionInMeters() / constElevator.MAX_HEIGHT))
             .applyTo(m_buffer);
         break;
     }
   }
 
-
-  // Hade to create a helper function 
-  private void setIdlePattern(AddressableLEDBuffer buffer, int i, int position) {
+  /**
+   *  Sets the LEDS to be a fading value from given (R,G,B) to White 
+   * @param buffer Led Buffer
+   * @param i Led index
+   * @param position Current Pos
+   * @param baseR Red 
+   * @param baseG Green
+   * @param baseB Blue
+  */
+  private void setIdlePattern(AddressableLEDBuffer buffer, int i, int position, double baseR, double baseG, double baseB) {
     if (position < constLED.PATTERN_LENGTH) {
       double fade = getFadeValue(position, constLED.PATTERN_LENGTH);
-      buffer.setLED(i, new Color(fade * 1.0, 0, 0));
+      double blendFactor = fade * 0.3;
+      buffer.setLED(i, new Color(
+          baseR + (blendFactor * (1.0 - baseR)),
+          baseG + (blendFactor * (1.0 - baseG)),
+          baseB + (blendFactor * (1.0 - baseB))
+      ));
     } else if (position < constLED.PATTERN_LENGTH * 2) {
       double fade = getFadeValue(position - constLED.PATTERN_LENGTH, constLED.PATTERN_LENGTH);
-      buffer.setLED(i, new Color(1.0, fade, fade));
+      double blendFactor = 0.3 + (fade * 0.4);
+      buffer.setLED(i, new Color(
+          baseR + (blendFactor * (1.0 - baseR)),
+          baseG + (blendFactor * (1.0 - baseG)),
+          baseB + (blendFactor * (1.0 - baseB))
+      ));
     } else {
-      double fade = 1.0 - getFadeValue(position - (constLED.PATTERN_LENGTH * 2), constLED.PATTERN_LENGTH);
-      buffer.setLED(i, new Color(fade, fade, fade));
+      double fade = getFadeValue(position - (constLED.PATTERN_LENGTH * 2), constLED.PATTERN_LENGTH);
+      double blendFactor = 0.7 + (fade * 0.3);
+      buffer.setLED(i, new Color(
+          baseR + (blendFactor * (1.0 - baseR)),
+          baseG + (blendFactor * (1.0 - baseG)),
+          baseB + (blendFactor * (1.0 - baseB))
+      ));
     }
   }
 
   /** Update Simulation
    * @brief Updates the simulation values for the LED strip
-   * 
    */
   private void updateSimulation() {
     if (m_simDevice != null) {

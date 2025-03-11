@@ -16,6 +16,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -108,7 +109,7 @@ public class RobotContainer {
         SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
 
         public RobotContainer() {
-                m_ledSubsystem = new LEDSystem();
+                m_ledSubsystem = new LEDSystem(RobotContainer.this);
                 m_ElevatorSubsystem = new ElevatorSubsystem();
                 m_ledSubsystem.setElevator(m_ElevatorSubsystem);
                 m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
@@ -247,6 +248,20 @@ public class RobotContainer {
         }
 
         public void periodic() {
+               
+        }
+
+        // Dont question it 
+        public void updateAlginmentStatus() { 
+                SmartDashboard.putBoolean("isAligned", drivebase.isAligned());
+                if (drivebase.isAligned()) {
+                        m_ledSubsystem.setLedState("Aligned");
+                        
+                } else {
+                        if (m_ledSubsystem.getLedState().equals("Aligned")) {
+                             m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
+                        }
+                }
         }
 
         private double joystickAlgaeArm() {

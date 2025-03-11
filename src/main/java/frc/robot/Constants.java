@@ -53,12 +53,18 @@ public final class Constants {
 
     public static class constLED {
         public static final int LED_PORT = 0; 
-        public static final int LED_LENGTH = 56;
+
+
+        public static final int SponsorPlate_Length = 56;
+        public static final int Funnel_Length = 60;
+
+
+        public static final int LED_LENGTH = SponsorPlate_Length + Funnel_Length;
 
         // Idle pattern speficly
         public static final int SCROLL_SPEED = 1;
-        public static final int PATTERN_LENGTH = 7; 
-        public static final int TRAIL_LENGTH = 3;
+        public static final int PATTERN_LENGTH = 4; 
+        public static final int TRAIL_LENGTH = 2;
         // Sim
         public static final double SIM_UPDATE_RATE = 0.02;
         
