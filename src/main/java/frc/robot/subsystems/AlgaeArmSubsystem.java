@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -9,62 +7,46 @@ import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
-import frc.robot.Ports;
-import frc.robot.Constants.EndEffector;
+import frc.robot.Constants.constEndEffector;
+import frc.robot.Ports.EndEffector;
 
 public class AlgaeArmSubsystem extends LogSubsystem {
-    private TalonFX algaeMotor = new TalonFX(Ports.EndEffector.ALGAE_MOTOR);
+    private TalonFX algaeMotor = new TalonFX(EndEffector.ALGAE_MOTOR);
 
-    private double targetAngle = Constants.EndEffector.algaePositions.minPosition;
+    public double targetAngle = constEndEffector.algaePivot.MIN_ANGLE;
 
-    private double offset = 0.0;
+    private double encoderOffset = 0.0;
 
     public AlgaeArmSubsystem() {
-        var config = new Slot0Configs();
-        config.kS = 0.1; // Add 0.1 V output to overcome static friction
-        config.kV = 0.12; // A velocity target of 1 rps results in 0.12 V output
-        config.kP = 0.11; // An error of 1 rps results in 0.11 V output
-        config.kI = 0; // no output for integrated error
-        config.kD = 0;
-        TalonFXConfiguration configuration = new TalonFXConfiguration();
-        configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        algaeMotor.getConfigurator().apply(configuration);
-        algaeMotor.getConfigurator().apply(config);
+        algaeMotor.setNeutralMode(NeutralModeValue.Brake);
 
-        offset = -algaeMotor.getPosition().getValueAsDouble() / 4.5 * 180 - 90;
+        encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
 
-        EndEffector.algaePID.setTolerance(EndEffector.algaeArmTolerance);
+        constEndEffector.algaePivot.PID_CONTROLLER.setTolerance(constEndEffector.algaePivot.TOLERANCE);
 
         stopControllers();
     }
 
     public double getAlgaePosition() {
-        return (algaeMotor.getPosition().getValueAsDouble()) / 4.5 * 180 + offset;
+        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset) * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.MIN_ANGLE;
     }
 
     public void goToTargetPosition() {
-        // 0 Degrees is always parallel to the ground
         double currentAngle = getAlgaePosition();
 
-        double motorVoltage = EndEffector.algaePID.calculate(currentAngle, targetAngle);
+        double motorVoltage = constEndEffector.algaePivot.PID_CONTROLLER.calculate(currentAngle, targetAngle);
 
-        double feedforwardOutput = EndEffector.algaeFeedforward.calculate(Math.toRadians(currentAngle),
-                EndEffector.algaePID.getSetpoint().velocity);
+        double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
+                constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
         SmartDashboard.putNumber("Algae Arm Angle", currentAngle);
-        SmartDashboard.putNumber("Algae Arm Target", EndEffector.algaePID.getSetpoint().position);
+        SmartDashboard.putNumber("Algae Arm Target", constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
 
         algaeMotor.setVoltage(DoubleUtils.clamp(feedforwardOutput + motorVoltage, -12, 12));
     }
 
     public void setAlgaePosition(double degree) {
-        targetAngle = DoubleUtils.clamp(degree, Constants.EndEffector.algaePositions.minPosition,
-                Constants.EndEffector.algaePositions.maxPosition);
-    }
-
-    public double getCurrentTarget() {
-        return targetAngle;
+        targetAngle = DoubleUtils.clamp(degree, constEndEffector.algaePivot.MIN_ANGLE, constEndEffector.algaePivot.MAX_ANGLE);
     }
 
     @Override

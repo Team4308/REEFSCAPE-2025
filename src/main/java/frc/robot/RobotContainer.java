@@ -25,7 +25,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Operator;
+import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Intake;
 import frc.robot.commands.AlgaeRemoval.AlgaeRoller;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
@@ -45,7 +47,6 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
 public class RobotContainer {
-
         // Controllers
         private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
         private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
@@ -93,6 +94,7 @@ public class RobotContainer {
                         .deadband(Operator.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
+        
         // Derive the heading axis with math!
         SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
                         .withControllerHeadingAxis(() -> Math.sin(
@@ -108,19 +110,21 @@ public class RobotContainer {
                                                         (Math.PI *
                                                                         2))
                         .headingWhile(true);
+        
+        // Reef align
         SwerveInputStream driveToClosestLeftReef = driveDirectAngle.copy();
         SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
 
         public RobotContainer() {
-                m_ledSubsystem = new LEDSystem();
+                m_ledSubsystem = new LEDSystem(RobotContainer.this);
                 m_ElevatorSubsystem = new ElevatorSubsystem();
                 m_ledSubsystem.setElevator(m_ElevatorSubsystem);
                 m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
                 m_CoralRollerSubsystem = new CoralRollerSubsystem();
 
-                SimpleRollerCommand = new SimpleRoller(() -> triggerRollerControl() * 15, m_CoralRollerSubsystem);
-                SimpleAlgaeCommand = new SimpleAlgae(() -> m_AlgaeArmSubsystem.getCurrentTarget() + joystickAlgaeArm(), m_AlgaeArmSubsystem);
-                SimpleElevatorCommand = new SimpleElevator(() -> m_ElevatorSubsystem.getTarget() + joystickElevatorControl(), m_ElevatorSubsystem);
+                SimpleRollerCommand = new SimpleRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
+                SimpleAlgaeCommand = new SimpleAlgae(() -> m_AlgaeArmSubsystem.targetAngle + joystickAlgaeArm(), m_AlgaeArmSubsystem);
+                SimpleElevatorCommand = new SimpleElevator(() -> m_ElevatorSubsystem.targetPosition + joystickElevatorControl(), m_ElevatorSubsystem);
 
                 m_AlgaeArmSubsystem.setDefaultCommand(SimpleAlgaeCommand);
                 m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
@@ -139,15 +143,15 @@ public class RobotContainer {
         }
 
         private void configureDriverBindings() {
-                Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+                // Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-                Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
-                Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-                Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
+                // Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
+                // Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+                // Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
                 Command driveFieldOrientedAnglularVelocityKeyboard = drivebase
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
-                Command driveSetpointGenKeyboard = drivebase
-                                .driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
+                // Command driveSetpointGenKeyboard = drivebase
+                //                 .driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
                 driveToClosestLeftReef.driveToPose(() -> drivebase.getClosestLeftReefPose(),
                                 new ProfiledPIDController(5, 0, 0,
@@ -161,6 +165,7 @@ public class RobotContainer {
                                 new ProfiledPIDController(5, 0, 0,
                                                 new Constraints(Units.degreesToRadians(360),
                                                                 Units.degreesToRadians(180))));
+                
                 driver.LB.whileTrue(Commands.runEnd(() -> driveToClosestLeftReef.driveToPoseEnabled(true),
                                 () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
                 driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
@@ -172,20 +177,15 @@ public class RobotContainer {
                 driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToLeft(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToLeft(false)));
                 driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToRight(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToRight(false)));
 
-                driver.povDown.whileTrue(Commands.run(drivebase::lock, drivebase));
-                driver.povUp.onTrue(Commands.runOnce(drivebase::zeroGyro, drivebase));
-
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
                 } else {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
                 }
-
                 if (Robot.isSimulation()) {
                         driver.Y.onTrue(Commands
                                         .runOnce(() -> drivebase.resetOdometry(new Pose2d(1, 4, new Rotation2d()))));
                         driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
-
                 }
                 if (DriverStation.isTest()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command
@@ -195,21 +195,18 @@ public class RobotContainer {
                         driver.Y.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
                         driver.Start.onTrue((Commands.runOnce(drivebase::zeroGyro)));
                         driver.Back.whileTrue(drivebase.centerModulesCommand());
-                        driver.LB.onTrue(Commands.none());
                         driver.RightStickButton.onTrue(Commands.none());
                 } else {
                         driver.A.onTrue((Commands.runOnce(drivebase::zeroGyro)));
                         driver.X.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
+                        driver.Y.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
                         driver.B.whileTrue(
                                         drivebase.driveToPose(
                                                         new Pose2d(new Translation2d(4, 4),
                                                                         Rotation2d.fromDegrees(0))));
                         driver.Start.whileTrue(Commands.none());
                         driver.Back.whileTrue(Commands.none());
-                        driver.LB.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                        driver.RB.onTrue(Commands.none());
                 }
-
         }
 
         private void configureOperatorBindings() {
@@ -233,9 +230,9 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers())); // SHOOTING
 
                 // Algae
-                operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.removeAlgaePosition)))
-                                .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.EndEffector.algaePositions.minPosition)))); // Set position to remove algae
-                operator.RB.onTrue(new AlgaeRoller(() -> -50.0, m_CoralRollerSubsystem))
+                operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
+                                .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.MIN_ANGLE)))); // Set position to remove algae
+                operator.RB.onTrue(new AlgaeRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL, m_CoralRollerSubsystem))
                                 .onFalse(new AlgaeRoller(() -> 0.0, m_CoralRollerSubsystem));
 
                 // Elevator
@@ -260,6 +257,20 @@ public class RobotContainer {
         }
 
         public void periodic() {
+
+        }
+
+        // Dont question it 
+        public void updateAlignmentStatus() { 
+                SmartDashboard.putBoolean("isAligned", drivebase.isAligned());
+                if (drivebase.isAligned()) {
+                        m_ledSubsystem.setLedState("Aligned");
+                        
+                } else {
+                        if (m_ledSubsystem.getLedState().equals("Aligned")) {
+                             m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
+                        }
+                }
         }
 
         private double joystickAlgaeArm() {
@@ -271,8 +282,8 @@ public class RobotContainer {
         }
 
         private double triggerRollerControl() {
-                double isPos = deadZone(operator.getRightTrigger());
-                double isNeg = deadZone(operator.getLeftTrigger());
+                double isPos = deadZone(operator.getRightTrigger()) * 15;
+                double isNeg = deadZone(operator.getLeftTrigger()) * 15;
                 if (isPos > 0) {
                         return isPos;
                 } else {
@@ -285,7 +296,7 @@ public class RobotContainer {
         }
 
         private static double deadZone(double integer) {
-                if (0.09 >= integer && integer >= -0.09) {
+                if (Math.abs(integer) < Operator.DEADBAND) {
                         integer = 0;
                 }
                 return integer;

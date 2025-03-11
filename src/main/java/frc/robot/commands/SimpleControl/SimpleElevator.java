@@ -34,7 +34,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public boolean isFinished() {
-        return constElevator.pidController.atSetpoint();
+        return constElevator.PID_CONTROLLER.atSetpoint();
     }
 
 }

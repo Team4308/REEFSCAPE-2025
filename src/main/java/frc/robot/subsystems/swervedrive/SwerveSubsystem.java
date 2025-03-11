@@ -22,7 +22,6 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -30,7 +29,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -140,7 +138,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public void checkTunableValues() {
-    if (!Constants.LoggedDashboard.tuningMode) {
+    if (!Constants.LoggedDashboard.TUNING_MODE) {
       return;
     }
     // Only update LoggedTunableNumbers when enabled
@@ -209,25 +207,6 @@ public class SwerveSubsystem extends SubsystemBase {
     PathfindingCommand.warmupCommand().schedule();
   }
 
-  public Pose3d getReefCenterPose() {
-    if (isRedAlliance()) {
-      return Constants.GamePieces.kReefCenterRed;
-    } else {
-      return Constants.GamePieces.kReefCenterBlue;
-    }
-  }
-
-  // public double getDistanceToReef() {
-  //   Pose3d reefCenterPose = getReefCenterPose();
-  //   return getPose().getTranslation().getDistance(reefCenterPose.toPose2d().getTranslation());
-  // }
-
-  // public Rotation2d getYawToClosestReef() {
-  //   Rotation2d reefRotation = getClosestReefPose().getRotation();
-  //   return reefRotation.plus(swerveDrive.getOdometryHeading());
-  // } // dont use? use direct angle method and pass in 55 deg
-
-
   public Pose2d getClosestLeftReefPose() {
     if (isRedAlliance()) {
       return getPose().nearest(FieldLayout.REEF.RED_LEFT_REEF_POSES);
@@ -253,23 +232,13 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.ReefHeadingAlign.alignTolerance && aligningToLeft) 
-      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.ReefHeadingAlign.alignTolerance && aligningToRight)) 
+    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.ReefHeadingAlign.TOLERANCE && aligningToLeft) 
+      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.ReefHeadingAlign.TOLERANCE && aligningToRight)) 
     {
       return true;
     } 
     return false;
   }
-
-  // public Command aimAtReef(double tolerance) {
-  //   return run(
-  //       () -> {
-  //         drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 0,
-  //             reefHeadingAlignController.calculate(getHeading().getRadians(),
-  //                 getYawToReef().getRadians()),
-  //             getHeading()));
-  //       }).until(() -> Math.abs(getYawToReef().minus(getHeading()).getDegrees()) < tolerance);
-  // }
 
   public Command aimAtTarget(Cameras camera) {
     return run(() -> {

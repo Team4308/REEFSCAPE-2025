@@ -56,7 +56,7 @@ public class LoggedTunableNumber implements DoubleSupplier {
     if (!hasDefault) {
       hasDefault = true;
       this.defaultValue = defaultValue;
-      if (Constants.LoggedDashboard.tuningMode) {
+      if (Constants.LoggedDashboard.TUNING_MODE) {
         SmartDashboard.putNumber(key, SmartDashboard.getNumber(key, defaultValue));
       }
     }
@@ -71,7 +71,7 @@ public class LoggedTunableNumber implements DoubleSupplier {
     if (!hasDefault) {
       return 0.0;
     } else {
-      return Constants.LoggedDashboard.tuningMode ? SmartDashboard.getNumber(key, defaultValue) : defaultValue;
+      return Constants.LoggedDashboard.TUNING_MODE ? SmartDashboard.getNumber(key, defaultValue) : defaultValue;
     }
   }
 

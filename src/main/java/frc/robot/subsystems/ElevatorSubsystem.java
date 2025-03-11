@@ -14,14 +14,13 @@ import frc.robot.Ports;
 import frc.robot.Robot;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private Double maxHeight = constElevator.MAX_HEIGHT;
-  private Double botHeight = constElevator.MIN_HEIGHT;
-  private double targetPosition = botHeight;
+  public double targetPosition = constElevator.MIN_HEIGHT;
   private TalonFX leftMotorFollower;
   private TalonFX rightMotorLeader;
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
   private Double encoderOffset = 0.0;
+  private double simEnc = 0;
 
   public ElevatorSubsystem() {
     leftMotorFollower = new TalonFX(Ports.Elevator.ELEVATOR_FOLLOWER);
@@ -31,7 +30,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
 
-    constElevator.pidController.setTolerance(constElevator.tolerance);
+    constElevator.PID_CONTROLLER.setTolerance(constElevator.TOLERANCE);
 
     stopControllers();
   }
@@ -43,29 +42,17 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Null
    */
   public void setPosition(double setpointMeters) {
-    targetPosition = setpointMeters;
+    targetPosition = DoubleUtils.clamp(setpointMeters, constElevator.MIN_HEIGHT, constElevator.MAX_HEIGHT);
   }
 
   private double calculateVoltage() {
-    targetPosition = DoubleUtils.clamp(targetPosition,
-        botHeight, maxHeight);
+    double pidOutput = constElevator.PID_CONTROLLER.calculate(getPositionInMeters(), targetPosition);
 
-    double pidOutput = constElevator.pidController.calculate(getPositionInMeters(), targetPosition);
+    double feedforwardVoltage = constElevator.FEEDFORWARD.calculate(constElevator.PID_CONTROLLER.getSetpoint().velocity);
 
-    double feedforwardVoltage = constElevator.feedforward.calculate(constElevator.pidController.getSetpoint().velocity);
+    double totalVoltage = DoubleUtils.clamp(pidOutput + feedforwardVoltage, -12.0, 12.0);
 
-    double totalVoltage = DoubleUtils.clamp(
-        pidOutput + feedforwardVoltage,
-        -12.0,
-        12.0);
-
-    SmartDashboard.putNumber("Setpoint Position", constElevator.pidController.getSetpoint().position);
-
-    if (bottomLimitSwitch.get()) {
-      return Math.max(0, totalVoltage);
-    } else if (topLimitSwitch.get()) {
-      return Math.min(0, totalVoltage);
-    }
+    SmartDashboard.putNumber("Setpoint Position", constElevator.PID_CONTROLLER.getSetpoint().position);
 
     return totalVoltage;
   }
@@ -80,8 +67,9 @@ public class ElevatorSubsystem extends SubsystemBase {
   public Command goToLevel(int lvl) {
     return runOnce(() -> {
       switch (lvl) {
+        default:
         case 0:
-          setPosition(botHeight);
+          setPosition(constElevator.MIN_HEIGHT);
           break;
         case 1:
           setPosition(constElevator.L1);
@@ -95,16 +83,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         case 4:
           setPosition(constElevator.MAX_HEIGHT);
           break;
-        default:
-          setPosition(botHeight);
-          break;
       }
     });
   }
 
   // Speed Control
   public void setConstraints(double velocity, double acceleration) {
-    constElevator.pidController.setConstraints(new TrapezoidProfile.Constraints(velocity, acceleration));
+    constElevator.PID_CONTROLLER.setConstraints(new TrapezoidProfile.Constraints(velocity, acceleration));
   }
 
   // Elevator data
@@ -113,8 +98,6 @@ public class ElevatorSubsystem extends SubsystemBase {
    * 
    * @return Double
    */
-  double simEnc = 0;
-
   public double getPosition() {
     if (Robot.isSimulation()) {
       double value = new XBoxWrapper(1).getLeftY();
@@ -135,10 +118,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     return (getPosition() * constElevator.SPOOL_CIRCUMFERENCE) + constElevator.MIN_HEIGHT;
   }
 
-  public double getTarget() {
-    return targetPosition;
-  }
-
   /**
    * Stops the controllers
    * 
@@ -154,6 +133,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     rightMotorLeader.setPosition(setpoint);
     leftMotorFollower.setPosition(setpoint);
   }
+
 
   @Override
   public void periodic() {
@@ -172,7 +152,7 @@ public class ElevatorSubsystem extends SubsystemBase {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
     SmartDashboard.putNumber("Elevator Target", targetPosition);
-    SmartDashboard.putBoolean("At Position", constElevator.pidController.atSetpoint());
+    SmartDashboard.putBoolean("At Position", constElevator.PID_CONTROLLER.atSetpoint());
 
   }
 

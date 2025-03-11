@@ -2,7 +2,7 @@
   "HALProvider": {
     "Addressable LEDs": {
       "0": {
-        "columns": 61
+        "columns": 39
       },
       "window": {
         "visible": true
@@ -66,6 +66,11 @@
       },
       "window": {
         "visible": false
+      }
+    },
+    "RoboRIO": {
+      "window": {
+        "visible": true
       }
     }
   },
@@ -173,7 +178,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 0,
+          "height": 273,
           "series": [
             {
               "color": [
@@ -222,7 +227,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <1>": {
       "plots": [
@@ -238,7 +246,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 0,
+          "height": 905,
           "series": [
             {
               "color": [
@@ -287,7 +295,10 @@
             }
           ]
         }
-      ]
+      ],
+      "window": {
+        "visible": false
+      }
     },
     "Plot <2>": {
       "plots": [
