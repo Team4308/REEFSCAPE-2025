@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +51,8 @@ public class FieldLayout {
         public static final List<Pose2d> BLUE_LEFT_REEF_POSES = List.of(A, C, E, G, I, K);
         public static final List<Pose2d> BLUE_RIGHT_REEF_POSES = List.of(B, D, F, H, J, L);
 
-        public static final List<Pose2d> RED_LEFT_REEF_POSES = getRedLeftReefPoses();
-        public static final List<Pose2d> RED_RIGHT_REEF_POSES = getRedRightReefPoses();
+        public static final List<Pose2d> RED_LEFT_REEF_POSES = new ArrayList<>(getRedLeftReefPoses());
+        public static final List<Pose2d> RED_RIGHT_REEF_POSES = new ArrayList<>(getRedRightReefPoses());
         
     }
 
@@ -63,7 +65,7 @@ public class FieldLayout {
         public static final Pose2d KL = new Pose2d(Units.inchesToMeters(154.377247), Units.inchesToMeters(206.570858), Rotation2d.fromDegrees(-60));
 
         public static final List<Pose2d> BLUE_ALGAE_POSES = List.of(AB, CD, EF, GH, IJ, KL);
-        public static final List<Pose2d> RED_ALGAE_POSES = getRedAlgaePoses();
+        public static final List<Pose2d> RED_ALGAE_POSES = new ArrayList<>(getRedAlgaePoses());
     }
 
     public static class CORAL_STATION {
@@ -74,7 +76,7 @@ public class FieldLayout {
         public static final Pose2d LEFT_NEAR = new Pose2d(Units.inchesToMeters(27.880330), Units.inchesToMeters(265.923340), Rotation2d.fromDegrees(-54));
 
         public static final List<Pose2d> BLUE_CORAL_STATION_POSES = List.of(LEFT_FAR, LEFT_NEAR, RIGHT_FAR, RIGHT_NEAR);
-        public static final List<Pose2d> RED_CORAL_STATION_POSES = getRedCoralStationPoses();
+        public static final List<Pose2d> RED_CORAL_STATION_POSES = new ArrayList<>(getRedCoralStationPoses());
     }
 
     public static Pose2d getRedAlliancePose(Pose2d bluePose) {
@@ -87,8 +89,8 @@ public class FieldLayout {
         Pose2d[] RED_LEFT_REEF_POSES = new Pose2d[REEF.BLUE_LEFT_REEF_POSES.size()];
         for (int i = 0; i < REEF.BLUE_LEFT_REEF_POSES.size(); i++) {
             RED_LEFT_REEF_POSES[i] = getRedAlliancePose(REEF.BLUE_LEFT_REEF_POSES.get(i));
-        }
-        return List.of(RED_LEFT_REEF_POSES);
+        };
+        return new ArrayList<>(Arrays.asList(RED_LEFT_REEF_POSES));
     }
 
     public static List<Pose2d> getRedRightReefPoses() {
@@ -96,7 +98,7 @@ public class FieldLayout {
         for (int i = 0; i < REEF.BLUE_RIGHT_REEF_POSES.size(); i++) {
             RED_RIGHT_REEF_POSES[i] = getRedAlliancePose(REEF.BLUE_RIGHT_REEF_POSES.get(i));
         }
-        return List.of(RED_RIGHT_REEF_POSES);
+        return new ArrayList<>(Arrays.asList(RED_RIGHT_REEF_POSES));
     }
 
     public static List<Pose2d> getRedAlgaePoses(){
@@ -104,7 +106,7 @@ public class FieldLayout {
         for (int i = 0; i < ALGAE.BLUE_ALGAE_POSES.size(); i++) {
                 RED_ALGAE_POSES[i] = getRedAlliancePose(ALGAE.BLUE_ALGAE_POSES.get(i));
         }
-        return List.of(RED_ALGAE_POSES);
+        return new ArrayList<>(Arrays.asList(RED_ALGAE_POSES));
     }
 
     public static List<Pose2d> getRedCoralStationPoses() {
@@ -112,6 +114,6 @@ public class FieldLayout {
         for (int i = 0; i < CORAL_STATION.BLUE_CORAL_STATION_POSES.size(); i++) {
             RED_CORAL_STATION_POSES[i] = getRedAlliancePose(CORAL_STATION.BLUE_CORAL_STATION_POSES.get(i));
         }
-        return List.of(RED_CORAL_STATION_POSES);
+        return new ArrayList<>(Arrays.asList(RED_CORAL_STATION_POSES));
     }
 }

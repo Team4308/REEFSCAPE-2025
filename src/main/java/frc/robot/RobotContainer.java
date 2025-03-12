@@ -166,9 +166,9 @@ public class RobotContainer {
                                                 new Constraints(Units.degreesToRadians(360),
                                                                 Units.degreesToRadians(180))));
                 
-                driver.LB.whileTrue(drivebase.driveToPose(drivebase.getClosestLeftReefPose()));
-                driver.RB.whileTrue(drivebase.driveToPose(drivebase.getClosestRightReefPose()));
-                driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToLeft(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToLeft(false)));
+                driver.LB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
+                driver.RB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToRightReef)));
+                driver.LB.onTrue(new InstantCommand(() -> drivebase.setAligningToLeft(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToLeft(false)));
                 driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToRight(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToRight(false)));
 
                 if (RobotBase.isSimulation()) {
@@ -178,7 +178,7 @@ public class RobotContainer {
                 }
                 if (Robot.isSimulation()) {
                         driver.Y.onTrue(Commands
-                                        .runOnce(() -> drivebase.resetOdometry(new Pose2d(1, 4, new Rotation2d()))));
+                                        .runOnce(() -> drivebase.resetOdometry(new Pose2d(15, 4, new Rotation2d()))));
                         driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
                 }
                 if (DriverStation.isTest()) {
