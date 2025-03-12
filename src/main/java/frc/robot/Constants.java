@@ -90,7 +90,7 @@ public final class Constants {
         // Elevator physical constants
         public static final double GEAR_RATIO = 175/36;
         //public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 1.757);
-        public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 2.5); // Random number that works
+        public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 2.53); // Random number that works
         public static double MAX_HEIGHT = Units.inchesToMeters(56.875);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
 
@@ -99,7 +99,7 @@ public final class Constants {
         public static final double L2 = Units.inchesToMeters(20.0);
         public static final double L3 = Units.inchesToMeters(39.0);
         public static final double ALGAE1 = Units.inchesToMeters(39.0);
-        public static final double ALGAE2 = Units.inchesToMeters(60.0);
+        public static final double ALGAE2 = Units.inchesToMeters(56.875);
 
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 1;
@@ -107,11 +107,11 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.005, 0.0, 0.0,
-                    new TrapezoidProfile.Constraints(180, 360), 0.02);
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.32, 0.0035, 0.0);
+            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.001, 0.0, 0.0,
+                    new TrapezoidProfile.Constraints(360, 720), 0.02);
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.31, 0.0035, 0.0);
 
-            public static final double TOLERANCE = 15.0;
+            public static final double TOLERANCE = 2.5;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 

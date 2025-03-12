@@ -53,7 +53,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     double totalVoltage = DoubleUtils.clamp(pidOutput + feedforwardVoltage, -12.0, 12.0);
 
     SmartDashboard.putNumber("Setpoint Position", constElevator.PID_CONTROLLER.getSetpoint().position);
-    SmartDashboard.putNumber("Elevator Voltage", totalVoltage);
 
     return totalVoltage;
   }
@@ -158,7 +157,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     SmartDashboard.putBoolean("At Position", isAtPosition());
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
-    SmartDashboard.putBoolean("Upper Switch", topLimitSwitch.get());
   }
 
 }
