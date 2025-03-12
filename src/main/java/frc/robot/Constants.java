@@ -83,18 +83,19 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 11.91; // m/s^2
 
         // Tuning
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.5, 0.0, 0.00,
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.5, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION), 0.02);
-        public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.40, 2.0, 0.0);
+        public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.40, 2.3, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 175/36;
-        public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(2 * Math.PI * 1.757);
-        public static double MAX_HEIGHT = Units.inchesToMeters(64);
+        //public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 1.757);
+        public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 2.5); // Random number that works
+        public static double MAX_HEIGHT = Units.inchesToMeters(56.875);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
 
         // Preset heights in inches
-        public static final double L1 = Units.inchesToMeters(6.0);
+        public static final double L1 = Units.inchesToMeters(8.0);
         public static final double L2 = Units.inchesToMeters(20.0);
         public static final double L3 = Units.inchesToMeters(39.0);
         public static final double ALGAE1 = Units.inchesToMeters(39.0);

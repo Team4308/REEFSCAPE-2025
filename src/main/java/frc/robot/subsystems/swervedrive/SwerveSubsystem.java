@@ -74,7 +74,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
   private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-  private final boolean visionDriveTest = true;
+  private final boolean visionDriveTest = false;
   private Vision vision;
 
   private PIDController reefHeadingAlignController = new PIDController(kReefP.get(), kReefI.get(), kReefD.get());
