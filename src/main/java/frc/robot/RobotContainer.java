@@ -168,8 +168,6 @@ public class RobotContainer {
                 
                 driver.LB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
                 driver.RB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToRightReef)));
-                driver.LB.onTrue(new InstantCommand(() -> drivebase.setAligningToLeft(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToLeft(false)));
-                driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToRight(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToRight(false)));
 
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);

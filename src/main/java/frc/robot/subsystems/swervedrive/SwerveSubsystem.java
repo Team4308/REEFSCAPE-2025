@@ -29,8 +29,8 @@ import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 
 import ca.team4308.absolutelib.wrapper.LoggedTunableNumber;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
+// import edu.wpi.first.apriltag.AprilTagFieldLayout;
+// import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -48,7 +48,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+// import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
@@ -65,12 +65,6 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase {
-  private static final LoggedTunableNumber kReefP = new LoggedTunableNumber("Swerve/ReefHeadingAlign/kP",
-      Constants.Swerve.ReefHeadingAlign.kP);
-  private static final LoggedTunableNumber kReefI = new LoggedTunableNumber("Swerve/ReefHeadingAlign/kI",
-      Constants.Swerve.ReefHeadingAlign.kI);
-  private static final LoggedTunableNumber kReefD = new LoggedTunableNumber("Swerve/ReefHeadingAlign/kD",
-      Constants.Swerve.ReefHeadingAlign.kD);
   
   private static final LoggedTunableNumber kAngleP = new LoggedTunableNumber("Swerve/Auton/Angle/kP",
       Constants.Swerve.Auton.Angle.kP);
@@ -90,12 +84,10 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDConstants TRANSLATION_CONTROLLER;
 
   private final SwerveDrive swerveDrive;
-  private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+  //private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
   private Vision vision;
-
-  private PIDController reefHeadingAlignController = new PIDController(kReefP.get(), kReefI.get(), kReefD.get());
   
   private boolean aligningToLeft = false;
   private boolean aligningToRight = false;
@@ -132,7 +124,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     setupPathPlanner();
     // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyro));
-    // TODO: Make sure inversions are correct using simulation. Zero Gyro function might be skewing up robot orientation
+    // Don't use this unless needed, orientation is correct right now
   }
 
   public SwerveSubsystem(SwerveDriveConfiguration driveCfg, SwerveControllerConfiguration controllerCfg) {
@@ -174,8 +166,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     // Only update LoggedTunableNumbers when enabled
     if (DriverStation.isEnabled()) {
-      LoggedTunableNumber.ifChanged(hashCode(),
-          () -> reefHeadingAlignController.setPID(kReefP.get(), kReefI.get(), kReefD.get()), kReefP, kReefI, kReefD);
       LoggedTunableNumber.ifChanged(
           hashCode(), () -> ANGLE_CONTROLLER = new PIDConstants(kAngleP.get(), kAngleI.get(), kAngleD.get()),
                                                                 kAngleP, kAngleI, kAngleD);
@@ -211,9 +201,9 @@ public class SwerveSubsystem extends SubsystemBase {
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
           new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
               // Translation PID constants
-              new PIDConstants(5.0, 0.0, 0.0),
+              TRANSLATION_CONTROLLER,
               // Rotation PID constants
-              new PIDConstants(5.0, 0.0, 0.0)),
+              ANGLE_CONTROLLER),
           config,
           () -> {
             // Boolean supplier that controls when the path will be mirrored for the red alliance
@@ -272,13 +262,37 @@ public class SwerveSubsystem extends SubsystemBase {
     aligningToRight = value;
   }
 
-  public boolean isAligned() {
-    if ((getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()) < Swerve.ReefHeadingAlign.TOLERANCE && aligningToLeft) 
-      || (getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()) < Swerve.ReefHeadingAlign.TOLERANCE && aligningToRight)) 
-    {
+  public boolean isTranslationAligned() {
+    Translation2d currentTranslation2d = getPose().getTranslation();
+    Translation2d closestLeftReefTranslation2d = getClosestLeftReefPose().getTranslation();
+    Translation2d closestRightReefTranslation2d = getClosestRightReefPose().getTranslation();
+    if (currentTranslation2d.getDistance(closestLeftReefTranslation2d) < Swerve.Align.Translation.TOLERANCE
+        || currentTranslation2d.getDistance(closestRightReefTranslation2d) < Swerve.Align.Translation.TOLERANCE) {
       return true;
-    } 
-    return false;
+    } else {
+      return false;
+    }
+
+  }
+
+  public boolean isHeadingAligned() {
+    double currentHeading = getPose().getRotation().getDegrees();
+    double closestLeftReefHeading = getClosestLeftReefPose().getRotation().getDegrees();
+    double closestRightReefHeading = getClosestRightReefPose().getRotation().getDegrees();
+    if ((Math.abs(currentHeading - closestLeftReefHeading) < Swerve.Align.Heading.TOLERANCE)
+        || (Math.abs(currentHeading - closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean isAligned() {
+    if (isTranslationAligned() && isHeadingAligned()) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public Command getAutonomousCommand(String pathName) {

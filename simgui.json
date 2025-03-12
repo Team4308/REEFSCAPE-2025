@@ -55,25 +55,22 @@
       "/SmartDashboard/Field": {
         "OdometryPose": {
           "arrowColor": [
+            240.00001525878906,
             255.0,
-            240.0,
             0.0,
             255.0
           ],
           "color": [
-            217.49996948242188,
+            247.5,
             0.0,
             255.0,
             255.0
-          ]
-        },
-        "Robot": {
-          "style": "Box/Image"
+          ],
+          "length": 0.8640000224113464,
+          "width": 0.8640000224113464
         },
         "XModules": {
-          "arrowSize": 44,
           "length": 0.25,
-          "style": "Hidden",
           "width": 0.25
         },
         "bottom": 1638,
@@ -83,6 +80,17 @@
         "right": 3466,
         "top": 291,
         "width": 17.54825210571289,
+        "window": {
+          "visible": true
+        }
+      },
+      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
         "window": {
           "visible": true
         }
