@@ -28,7 +28,6 @@ public class LEDSystem extends SubsystemBase {
   private final RobotContainer robotContainer;
 
   private String led_status = "Idle";
-  public String robot_status = "A";
   private int scrollOffset = 0;
 
   private SimDevice m_simDevice;

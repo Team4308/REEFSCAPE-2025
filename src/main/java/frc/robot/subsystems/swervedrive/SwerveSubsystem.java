@@ -28,8 +28,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -58,6 +60,8 @@ import swervelib.parser.SwerveDriveConfiguration;
 import swervelib.parser.SwerveParser;
 import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.networktables.StructTopic;
 
 public class SwerveSubsystem extends SubsystemBase {
   private static final LoggedTunableNumber kReefP = new LoggedTunableNumber("Swerve/ReefHeadingAlign/kP",
@@ -70,13 +74,19 @@ public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
   private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
   private Vision vision;
 
   private PIDController reefHeadingAlignController = new PIDController(kReefP.get(), kReefI.get(), kReefD.get());
   
   private boolean aligningToLeft = false;
   private boolean aligningToRight = false;
+
+  private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Robot Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher1 = NetworkTableInstance.getDefault().getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault().getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
+
+
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -131,6 +141,13 @@ public class SwerveSubsystem extends SubsystemBase {
       vision.updatePoseEstimation(swerveDrive);
     }
     checkTunableValues();
+    SmartDashboard.putNumber("Robot Pose X", getPose().getX());
+    SmartDashboard.putNumber("Robot Pose Y", getPose().getY());
+    SmartDashboard.putNumber("Robot Pose Theta", getPose().getRotation().getDegrees());
+    publisher.set(getPose());
+    publisher1.set(getClosestLeftReefPose());
+    publisher2.set(getClosestRightReefPose());
+
   }
 
   @Override
@@ -532,4 +549,5 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveDrive getSwerveDrive() {
     return swerveDrive;
   }
+
 }

@@ -49,6 +49,10 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         targetAngle = DoubleUtils.clamp(degree, constEndEffector.algaePivot.MIN_ANGLE, constEndEffector.algaePivot.MAX_ANGLE);
     }
 
+    public boolean isAtPosition() {
+        return Math.abs(getAlgaePosition() - targetAngle) < constEndEffector.algaePivot.TOLERANCE;
+    }
+
     @Override
     public void periodic() {
         goToTargetPosition();

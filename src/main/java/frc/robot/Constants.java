@@ -56,7 +56,7 @@ public final class Constants {
 
 
         public static final int SponsorPlate_Length = 56;
-        public static final int Funnel_Length = 60;
+        public static final int Funnel_Length = 0;
 
 
         public static final int LED_LENGTH = SponsorPlate_Length + Funnel_Length;

@@ -166,14 +166,8 @@ public class RobotContainer {
                                                 new Constraints(Units.degreesToRadians(360),
                                                                 Units.degreesToRadians(180))));
                 
-                driver.LB.whileTrue(Commands.runEnd(() -> driveToClosestLeftReef.driveToPoseEnabled(true),
-                                () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
-                driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
-                                () -> driveToClosestRightReef.driveToPoseEnabled(false)));
-                driver.LB.whileTrue(Commands.runEnd(() -> driveToClosestLeftReef.driveToPoseEnabled(true),
-                                () -> driveToClosestLeftReef.driveToPoseEnabled(false)));
-                driver.RB.whileTrue(Commands.runEnd(() -> driveToClosestRightReef.driveToPoseEnabled(true),
-                                () -> driveToClosestRightReef.driveToPoseEnabled(false)));
+                driver.LB.whileTrue(drivebase.driveToPose(drivebase.getClosestLeftReefPose()));
+                driver.RB.whileTrue(drivebase.driveToPose(drivebase.getClosestRightReefPose()));
                 driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToLeft(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToLeft(false)));
                 driver.RB.onTrue(new InstantCommand(() -> drivebase.setAligningToRight(true))).onFalse(new InstantCommand(() -> drivebase.setAligningToRight(false)));
 

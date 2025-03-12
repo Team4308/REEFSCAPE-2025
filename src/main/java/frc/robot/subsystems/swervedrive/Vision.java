@@ -225,17 +225,17 @@ public class Vision {
     /**
      * Left Camera
      */
-    FRONT_CAM("Frontcam OV9782",
-        new Rotation3d(0, Math.toRadians(-10), Math.toRadians(45)),
-        new Translation3d(0.24499, -0.27672, 0.22145),
-        VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    // FRONT_CAM("Frontcam OV9782",
+    //     new Rotation3d(0, Math.toRadians(-10), Math.toRadians(45)),
+    //     new Translation3d(0.24499, -0.27672, 0.22145),
+    //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
     /**
      * Right Camera
      */
-    // FUNNEL_CAM("Argoose OV9821",
-    //     new Rotation3d(0, Math.toRadians(-10), Math.toRadians(-10)),
-    //     new Translation3d(-0.1397, -0.2794, 0.26612),
-    //     VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    FUNNEL_CAM("Frontcam OV9782",
+        new Rotation3d(0, Math.toRadians(10), Math.toRadians(-10)),
+        new Translation3d(0.020259, -0.253941, 0.418301),
+        VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     // Latency alert to use when high latency is detected.
     public final Alert latencyAlert;

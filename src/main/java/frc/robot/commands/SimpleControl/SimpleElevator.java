@@ -34,7 +34,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public boolean isFinished() {
-        return constElevator.PID_CONTROLLER.atSetpoint();
+        return subsystem.isAtPosition();
     }
 
 }

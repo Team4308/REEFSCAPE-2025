@@ -57,6 +57,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     return totalVoltage;
   }
 
+  public boolean isAtPosition() {
+    return Math.abs(getPositionInMeters() - targetPosition) < constElevator.TOLERANCE;
+  }
+
   // Preset position commands
   /**
    * Sets the elevators position to the desired setpoint
