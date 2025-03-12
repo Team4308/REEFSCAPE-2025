@@ -36,6 +36,7 @@ import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.CoralScoring.FastL4;
+import frc.robot.commands.ManualControl.ManualElevator;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.commands.SimpleControl.SimpleRoller;
@@ -62,7 +63,7 @@ public class RobotContainer {
         // Failsafe commands
         private final SimpleRoller SimpleRollerCommand;
         private final SimpleAlgae SimpleAlgaeCommand;
-        private final SimpleElevator SimpleElevatorCommand;
+        private final ManualElevator ManualElevatorCommand;
 
         private final SendableChooser<Command> autoChooser;
 
@@ -124,11 +125,11 @@ public class RobotContainer {
 
                 SimpleRollerCommand = new SimpleRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
                 SimpleAlgaeCommand = new SimpleAlgae(() -> m_AlgaeArmSubsystem.targetAngle + joystickAlgaeArm(), m_AlgaeArmSubsystem);
-                SimpleElevatorCommand = new SimpleElevator(() -> m_ElevatorSubsystem.targetPosition + joystickElevatorControl(), m_ElevatorSubsystem);
+                ManualElevatorCommand = new ManualElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
 
                 m_AlgaeArmSubsystem.setDefaultCommand(SimpleAlgaeCommand);
                 m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
-                m_ElevatorSubsystem.setDefaultCommand(SimpleElevatorCommand);
+                m_ElevatorSubsystem.setDefaultCommand(ManualElevatorCommand);
 
                 CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
                 CommandScheduler.getInstance().registerSubsystem(m_ElevatorSubsystem);

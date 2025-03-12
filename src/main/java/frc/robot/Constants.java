@@ -83,9 +83,9 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 11.91; // m/s^2
 
         // Tuning
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.5, 0.0, 0.00,
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.5, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION), 0.02);
-        public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.40, 2.3, 0.0);
+        public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.38, 2.3, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 175/36;
