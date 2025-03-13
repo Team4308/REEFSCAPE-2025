@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.Operator;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Intake;
@@ -36,9 +34,9 @@ import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.CoralScoring.FastL4;
-import frc.robot.commands.SimpleControl.SimpleAlgae;
-import frc.robot.commands.SimpleControl.SimpleElevator;
-import frc.robot.commands.SimpleControl.SimpleRoller;
+import frc.robot.commands.ManualControl.ManualAlgae;
+import frc.robot.commands.ManualControl.ManualElevator;
+import frc.robot.commands.ManualControl.ManualRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -60,9 +58,9 @@ public class RobotContainer {
         private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
         // Failsafe commands
-        private final SimpleRoller SimpleRollerCommand;
-        private final SimpleAlgae SimpleAlgaeCommand;
-        private final SimpleElevator SimpleElevatorCommand;
+        private final ManualRoller ManualRollerCommand;
+        private final ManualAlgae ManualAlgaeCommand;
+        private final ManualElevator ManualElevatorCommand;
 
         private final SendableChooser<Command> autoChooser;
 
@@ -122,13 +120,13 @@ public class RobotContainer {
                 m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
                 m_CoralRollerSubsystem = new CoralRollerSubsystem();
 
-                SimpleRollerCommand = new SimpleRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
-                SimpleAlgaeCommand = new SimpleAlgae(() -> m_AlgaeArmSubsystem.targetAngle + joystickAlgaeArm(), m_AlgaeArmSubsystem);
-                SimpleElevatorCommand = new SimpleElevator(() -> m_ElevatorSubsystem.targetPosition + joystickElevatorControl(), m_ElevatorSubsystem);
+                ManualRollerCommand = new ManualRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
+                ManualAlgaeCommand = new ManualAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
+                ManualElevatorCommand = new ManualElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
 
-                m_AlgaeArmSubsystem.setDefaultCommand(SimpleAlgaeCommand);
-                m_CoralRollerSubsystem.setDefaultCommand(SimpleRollerCommand);
-                m_ElevatorSubsystem.setDefaultCommand(SimpleElevatorCommand);
+                m_AlgaeArmSubsystem.setDefaultCommand(ManualAlgaeCommand);
+                m_CoralRollerSubsystem.setDefaultCommand(ManualRollerCommand);
+                m_ElevatorSubsystem.setDefaultCommand(ManualElevatorCommand);
 
                 CommandScheduler.getInstance().registerSubsystem(m_ledSubsystem);
                 CommandScheduler.getInstance().registerSubsystem(m_ElevatorSubsystem);
@@ -220,8 +218,6 @@ public class RobotContainer {
                 // commands ***
                 // Coral
                 operator.Start.onTrue(new Intake(m_CoralRollerSubsystem)); // INTAKING
-                operator.Back.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
-                                .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers())); // SHOOTING
 
                 // Algae
                 operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
