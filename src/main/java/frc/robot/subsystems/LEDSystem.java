@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -27,7 +29,6 @@ public class LEDSystem extends SubsystemBase {
   private final AddressableLEDBuffer m_buffer;
   private final RobotContainer robotContainer;
 
-  private String led_status = "Idle";
   private int scrollOffset = 0;
 
   private SimDevice m_simDevice;
@@ -36,8 +37,9 @@ public class LEDSystem extends SubsystemBase {
   private SimDouble m_simB;
   private SimDouble m_simBrightness;
 
-  public String previousState = "Idle";
-  public String currentState = "Idle";
+  public String previousState = "";
+  public String currentState = "";
+  private String baseState = ""; // Add this to track the underlying state
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
   private static final double STATUS_DURATION = 1.0; 
@@ -77,7 +79,7 @@ public class LEDSystem extends SubsystemBase {
    * @return led_status
    */
   public String getLedState() {
-    return led_status;
+    return currentState;
   }
 
  /**
@@ -85,6 +87,15 @@ public class LEDSystem extends SubsystemBase {
   * @param status
   */
   public void setLedState(String status) {
+    if (status == null || status.trim().isEmpty()) {
+      return;
+    }
+    
+    // Store base state for non-status states
+    if (!status.equals("Aligned") && !status.equals("Fault")) {
+      baseState = status;
+    }
+    
     if (!status.equals(currentState)) {
       previousState = currentState;
       currentState = status;
@@ -94,20 +105,29 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putString("currentState", currentState);
+    SmartDashboard.putString("Last LED status", previousState);
+    SmartDashboard.putString("Base State", baseState); // Debug output
+
     robotContainer.updateAlignmentStatus();
+    
+    // Skip if no valid state
+    if (currentState == null || currentState.trim().isEmpty()) {
+      return;
+    }
+
     if (isShowingStatus) {
       statusTimer -= 0.02; 
       if (statusTimer <= 0) {
         isShowingStatus = false;
-        led_status = previousState;
+        currentState = baseState; // Return to base state instead of previous state
       }
-    } else if (!currentState.equals(led_status)) {
+    } else if (currentState.equals("Aligned") || currentState.equals("Fault")) {
       isShowingStatus = true;
       statusTimer = STATUS_DURATION;
-      led_status = currentState;
     }
 
-    applyPattern(led_status);
+    applyPattern(currentState);
     m_led.setData(m_buffer);
     updateSimulation();
   }
