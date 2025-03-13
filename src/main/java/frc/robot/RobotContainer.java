@@ -6,7 +6,9 @@ package frc.robot;
 
 import java.io.File;
 
+import com.fasterxml.jackson.databind.util.Named;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -128,6 +130,7 @@ public class RobotContainer {
                 CommandScheduler.getInstance().registerSubsystem(m_AlgaeArmSubsystem);
                 CommandScheduler.getInstance().registerSubsystem(m_CoralRollerSubsystem);
 
+                configureNamedCommands();
                 configureDriverBindings();
                 configureOperatorBindings();
                 DriverStation.silenceJoystickConnectionWarning(true);
@@ -214,6 +217,15 @@ public class RobotContainer {
                 operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(3));
                 operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(4));
                 operator.LB.onTrue(m_ElevatorSubsystem.goToLevel(0));
+        }
+
+        public void configureNamedCommands() {
+                NamedCommands.registerCommand("Intake Coral", new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_CoralRollerSubsystem)
+                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
+                NamedCommands.registerCommand("L2 Preset", new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("L3 Preset", new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove Algae L1", new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove Algae L2", new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
         }
 
         public LEDSystem getLEDSystem() {
