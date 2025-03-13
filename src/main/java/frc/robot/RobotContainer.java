@@ -218,8 +218,6 @@ public class RobotContainer {
                 // commands ***
                 // Coral
                 operator.Start.onTrue(new Intake(m_CoralRollerSubsystem)); // INTAKING
-                operator.Back.onTrue(new InstantCommand(() -> m_CoralRollerSubsystem.setRollerOutput(15)))
-                                .onFalse(new InstantCommand(() -> m_CoralRollerSubsystem.stopControllers())); // SHOOTING
 
                 // Algae
                 operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))

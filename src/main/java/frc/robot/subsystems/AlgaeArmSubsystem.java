@@ -22,8 +22,6 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
         encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
 
-        constEndEffector.algaePivot.PID_CONTROLLER.setTolerance(constEndEffector.algaePivot.TOLERANCE);
-
         stopControllers();
     }
 
@@ -56,6 +54,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     @Override
     public void periodic() {
         goToTargetPosition();
+        SmartDashboard.putBoolean("Pivot At Position", isAtPosition());
     }
 
     public void stopControllers() {

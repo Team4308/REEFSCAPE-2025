@@ -78,9 +78,10 @@ public final class Constants {
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         }
 
-        public static final double TOLERANCE = 0.01; // m
-        public static final double MAX_VELOCITY = 5.42; // m/s
-        public static final double MAX_ACCELERATION = 11.91; // m/s^2
+        public static final double TOLERANCE = 0.005;           // m
+        public static final double ZERO_RANGE = 0.15;           // m
+        public static final double MAX_VELOCITY = 5.42;         // m/s
+        public static final double MAX_ACCELERATION = 11.91;    // m/s^2
 
         // Tuning
         public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.5, 0.0, 0.00,
@@ -111,12 +112,12 @@ public final class Constants {
                     new TrapezoidProfile.Constraints(360, 720), 0.02);
             public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.31, 0.0035, 0.0);
 
-            public static final double TOLERANCE = 2.5;
+            public static final double TOLERANCE = 5.0;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
             public static final double MIN_ANGLE = -90.0;
-            public static final double MAX_ANGLE = 120;
+            public static final double MAX_ANGLE = 100;
             public static final double REMOVAL_ANGLE = -30;
         }
 
