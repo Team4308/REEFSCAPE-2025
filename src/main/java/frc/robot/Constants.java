@@ -24,22 +24,36 @@ public final class Constants {
         public static final boolean TUNING_MODE = false;
     }
 
-    // public static final class AutonConstants
-    // {
-    //
-    //  public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    //  public static final PIDConstants ANGLE_PID = new PIDConstants(0.4, 0, 0.01);
-    // }
     public static final class Swerve {
         // Hold time on motor brakes when disabled
         public static final double WHEEL_LOCK_TIME = 10; // seconds
 
-        public static final class ReefHeadingAlign {
-            public static double kP = 0.0;
-            public static double kI = 0.0;
-            public static double kD = 0.0;
+        public static final class Align {
+            public static final class Heading {
+                public static final double TOLERANCE = 1; // in degrees
+            }
+            public static final class Translation { 
+                public static final double TOLERANCE = 0.05; // in meters
+            }
+        }
 
-            public static final double TOLERANCE = 1.0;
+        public static final class ReefHeadingAlign {
+            public static final double TOLERANCE = Units.degreesToRadians(1); // in degrees
+        }
+        
+
+        public static class Auton {
+            public static class Angle {
+                public static final double kP = 5.0;
+                public static final double kI = 0.0;
+                public static final double kD = 0.0;
+            }
+
+            public static class Translation {
+                public static final double kP = 5.0;
+                public static final double kI = 0.0;
+                public static final double kD = 0.0;
+            }
         }
     }
 
