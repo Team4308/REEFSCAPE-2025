@@ -33,7 +33,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double motorVoltage = constEndEffector.algaePivot.PID_CONTROLLER.calculate(currentAngle, targetAngle);
 
         double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
-                constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
+                                                                                constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
         SmartDashboard.putNumber("Algae Arm Angle", currentAngle);
         SmartDashboard.putNumber("Algae Arm Target", constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);

@@ -97,9 +97,9 @@ public final class Constants {
         public static final double MAX_VELOCITY = 5.42;         // m/s
         public static final double MAX_ACCELERATION = 11.91;    // m/s^2
 
-        // Tuning
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.5, 0.0, 0.00,
-                new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION), 0.02);
+        // Controllers
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.6, 0.0, 0.00,
+                new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
         public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.38, 2.3, 0.0);
 
         // Elevator physical constants
@@ -121,14 +121,16 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.001, 0.0, 0.0,
-                    new TrapezoidProfile.Constraints(360, 720), 0.02);
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.31, 0.0035, 0.0);
-
             public static final double TOLERANCE = 5.0;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
+            // Controllers
+            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.001, 0.0, 0.0,
+                    new TrapezoidProfile.Constraints(360, 720));    // degrees
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.31, 0.0035, 0.0);
+
+            // Angles (degrees)
             public static final double MIN_ANGLE = -90.0;
             public static final double MAX_ANGLE = 100;
             public static final double REMOVAL_ANGLE = -30;
@@ -153,5 +155,14 @@ public final class Constants {
 
         // The precentage output of the intake motor while it is running.
         public static final double INTAKE_SPEED = 0.2; // precentage
+
+        // Controllers
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0, 0, 0, 
+            new TrapezoidProfile.Constraints(180, 360));    // degrees
+        public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0, 0, 0, 0);
+
+        // Conversions
+        public static final double ENCODER_TO_DEGREE_RATIO = 10.0;
+        public static final double GEAR_RATIO = 2.0;
     }
 }

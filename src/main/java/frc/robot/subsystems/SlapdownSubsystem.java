@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,43 +14,35 @@ import frc.robot.Ports;
 public class SlapdownSubsystem extends SubsystemBase {
     private TalonSRX pivotMotor;
     private TalonFX intakeMotor;
-    private ArmFeedforward slapdownArmFeedforward = new ArmFeedforward(0, 0, 0);
-    private PIDController pidController = new PIDController(0, 0, 0);
-    public double currentTarget = 90;// straight up
+    public double currentTarget = 90;   // straight up (degrees)
 
     public SlapdownSubsystem() {
         this.pivotMotor = new TalonSRX(Ports.AlgaeSlapdown.ALGAE_PIVOT);
         this.intakeMotor = new TalonFX(Ports.AlgaeSlapdown.ALGAE_ROLLER);
     }
 
-    public void SetArmPosition(double degrees) {
-        currentTarget = DoubleUtils.clamp(degrees, 0, 90);// 90 is straight down, probably too far
-    }
-
     public double calculatePower() {
-        double setPoint = currentTarget;
         double curPoint = getPosition();
 
-        double pidOut = pidController.calculate(curPoint, setPoint);
+        double pidOut = constSlapdown.PID_CONTROLLER.calculate(curPoint, currentTarget);
 
-        double feedforwardOutput = slapdownArmFeedforward.calculate(Math.toRadians(curPoint),
-                69.0);  // change
-        feedforwardOutput = DoubleUtils.mapRange(feedforwardOutput, -12, 12, -1, 1);
+        double feedforwardOutput = constSlapdown.FEEDFORWARD.calculate(Math.toRadians(curPoint), 
+                                                                    constSlapdown.PID_CONTROLLER.getSetpoint().velocity);
 
-        double output = pidOut + feedforwardOutput;
-        output = DoubleUtils.clamp(feedforwardOutput, -1, 1);
+        double output = DoubleUtils.mapRange(DoubleUtils.clamp(pidOut + feedforwardOutput, -12, 12), -12, 12, -1, 1);
+
         return output;
     }
 
     public double getPosition() {
-        double value = this.pivotMotor.getSelectedSensorPosition() / 10;// returns degrees
-        value = value / 2;// gear ratio
+        double value = this.pivotMotor.getSelectedSensorPosition() / constSlapdown.ENCODER_TO_DEGREE_RATIO;    // returns degrees
+        value = value / constSlapdown.GEAR_RATIO;   // gear ratio
         return value;
     }
 
     public Command setPosition(double angle) {
         return runOnce(() -> {
-            currentTarget = angle;
+            currentTarget = DoubleUtils.clamp(angle, constSlapdown.PIVOT_BOTTOM_ANGLE, constSlapdown.PIVOT_TOP_ANGLE);
         });
     }
 
