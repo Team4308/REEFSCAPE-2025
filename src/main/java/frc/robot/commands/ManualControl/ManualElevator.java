@@ -1,17 +1,16 @@
-
-package frc.robot.commands.SimpleControl;
+package frc.robot.commands.ManualControl;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
 
-public class SimpleElevator extends Command {
-    private final Supplier<Double> control;
+public class ManualElevator extends Command {
+    private final Supplier<Double> angle;
     private final ElevatorSubsystem subsystem;
 
-    public SimpleElevator(Supplier<Double> control, ElevatorSubsystem elevatorSubsystem) {
-        this.control = control;
+    public ManualElevator(Supplier<Double> angle, ElevatorSubsystem elevatorSubsystem) {
+        this.angle = angle;
         this.subsystem = elevatorSubsystem;
         addRequirements(elevatorSubsystem);
     }
@@ -23,7 +22,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public void execute() {
-        subsystem.setPosition(control.get());
+        subsystem.setPosition(subsystem.targetPosition + angle.get());
     }
 
     @Override
@@ -33,7 +32,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public boolean isFinished() {
-        return subsystem.isAtPosition();
+        return false;
     }
 
 }

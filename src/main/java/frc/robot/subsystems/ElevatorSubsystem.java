@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants.constElevator;
-import frc.robot.Ports;
+import frc.robot.Ports.Elevator;
 import frc.robot.Robot;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -23,14 +23,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   private double simEnc = 0;
 
   public ElevatorSubsystem() {
-    leftMotorFollower = new TalonFX(Ports.Elevator.ELEVATOR_FOLLOWER);
-    rightMotorLeader = new TalonFX(Ports.Elevator.ELEVATOR_MASTER);
-    topLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_TOP);
-    bottomLimitSwitch = new DigitalInput(Ports.Elevator.LIMIT_SWITCH_BOTTOM);
+    leftMotorFollower = new TalonFX(Elevator.ELEVATOR_FOLLOWER);
+    rightMotorLeader = new TalonFX(Elevator.ELEVATOR_MASTER);
+    topLimitSwitch = new DigitalInput(Elevator.LIMIT_SWITCH_TOP);
+    bottomLimitSwitch = new DigitalInput(Elevator.LIMIT_SWITCH_BOTTOM);
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
-
-    constElevator.PID_CONTROLLER.setTolerance(constElevator.TOLERANCE);
 
     stopControllers();
   }
@@ -132,17 +130,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     leftMotorFollower.set(0.0);
   }
 
-  // Reset the sensor position of the elevator
-  public void resetSensorPosition(double setpoint) {
-    rightMotorLeader.setPosition(setpoint);
-    leftMotorFollower.setPosition(setpoint);
-  }
-
-
   @Override
   public void periodic() {
     double voltage = calculateVoltage();
-    if (targetPosition == constElevator.MIN_HEIGHT && getPositionInMeters() < 0.15) {
+    if (targetPosition == constElevator.MIN_HEIGHT && getPositionInMeters() < constElevator.ZERO_RANGE) {
       voltage = 0.0;
     }
     rightMotorLeader.setVoltage(voltage);
@@ -150,14 +141,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Check if the top top limit switch is hit then set that to the new height
     if (topLimitSwitch.get()) {
-      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble() + ((constElevator.MAX_HEIGHT - constElevator.MIN_HEIGHT) / constElevator.SPOOL_CIRCUMFERENCE) * constElevator.GEAR_RATIO;
+      encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble() 
+                      + ((constElevator.MAX_HEIGHT - constElevator.MIN_HEIGHT) / constElevator.SPOOL_CIRCUMFERENCE) * constElevator.GEAR_RATIO;
     }
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
-    SmartDashboard.putNumber("Elevator Target", targetPosition);
-    SmartDashboard.putBoolean("At Position", constElevator.PID_CONTROLLER.atSetpoint());
-
+    SmartDashboard.putBoolean("Elevator At Position", constElevator.PID_CONTROLLER.atSetpoint());
+    SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
   }
 
 }
