@@ -9,12 +9,9 @@ import java.io.File;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -26,17 +23,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.Operator;
 import frc.robot.Constants.constEndEffector;
-import frc.robot.commands.Intake;
-import frc.robot.commands.AlgaeRemoval.AlgaeRoller;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
 import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.CoralScoring.FastL4;
-import frc.robot.commands.ManualControl.ManualAlgae;
-import frc.robot.commands.ManualControl.ManualElevator;
-import frc.robot.commands.ManualControl.ManualRoller;
+import frc.robot.commands.DefaultControl.DefaultAlgae;
+import frc.robot.commands.DefaultControl.DefaultElevator;
+import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -58,9 +53,9 @@ public class RobotContainer {
         private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
         // Failsafe commands
-        private final ManualRoller ManualRollerCommand;
-        private final ManualAlgae ManualAlgaeCommand;
-        private final ManualElevator ManualElevatorCommand;
+        private final DefaultRoller ManualRollerCommand;
+        private final DefaultAlgae ManualAlgaeCommand;
+        private final DefaultElevator ManualElevatorCommand;
 
         private final SendableChooser<Command> autoChooser;
 
@@ -120,9 +115,9 @@ public class RobotContainer {
                 m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
                 m_CoralRollerSubsystem = new CoralRollerSubsystem();
 
-                ManualRollerCommand = new ManualRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
-                ManualAlgaeCommand = new ManualAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
-                ManualElevatorCommand = new ManualElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
+                ManualRollerCommand = new DefaultRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
+                ManualAlgaeCommand = new DefaultAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
+                ManualElevatorCommand = new DefaultElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
 
                 m_AlgaeArmSubsystem.setDefaultCommand(ManualAlgaeCommand);
                 m_CoralRollerSubsystem.setDefaultCommand(ManualRollerCommand);
@@ -150,19 +145,6 @@ public class RobotContainer {
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
                 // Command driveSetpointGenKeyboard = drivebase
                 //                 .driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
-
-                driveToClosestLeftReef.driveToPose(() -> drivebase.getClosestLeftReefPose(),
-                                new ProfiledPIDController(5, 0, 0,
-                                                new Constraints(5, 2)),
-                                new ProfiledPIDController(5, 0, 0,
-                                                new Constraints(Units.degreesToRadians(360),
-                                                                Units.degreesToRadians(180))));
-                driveToClosestRightReef.driveToPose(() -> drivebase.getClosestRightReefPose(),
-                                new ProfiledPIDController(5, 0, 0,
-                                                new Constraints(5, 2)),
-                                new ProfiledPIDController(5, 0, 0,
-                                                new Constraints(Units.degreesToRadians(360),
-                                                                Units.degreesToRadians(180))));
                 
                 driver.LB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
                 driver.RB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToRightReef)));
@@ -215,13 +197,16 @@ public class RobotContainer {
                 // *** These are failsafes, that should be already covered by the previous
                 // commands ***
                 // Coral
-                operator.Start.onTrue(new Intake(m_CoralRollerSubsystem)); // INTAKING
+                operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_CoralRollerSubsystem)
+                                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get())); // INTAKING
+                operator.Back.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_CoralRollerSubsystem)
+                                                .until(() -> m_CoralRollerSubsystem.beamBreak.get()));  // SHOOTING
 
                 // Algae
                 operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
-                                .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.MIN_ANGLE)))); // Set position to remove algae
-                operator.RB.onTrue(new AlgaeRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL, m_CoralRollerSubsystem))
-                                .onFalse(new AlgaeRoller(() -> 0.0, m_CoralRollerSubsystem));
+                        .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.MIN_ANGLE)))); // Set position to remove algae
+                operator.RB.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL, m_CoralRollerSubsystem))
+                        .onFalse(new DefaultRoller(() -> 0.0, m_CoralRollerSubsystem));
 
                 // Elevator
                 operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(1));

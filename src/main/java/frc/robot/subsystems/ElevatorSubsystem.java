@@ -147,7 +147,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
-    SmartDashboard.putBoolean("Elevator At Position", constElevator.PID_CONTROLLER.atSetpoint());
+    SmartDashboard.putBoolean("Elevator At Position", isAtPosition());
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
   }
 

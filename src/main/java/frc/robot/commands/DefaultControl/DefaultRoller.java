@@ -1,18 +1,18 @@
 
-package frc.robot.commands.AlgaeRemoval;
+package frc.robot.commands.DefaultControl;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
-public class AlgaeRoller extends Command {
-    private final CoralRollerSubsystem subsystem;
+public class DefaultRoller extends Command {
     private final Supplier<Double> control;
+    private final CoralRollerSubsystem subsystem;
 
-    public AlgaeRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
-        this.subsystem = rollerSubsystem;
+    public DefaultRoller(Supplier<Double> control, CoralRollerSubsystem rollerSubsystem) {
         this.control = control;
+        this.subsystem = rollerSubsystem;
         addRequirements(rollerSubsystem);
     }
 

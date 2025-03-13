@@ -1,15 +1,15 @@
-package frc.robot.commands.ManualControl;
+package frc.robot.commands.DefaultControl;
 
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 
-public class ManualAlgae extends Command {
+public class DefaultAlgae extends Command {
     private final Supplier<Double> angle;
     private final AlgaeArmSubsystem subsystem;
 
-    public ManualAlgae(Supplier<Double> angle, AlgaeArmSubsystem algaePivotSubsystem) {
+    public DefaultAlgae(Supplier<Double> angle, AlgaeArmSubsystem algaePivotSubsystem) {
         this.angle = angle;
         this.subsystem = algaePivotSubsystem;
         addRequirements(algaePivotSubsystem);

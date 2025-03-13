@@ -20,8 +20,6 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     public AlgaeArmSubsystem() {
         algaeMotor.setNeutralMode(NeutralModeValue.Brake);
 
-        encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
-
         stopControllers();
     }
 

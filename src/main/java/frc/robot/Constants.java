@@ -104,7 +104,6 @@ public final class Constants {
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 175/36;
-        //public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 1.757);
         public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 2.53); // Random number that works
         public static double MAX_HEIGHT = Units.inchesToMeters(56.875);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
@@ -140,7 +139,7 @@ public final class Constants {
             public static final double L23 = 50;
             public static final double L4 = 10;
 
-            public static final double CORAL_INTAKE = 10;
+            public static final double DEFAULT_CORAL = 10;
             public static final double ALGAE_REMOVAL = -50;
         }
     }

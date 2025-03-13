@@ -1,7 +1,6 @@
 
 package frc.robot.commands.CoralScoring;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.constEndEffector;
@@ -19,9 +18,7 @@ public class FastL1 extends SequentialCommandGroup {
                 new SimpleAlgae(() -> constEndEffector.algaePivot.MIN_ANGLE, algaeArmSubsystem),
                 new SimpleElevator(() -> constElevator.L1, elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L1, rollerSubsystem),
-                new ParallelCommandGroup(
-                        new SimpleElevator(() -> constElevator.L3, elevatorSubsystem),
-                        new SimpleRoller(() -> constEndEffector.rollerSpeeds.L1, rollerSubsystem)),
+                new SimpleElevator(() -> constElevator.L3, elevatorSubsystem),
                 new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem));
     }   
 }

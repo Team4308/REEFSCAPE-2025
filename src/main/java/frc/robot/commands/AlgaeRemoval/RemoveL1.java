@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
+import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.subsystems.AlgaeArmSubsystem;
@@ -21,7 +22,7 @@ public class RemoveL1 extends SequentialCommandGroup {
                                 new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.ALGAE_REMOVAL_SPEED, constElevator.MAX_ACCELERATION)),
                                 new ParallelDeadlineGroup(
                                                 new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem),
-                                                new AlgaeRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL, rollerSubsystem)), 
+                                                new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL, rollerSubsystem)), 
                                 new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY, constElevator.MAX_ACCELERATION)),
                                 new SimpleAlgae(() -> constEndEffector.algaePivot.MIN_ANGLE, algaeArmSubsystem));
         }

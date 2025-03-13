@@ -33,7 +33,6 @@ public class SimpleAlgae extends Command {
     @Override
     public boolean isFinished() {
         return subsystem.isAtPosition();
-        //return constEndEffector.algaePivot.PID_CONTROLLER.atSetpoint();
     }
 
 }
