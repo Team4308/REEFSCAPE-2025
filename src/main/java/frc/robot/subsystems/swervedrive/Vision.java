@@ -383,16 +383,13 @@ public class Vision {
       for (PhotonPipelineResult result : resultsList) {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
-      if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
-          (currentTimestamp - lastReadTimestamp) >= debounceTime) {
-        resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
-        lastReadTimestamp = currentTimestamp;
-        resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
-          return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
-        });
-        if (!resultsList.isEmpty()) {
-          updateEstimatedGlobalPose();
-        }
+      resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
+      lastReadTimestamp = currentTimestamp;
+      resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
+        return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
+      });
+      if (!resultsList.isEmpty()) {
+        updateEstimatedGlobalPose();
       }
       
     }
