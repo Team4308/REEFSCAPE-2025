@@ -33,15 +33,10 @@ public final class Constants {
                 public static final double TOLERANCE = 1; // in degrees
             }
             public static final class Translation { 
-                public static final double TOLERANCE = 0.05; // in meters
+                public static final double TOLERANCE = 0.01; // in meters
             }
         }
-
-        public static final class ReefHeadingAlign {
-            public static final double TOLERANCE = Units.degreesToRadians(1); // in degrees
-        }
         
-
         public static class Auton {
             public static class Angle {
                 public static final double kP = 5.0;
