@@ -261,9 +261,7 @@ public class SwerveSubsystem extends SubsystemBase {
     double closestLeftReefHeading = getClosestLeftReefPose().getRotation().getDegrees();
     double closestRightReefHeading = getClosestRightReefPose().getRotation().getDegrees();
     if ((Math.abs(currentHeading - closestLeftReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading - closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading + closestLeftReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading + closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)) {
+        || (Math.abs(currentHeading - closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)) {
       return true;
     } else {
       return false;
@@ -271,8 +269,6 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    System.out.println("Translation: " + isTranslationAligned());
-    System.out.println("Heading: " + isHeadingAligned());
     if (isTranslationAligned() && isHeadingAligned()) {
       return true;
     } else {
@@ -292,8 +288,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command driveToPose(Pose2d pose) {
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity() * 0.1, 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity() * 0.2, Units.degreesToRadians(720));
+        swerveDrive.getMaximumChassisVelocity(), 4.0,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
