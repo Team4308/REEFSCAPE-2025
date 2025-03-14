@@ -15,10 +15,12 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     public double targetAngle = constEndEffector.algaePivot.MIN_ANGLE;
 
-    private double encoderOffset = 0.0;
+    private double encoderOffset;
 
     public AlgaeArmSubsystem() {
         algaeMotor.setNeutralMode(NeutralModeValue.Brake);
+
+        encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
 
         stopControllers();
     }

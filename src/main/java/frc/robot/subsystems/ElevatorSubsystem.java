@@ -19,7 +19,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private TalonFX rightMotorLeader;
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
-  private Double encoderOffset = 0.0;
+  private double encoderOffset;
   private double simEnc = 0;
 
   public ElevatorSubsystem() {
@@ -29,6 +29,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     bottomLimitSwitch = new DigitalInput(Elevator.LIMIT_SWITCH_BOTTOM);
     rightMotorLeader.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
     leftMotorFollower.getConfigurator().apply(constElevator.ELEVATOR_CONFIG);
+
+    encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
 
     stopControllers();
   }
@@ -133,9 +135,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     double voltage = calculateVoltage();
-    if (targetPosition == constElevator.MIN_HEIGHT && getPositionInMeters() < constElevator.ZERO_RANGE) {
-      voltage = 0.0;
-    }
     rightMotorLeader.setVoltage(voltage);
     leftMotorFollower.setVoltage(voltage);
 
