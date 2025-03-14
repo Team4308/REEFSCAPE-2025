@@ -29,7 +29,6 @@ import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
-import frc.robot.commands.CoralScoring.FastL4;
 import frc.robot.commands.DefaultControl.DefaultAlgae;
 import frc.robot.commands.DefaultControl.DefaultElevator;
 import frc.robot.commands.DefaultControl.DefaultRoller;
@@ -217,7 +216,7 @@ public class RobotContainer {
                 operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem
                                 .setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
                                 .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem
-                                                .setAlgaePosition(Constants.constEndEffector.algaePivot.MIN_ANGLE)))); // Set
+                                                .setAlgaePosition(Constants.constEndEffector.algaePivot.MAX_ANGLE)))); // Set
                                                                                                                        // position
                                                                                                                        // to
                                                                                                                        // remove

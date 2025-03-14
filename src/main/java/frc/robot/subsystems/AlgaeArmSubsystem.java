@@ -13,7 +13,7 @@ import frc.robot.Ports.EndEffector;
 public class AlgaeArmSubsystem extends LogSubsystem {
     private TalonFX algaeMotor = new TalonFX(EndEffector.ALGAE_MOTOR);
 
-    public double targetAngle = constEndEffector.algaePivot.MIN_ANGLE;
+    public double targetAngle = constEndEffector.algaePivot.MAX_ANGLE;
 
     private double encoderOffset;
 
@@ -26,7 +26,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public double getAlgaePosition() {
-        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset) * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.MIN_ANGLE;
+        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset) * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.MAX_ANGLE;
     }
 
     public void goToTargetPosition() {

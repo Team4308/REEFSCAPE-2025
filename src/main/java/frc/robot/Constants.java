@@ -33,14 +33,9 @@ public final class Constants {
                 public static final double TOLERANCE = 1; // in degrees
             }
             public static final class Translation { 
-                public static final double TOLERANCE = 0.05; // in meters
+                public static final double TOLERANCE = 0.01; // in meters
             }
-        }
-
-        public static final class ReefHeadingAlign {
-            public static final double TOLERANCE = Units.degreesToRadians(1); // in degrees
-        }
-        
+        }      
 
         public static class Auton {
             public static class Angle {
@@ -127,11 +122,11 @@ public final class Constants {
             // Controllers
             public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.001, 0.0, 0.0,
                     new TrapezoidProfile.Constraints(360, 720));    // degrees
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.297, 0.0035, 0.0);
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.297, 0.003, 0.0);
 
             // Angles (degrees)
             public static final double MIN_ANGLE = -90.0;
-            public static final double MAX_ANGLE = 100;
+            public static final double MAX_ANGLE = 100.0;
             public static final double REMOVAL_ANGLE = -30;
         }
 
