@@ -88,7 +88,7 @@ public class RobotContainer {
                         .deadband(Operator.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
-        
+
         // Derive the heading axis with math!
         SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
                         .withControllerHeadingAxis(() -> Math.sin(
@@ -104,7 +104,7 @@ public class RobotContainer {
                                                         (Math.PI *
                                                                         2))
                         .headingWhile(true);
-        
+
         // Reef align
         SwerveInputStream driveToClosestLeftReef = driveDirectAngle.copy();
         SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
@@ -138,18 +138,24 @@ public class RobotContainer {
         }
 
         private void configureDriverBindings() {
-                // Command driveFieldOrientedDirectAngle = drivebase.driveFieldOriented(driveDirectAngle);
+                // Command driveFieldOrientedDirectAngle =
+                // drivebase.driveFieldOriented(driveDirectAngle);
                 Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);
-                // Command driveRobotOrientedAngularVelocity = drivebase.driveFieldOriented(driveRobotOriented);
-                // Command driveSetpointGen = drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
-                // Command driveFieldOrientedDirectAngleKeyboard = drivebase.driveFieldOriented(driveDirectAngleKeyboard);
+                // Command driveRobotOrientedAngularVelocity =
+                // drivebase.driveFieldOriented(driveRobotOriented);
+                // Command driveSetpointGen =
+                // drivebase.driveWithSetpointGeneratorFieldRelative(driveDirectAngle);
+                // Command driveFieldOrientedDirectAngleKeyboard =
+                // drivebase.driveFieldOriented(driveDirectAngleKeyboard);
                 Command driveFieldOrientedAnglularVelocityKeyboard = drivebase
                                 .driveFieldOriented(driveAngularVelocityKeyboard);
                 // Command driveSetpointGenKeyboard = drivebase
-                //                 .driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
-                
-                driver.LB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
-                driver.RB.whileTrue(drivebase.updateClosestReefPoses().andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToRightReef)));
+                // .driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
+
+                driver.LB.whileTrue(drivebase.updateClosestReefPoses()
+                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
+                driver.RB.whileTrue(drivebase.updateClosestReefPoses()
+                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToRightReef)));
 
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
@@ -185,10 +191,11 @@ public class RobotContainer {
 
         private void configureOperatorBindings() {
                 // Automatic Scoring
-                operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.X.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.X.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.Y.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                // operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem,
+                // m_AlgaeArmSubsystem));
 
                 // Automatic Algae Removal
                 operator.LeftStickButton
@@ -199,32 +206,47 @@ public class RobotContainer {
                 // *** These are failsafes, that should be already covered by the previous
                 // commands ***
                 // Coral
-                operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_CoralRollerSubsystem)
-                                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get())); // INTAKING
-                operator.Back.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_CoralRollerSubsystem)
-                                                .until(() -> m_CoralRollerSubsystem.beamBreak.get()));  // SHOOTING
+                operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
+                                m_CoralRollerSubsystem)
+                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get())); // INTAKING
+                operator.Back.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
+                                m_CoralRollerSubsystem)
+                                .until(() -> m_CoralRollerSubsystem.beamBreak.get())); // SHOOTING
 
                 // Algae
-                operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
-                        .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(Constants.constEndEffector.algaePivot.MIN_ANGLE)))); // Set position to remove algae
-                operator.RB.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL, m_CoralRollerSubsystem))
-                        .onFalse(new DefaultRoller(() -> 0.0, m_CoralRollerSubsystem));
+                operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem
+                                .setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
+                                .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem
+                                                .setAlgaePosition(Constants.constEndEffector.algaePivot.MIN_ANGLE)))); // Set
+                                                                                                                       // position
+                                                                                                                       // to
+                                                                                                                       // remove
+                                                                                                                       // algae
+                operator.RB.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL,
+                                m_CoralRollerSubsystem))
+                                .onFalse(new DefaultRoller(() -> 0.0, m_CoralRollerSubsystem));
 
                 // Elevator
-                operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(1));
+                operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(3));
                 operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(2));
-                operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(3));
-                operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(4));
-                operator.LB.onTrue(m_ElevatorSubsystem.goToLevel(0));
+                operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(0));
+                operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(1));
+                operator.A.onTrue(m_ElevatorSubsystem.goToLevel(0));
         }
 
         public void configureNamedCommands() {
-                NamedCommands.registerCommand("Intake Coral", new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_CoralRollerSubsystem)
-                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
-                NamedCommands.registerCommand("L2 Preset", new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                NamedCommands.registerCommand("L3 Preset", new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                NamedCommands.registerCommand("Remove Algae L1", new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                NamedCommands.registerCommand("Remove Algae L2", new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Intake Coral",
+                                new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
+                                                m_CoralRollerSubsystem)
+                                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
+                NamedCommands.registerCommand("L2 Preset",
+                                new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("L3 Preset",
+                                new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove Algae L1",
+                                new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove Algae L2",
+                                new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
         }
 
         public LEDSystem getLEDSystem() {
@@ -244,21 +266,21 @@ public class RobotContainer {
 
         }
 
-        // Dont question it 
-        public void updateAlignmentStatus() { 
+        // Dont question it
+        public void updateAlignmentStatus() {
                 SmartDashboard.putBoolean("isAligned", drivebase.isAligned());
                 if (drivebase.isAligned()) {
                         m_ledSubsystem.setLedState("Aligned");
-                        
+
                 } else {
                         if (m_ledSubsystem.getLedState().equals("Aligned")) {
-                             m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
+                                m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
                         }
                 }
         }
 
         private double joystickAlgaeArm() {
-                return deadZone(operator.getLeftY()) * 5;
+                return -deadZone(operator.getLeftY()) * 5;
         }
 
         private double joystickElevatorControl() {
