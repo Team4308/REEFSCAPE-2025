@@ -86,7 +86,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private final SwerveDrive swerveDrive;
   //private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-  private final boolean visionDriveTest = false;
+  private final boolean visionDriveTest = true;
   private Vision vision;
   
   private boolean aligningToLeft = false;
@@ -95,9 +95,11 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d nearestPoseToLeftReef = new Pose2d();
   public Pose2d nearestPoseToRightReef = new Pose2d();
 
+
   private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Robot Pose", Pose2d.struct).publish();
   private StructPublisher<Pose2d> publisher1 = NetworkTableInstance.getDefault().getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
   private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault().getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher3 = NetworkTableInstance.getDefault().getStructTopic("Estimated Pose", Pose2d.struct).publish();
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
@@ -147,13 +149,9 @@ public class SwerveSubsystem extends SubsystemBase {
       vision.updatePoseEstimation(swerveDrive);
     }
     checkTunableValues();
-    SmartDashboard.putNumber("Robot Pose X", getPose().getX());
-    SmartDashboard.putNumber("Robot Pose Y", getPose().getY());
-    SmartDashboard.putNumber("Robot Pose Theta", getPose().getRotation().getDegrees());
     publisher.set(getPose());
     publisher1.set(getClosestLeftReefPose());
     publisher2.set(getClosestRightReefPose());
-
   }
 
   @Override

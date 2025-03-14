@@ -232,7 +232,7 @@ public class Vision {
     /**
      * Right Camera
      */
-    FUNNEL_CAM("Funnelcam_OV9782",
+    FUNNEL_CAM("Frontcam OV9782",
         new Rotation3d(0, Math.toRadians(10), Math.toRadians(-10)),
         new Translation3d(0.020259, -0.253941, 0.418301),
         VecBuilder.fill(6, 6, 10), VecBuilder.fill(0.5, 0.5, 1));
@@ -394,6 +394,7 @@ public class Vision {
           updateEstimatedGlobalPose();
         }
       }
+      
     }
 
     /**

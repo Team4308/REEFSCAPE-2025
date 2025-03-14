@@ -92,28 +92,28 @@ public final class Constants {
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         }
 
-        public static final double TOLERANCE = 0.005;           // m
+        public static final double TOLERANCE = 0.01;           // m
         public static final double ZERO_RANGE = 0.15;           // m
         public static final double MAX_VELOCITY = 5.42;         // m/s
         public static final double MAX_ACCELERATION = 11.91;    // m/s^2
 
         // Controllers
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.6, 0.0, 0.00,
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(1.7, 0.0, 0.00,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
         public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.38, 2.3, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 175/36;
         public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 2.53); // Random number that works
-        public static double MAX_HEIGHT = Units.inchesToMeters(56.875);
+        public static double MAX_HEIGHT = Units.inchesToMeters(48.0);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
 
         // Preset heights in inches
-        public static final double L1 = Units.inchesToMeters(8.0);
-        public static final double L2 = Units.inchesToMeters(20.0);
-        public static final double L3 = Units.inchesToMeters(39.0);
-        public static final double ALGAE1 = Units.inchesToMeters(39.0);
-        public static final double ALGAE2 = Units.inchesToMeters(56.875);
+        public static final double L1 = Units.inchesToMeters(6.0);
+        public static final double L2 = Units.inchesToMeters(17.0);
+        public static final double L3 = Units.inchesToMeters(33.0);
+        public static final double ALGAE1 = Units.inchesToMeters(33.0);
+        public static final double ALGAE2 = Units.inchesToMeters(48.0);
 
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 1;
