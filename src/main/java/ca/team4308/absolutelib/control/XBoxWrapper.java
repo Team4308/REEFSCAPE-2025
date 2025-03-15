@@ -1,6 +1,7 @@
 package ca.team4308.absolutelib.control;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 
@@ -49,7 +50,7 @@ public class XBoxWrapper {
         this.B = new JoystickButton(joystick, XBoxMapping.B);
         this.X = new JoystickButton(joystick, XBoxMapping.X);
         this.Y = new JoystickButton(joystick, XBoxMapping.Y);
-        
+
         this.LB = new JoystickButton(joystick, XBoxMapping.LB);
         this.RB = new JoystickButton(joystick, XBoxMapping.RB);
         this.LeftStickButton = new JoystickButton(joystick, XBoxMapping.LeftStickButton);
@@ -94,5 +95,9 @@ public class XBoxWrapper {
 
     public boolean getRightTriggerAsBoolean() {
         return (joystick.getRawAxis(3) > 0.5);
+    }
+
+    public void setRumble(RumbleType type, double power) {
+        joystick.setRumble(type, power);
     }
 }

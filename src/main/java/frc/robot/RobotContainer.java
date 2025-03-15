@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Operator;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
@@ -61,6 +63,9 @@ public class RobotContainer {
         private final SendableChooser<Command> autoChooser;
 
         private final Simulation m_simulation;
+
+        private final Trigger coralIntakeTrigger;
+        private final Trigger drivebaseAlignedTrigger;
 
         // Converts driver input into a field-relative ChassisSpeeds that is controlled
         // by angular velocity.
@@ -133,9 +138,13 @@ public class RobotContainer {
                 CommandScheduler.getInstance().registerSubsystem(m_AlgaeArmSubsystem);
                 CommandScheduler.getInstance().registerSubsystem(m_CoralRollerSubsystem);
 
+                coralIntakeTrigger = new Trigger(() -> m_CoralRollerSubsystem.getBeamBreak());
+                drivebaseAlignedTrigger = new Trigger(() -> drivebase.isAligned());
+
                 configureNamedCommands();
                 configureDriverBindings();
                 configureOperatorBindings();
+                configureOtherTriggers();
                 DriverStation.silenceJoystickConnectionWarning(true);
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -238,6 +247,20 @@ public class RobotContainer {
                 operator.A.onTrue(m_ElevatorSubsystem.goToLevel(0));
         }
 
+        private void configureOtherTriggers() {
+                drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Aligned")));
+                drivebaseAlignedTrigger.onFalse(new InstantCommand(() -> {
+                        if (m_ledSubsystem.getLedState().equals("Aligned")) {
+                                m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
+                        }
+                }));
+
+                coralIntakeTrigger.onTrue(new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
+                                .withTimeout(1).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
+                drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1))
+                                .withTimeout(1).finallyDo(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+        }
+
         public void configureNamedCommands() {
                 NamedCommands.registerCommand("Intake Coral",
                                 new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
@@ -267,24 +290,16 @@ public class RobotContainer {
         }
 
         public void periodic() {
-
         }
 
         public void simulationPerodic() {
                 m_simulation.run();
         }
 
-        // Dont question it
-        public void updateAlignmentStatus() {
-                SmartDashboard.putBoolean("isAligned", drivebase.isAligned());
-                if (drivebase.isAligned()) {
-                        m_ledSubsystem.setLedState("Aligned");
-
-                } else {
-                        if (m_ledSubsystem.getLedState().equals("Aligned")) {
-                                m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
-                        }
-                }
+        public void disabledInit() {
+                driver.setRumble(RumbleType.kBothRumble, 0);
+                operator.setRumble(RumbleType.kBothRumble, 0);
+                m_ledSubsystem.setLedState("Idle");
         }
 
         private double joystickAlgaeArm() {

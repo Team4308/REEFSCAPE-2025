@@ -52,9 +52,11 @@
       "/SmartDashboard/JSON": "Alerts",
       "/SmartDashboard/Motors": "Alerts",
       "/SmartDashboard/PathPlanner": "Alerts",
+      "/SmartDashboard/PhotonAlerts": "Alerts",
       "/SmartDashboard/Pigeon 2 (v6) [0]": "Gyro",
       "/SmartDashboard/Swerve Drive": "Alerts",
-      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": "Field2d"
+      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": "Field2d",
+      "/SmartDashboard/elevatorMech": "Mechanism2d"
     },
     "windows": {
       "/SmartDashboard/Field": {
@@ -95,10 +97,7 @@
         "left": 150,
         "right": 2961,
         "top": 79,
-        "width": 16.541748046875,
-        "window": {
-          "visible": true
-        }
+        "width": 16.541748046875
       }
     }
   },

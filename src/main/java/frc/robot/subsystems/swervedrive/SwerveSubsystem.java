@@ -151,8 +151,11 @@ public class SwerveSubsystem extends SubsystemBase {
     publisher1.set(getClosestLeftReefPose());
     publisher2.set(getClosestRightReefPose());
 
-    SmartDashboard.putNumber("Left Distance", getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
-    SmartDashboard.putNumber("Right Distance", getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
+    SmartDashboard.putNumber("Left Distance",
+        getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
+    SmartDashboard.putNumber("Right Distance",
+        getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
+    SmartDashboard.putBoolean("isAligned", isAligned());
   }
 
   @Override

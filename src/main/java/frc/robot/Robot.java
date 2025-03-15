@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    m_robotContainer.getLEDSystem().setLedState("Idle");
+    m_robotContainer.disabledInit();
   }
 
   @Override
