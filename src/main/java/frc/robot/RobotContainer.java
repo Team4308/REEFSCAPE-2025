@@ -36,6 +36,7 @@ import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.LEDSystem;
+import frc.robot.subsystems.Simulation;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 
@@ -58,6 +59,8 @@ public class RobotContainer {
         private final DefaultElevator ManualElevatorCommand;
 
         private final SendableChooser<Command> autoChooser;
+
+        private final Simulation m_simulation;
 
         // Converts driver input into a field-relative ChassisSpeeds that is controlled
         // by angular velocity.
@@ -114,6 +117,8 @@ public class RobotContainer {
                 m_ledSubsystem.setElevator(m_ElevatorSubsystem);
                 m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
                 m_CoralRollerSubsystem = new CoralRollerSubsystem();
+                m_simulation = new Simulation();
+                m_simulation.setupsubsystems(m_ElevatorSubsystem, m_AlgaeArmSubsystem, m_CoralRollerSubsystem);
 
                 ManualRollerCommand = new DefaultRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
                 ManualAlgaeCommand = new DefaultAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
@@ -263,6 +268,10 @@ public class RobotContainer {
 
         public void periodic() {
 
+        }
+
+        public void simulationPerodic() {
+                m_simulation.run();
         }
 
         // Dont question it

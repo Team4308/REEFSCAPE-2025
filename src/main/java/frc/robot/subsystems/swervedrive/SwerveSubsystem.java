@@ -60,7 +60,7 @@ import swervelib.telemetry.SwerveDriveTelemetry;
 import swervelib.telemetry.SwerveDriveTelemetry.TelemetryVerbosity;
 
 public class SwerveSubsystem extends SubsystemBase {
-  
+
   private static final LoggedTunableNumber kAngleP = new LoggedTunableNumber("Swerve/Auton/Angle/kP",
       Constants.Swerve.Auton.Angle.kP);
   private static final LoggedTunableNumber kAngleI = new LoggedTunableNumber("Swerve/Auton/Angle/kI",
@@ -79,7 +79,8 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDConstants TRANSLATION_CONTROLLER;
 
   private final SwerveDrive swerveDrive;
-  //private final AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+  // private final AprilTagFieldLayout aprilTagFieldLayout =
+  // AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
   private final boolean visionDriveTest = true;
   private Vision vision;
@@ -87,13 +88,16 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d nearestPoseToLeftReef = new Pose2d();
   public Pose2d nearestPoseToRightReef = new Pose2d();
 
-
-  private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault().getStructTopic("Robot Pose", Pose2d.struct).publish();
-  private StructPublisher<Pose2d> publisher1 = NetworkTableInstance.getDefault().getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
-  private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault().getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+      .getStructTopic("Robot Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher1 = NetworkTableInstance.getDefault()
+      .getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault()
+      .getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
 
   public SwerveSubsystem(File directory) {
-    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary objects being created.
+    // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
+    // objects being created.
     SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
@@ -104,8 +108,10 @@ public class SwerveSubsystem extends SubsystemBase {
       throw new RuntimeException(e);
     }
     swerveDrive.setHeadingCorrection(false); // Only set to true if controlling the robot via angle.
-    swerveDrive.setCosineCompensator(false); // Correct for skew that gets worse as angular velocity increases. Start with a coefficient of 0.1. Could be negative
-    swerveDrive.setAngularVelocityCompensation(false, false, 0.1); // Resync absolute encoders and motor encoders periodically when they are not moving.
+    swerveDrive.setCosineCompensator(false); // Correct for skew that gets worse as angular velocity increases. Start
+                                             // with a coefficient of 0.1. Could be negative
+    swerveDrive.setAngularVelocityCompensation(false, false, 0.1); // Resync absolute encoders and motor encoders
+                                                                   // periodically when they are not moving.
     swerveDrive.setModuleEncoderAutoSynchronize(false, 1);
     if (visionDriveTest) {
       setupPhotonVision();
@@ -157,17 +163,19 @@ public class SwerveSubsystem extends SubsystemBase {
     if (DriverStation.isEnabled()) {
       LoggedTunableNumber.ifChanged(
           hashCode(), () -> ANGLE_CONTROLLER = new PIDConstants(kAngleP.get(), kAngleI.get(), kAngleD.get()),
-                                                                kAngleP, kAngleI, kAngleD);
+          kAngleP, kAngleI, kAngleD);
       LoggedTunableNumber.ifChanged(
           hashCode(),
-          () -> TRANSLATION_CONTROLLER = new PIDConstants(kTranslationP.get(), kTranslationI.get(), kTranslationD.get()), 
-                                                          kTranslationP, kTranslationI, kTranslationD);
+          () -> TRANSLATION_CONTROLLER = new PIDConstants(kTranslationP.get(), kTranslationI.get(),
+              kTranslationD.get()),
+          kTranslationP, kTranslationI, kTranslationD);
     }
   }
 
   // Setup AutoBuilder for PathPlanner.
   public void setupPathPlanner() {
-    // Load the RobotConfig from the GUI settings. You should probably store this in your Constants file
+    // Load the RobotConfig from the GUI settings. You should probably store this in
+    // your Constants file
     RobotConfig config;
     try {
       config = RobotConfig.fromGUISettings();
@@ -187,15 +195,18 @@ public class SwerveSubsystem extends SubsystemBase {
               swerveDrive.setChassisSpeeds(speedsRobotRelative);
             }
           },
-          // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-          new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+          // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
+          // optionally outputs individual module feedforwards
+          new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for
+                                          // holonomic drive trains
               // Translation PID constants
               TRANSLATION_CONTROLLER,
               // Rotation PID constants
               ANGLE_CONTROLLER),
           config,
           () -> {
-            // Boolean supplier that controls when the path will be mirrored for the red alliance
+            // Boolean supplier that controls when the path will be mirrored for the red
+            // alliance
             // This will flip the path being followed to the red side of the field.
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
@@ -212,7 +223,8 @@ public class SwerveSubsystem extends SubsystemBase {
       // Handle exception as needed
       e.printStackTrace();
     }
-    // Preload PathPlanner Path finding. IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
+    // Preload PathPlanner Path finding. IF USING CUSTOM PATHFINDER ADD BEFORE THIS
+    // LINE
     PathfindingCommand.warmupCommand().schedule();
   }
 
@@ -271,8 +283,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    System.out.println("Translation: " + isTranslationAligned());
-    System.out.println("Heading: " + isHeadingAligned());
+    // System.out.println("Translation: " + isTranslationAligned());
+    // System.out.println("Heading: " + isHeadingAligned());
     if (isTranslationAligned() && isHeadingAligned()) {
       return true;
     } else {
@@ -281,7 +293,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Command getAutonomousCommand(String pathName) {
-    // Create a path following command using AutoBuilder. This will also trigger event markers.
+    // Create a path following command using AutoBuilder. This will also trigger
+    // event markers.
     return new PathPlannerAuto(pathName);
   }
 
@@ -390,7 +403,8 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.replaceSwerveModuleFeedforward(new SimpleMotorFeedforward(kS, kV, kA));
   }
 
-  // Command to drive the robot using translative values and heading as angular velocity.
+  // Command to drive the robot using translative values and heading as angular
+  // velocity.
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY,
       DoubleSupplier angularRotationX) {
     return run(() -> {
@@ -404,10 +418,12 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  // Command to drive the robot using translative values and heading as a setpoint.
+  // Command to drive the robot using translative values and heading as a
+  // setpoint.
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier headingX,
       DoubleSupplier headingY) {
-    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading correction for this kind of control.
+    // swerveDrive.setHeadingCorrection(true); // Normally you would want heading
+    // correction for this kind of control.
     return run(() -> {
 
       Translation2d scaledInputs = SwerveMath.scaleTranslation(new Translation2d(translationX.getAsDouble(),
@@ -422,9 +438,11 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
 
-  // Primary method for controlling the drivebase, for which the swerve drive methods base on.
+  // Primary method for controlling the drivebase, for which the swerve drive
+  // methods base on.
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
-    swerveDrive.drive(translation, rotation, fieldRelative, false); // Open loop is disabled since it shouldn't be used most of the time.
+    swerveDrive.drive(translation, rotation, fieldRelative, false); // Open loop is disabled since it shouldn't be used
+                                                                    // most of the time.
   }
 
   public void driveFieldOriented(ChassisSpeeds velocity) {
@@ -461,7 +479,8 @@ public class SwerveSubsystem extends SubsystemBase {
     swerveDrive.postTrajectory(trajectory);
   }
 
-  // Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0.
+  // Resets the gyro angle to zero and resets odometry to the same position, but
+  // facing toward 0.
   public void zeroGyro() {
     swerveDrive.zeroGyro();
   }
