@@ -15,7 +15,7 @@ import swervelib.math.Matter;
 public final class Constants {
 
     public static final double ROBOT_MASS = 100 * 0.453592;
-    public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
+    public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(27), Units.inchesToMeters(27), Units.inchesToMeters(40)), ROBOT_MASS);
     public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
     public static final double MAX_SPEED = Units.feetToMeters(15.1);
     // Maximum speed of the robot in meters per second, used to limit acceleration.
@@ -30,10 +30,10 @@ public final class Constants {
 
         public static final class Align {
             public static final class Heading {
-                public static final double TOLERANCE = 1; // in degrees
+                public static final double TOLERANCE = 2; // in degrees
             }
             public static final class Translation { 
-                public static final double TOLERANCE = Units.inchesToMeters(0.5);
+                public static final double TOLERANCE = Units.inchesToMeters(1.0);
             }
         }      
 
@@ -45,7 +45,7 @@ public final class Constants {
             }
 
             public static class Translation {
-                public static final double kP = 5.0;
+                public static final double kP = 2.0;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
             }
