@@ -15,7 +15,7 @@ import swervelib.math.Matter;
 public final class Constants {
 
     public static final double ROBOT_MASS = 100 * 0.453592;
-    public static final Matter CHASSIS = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
+    public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(27), Units.inchesToMeters(27), Units.inchesToMeters(40)), ROBOT_MASS);
     public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
     public static final double MAX_SPEED = Units.feetToMeters(15.1);
     // Maximum speed of the robot in meters per second, used to limit acceleration.
@@ -30,10 +30,10 @@ public final class Constants {
 
         public static final class Align {
             public static final class Heading {
-                public static final double TOLERANCE = 1; // in degrees
+                public static final double TOLERANCE = 2; // in degrees
             }
             public static final class Translation { 
-                public static final double TOLERANCE = 0.01; // in meters
+                public static final double TOLERANCE = Units.inchesToMeters(1.0);
             }
         }      
 
@@ -99,7 +99,7 @@ public final class Constants {
         // Elevator physical constants
         public static final double GEAR_RATIO = 175/36;
         public static final double SPOOL_CIRCUMFERENCE = Units.inchesToMeters(Math.PI * 2.53); // Random number that works
-        public static double MAX_HEIGHT = Units.inchesToMeters(47.0);
+        public static double MAX_HEIGHT = Units.inchesToMeters(46.875);
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
 
         // Preset heights in inches
@@ -107,7 +107,7 @@ public final class Constants {
         public static final double L2 = Units.inchesToMeters(17.0);
         public static final double L3 = Units.inchesToMeters(33.0);
         public static final double ALGAE1 = Units.inchesToMeters(33.0);
-        public static final double ALGAE2 = Units.inchesToMeters(47.0);
+        public static final double ALGAE2 = Units.inchesToMeters(46.875);
 
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 1;
@@ -120,9 +120,9 @@ public final class Constants {
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
             // Controllers
-            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.001, 0.0, 0.0,
+            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.004, 0.0, 0.0,
                     new TrapezoidProfile.Constraints(360, 720));    // degrees
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.297, 0.003, 0.0);
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.3, 0.003, 0.0);
 
             // Angles (degrees)
             public static final double MIN_ANGLE = -90.0;

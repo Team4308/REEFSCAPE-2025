@@ -41,6 +41,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -149,6 +150,9 @@ public class SwerveSubsystem extends SubsystemBase {
     publisher.set(getPose());
     publisher1.set(getClosestLeftReefPose());
     publisher2.set(getClosestRightReefPose());
+
+    SmartDashboard.putNumber("Left Distance", getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
+    SmartDashboard.putNumber("Right Distance", getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
   }
 
   @Override
@@ -305,8 +309,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command driveToPose(Pose2d pose) {
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity() * 0.1, 4.0,
-        swerveDrive.getMaximumChassisAngularVelocity() * 0.2, Units.degreesToRadians(720));
+        swerveDrive.getMaximumChassisVelocity(), 1.5,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(360));
 
     // Since AutoBuilder is configured, we can use it to build pathfinding commands
     return AutoBuilder.pathfindToPose(
