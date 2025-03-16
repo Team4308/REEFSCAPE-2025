@@ -138,8 +138,8 @@ public class RobotContainer {
                 CommandScheduler.getInstance().registerSubsystem(m_AlgaeArmSubsystem);
                 CommandScheduler.getInstance().registerSubsystem(m_CoralRollerSubsystem);
 
-                coralIntakeTrigger = new Trigger(() -> m_CoralRollerSubsystem.getBeamBreak());
-                drivebaseAlignedTrigger = new Trigger(() -> drivebase.isAligned());
+                coralIntakeTrigger = new Trigger(m_CoralRollerSubsystem::getBeamBreak);
+                drivebaseAlignedTrigger = new Trigger(drivebase::isAligned);
 
                 configureNamedCommands();
                 configureDriverBindings();
