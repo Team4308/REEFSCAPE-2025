@@ -147,6 +147,11 @@ public class LEDSystem extends SubsystemBase {
               .blink(Units.Seconds.of(0.2))
               .applyTo(m_buffer);
           return;
+        case "Coral":
+          LEDPattern.solid(Color.kYellow)
+              .blink(Units.Seconds.of(0.2))
+              .applyTo(m_buffer);
+          return;
         case "Fault":
           LEDPattern.solid(Color.kRed)
               .blink(Units.Seconds.of(0.2))

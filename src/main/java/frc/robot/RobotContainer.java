@@ -242,6 +242,12 @@ public class RobotContainer {
         }
 
         private void configureOtherTriggers() {
+                coralIntakeTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Coral")));
+                coralIntakeTrigger.onFalse(new InstantCommand(() -> {
+                        if (m_ledSubsystem.getLedState().equals("Coral")) {
+                                m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
+                        }
+                }));
                 drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Aligned")));
                 drivebaseAlignedTrigger.onFalse(new InstantCommand(() -> {
                         if (m_ledSubsystem.getLedState().equals("Aligned")) {
@@ -300,8 +306,8 @@ public class RobotContainer {
                 return -deadZone(operator.getLeftY()) * 5;
         }
 
-        private double joystickElevatorControl() {
-                return -deadZone(operator.getRightY()) / 20;
+        public double joystickElevatorControl() {
+                return -deadZone(operator.getRightY()) / 10;
         }
 
         private double triggerRollerControl() {
