@@ -82,14 +82,13 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDConstants TRANSLATION_CONTROLLER;
 
   private final SwerveDrive swerveDrive;
-  // private final AprilTagFieldLayout aprilTagFieldLayout =
-  // AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
   private final boolean visionDriveTest = true;
   private Vision vision;
 
   public Pose2d nearestPoseToLeftReef = new Pose2d();
   public Pose2d nearestPoseToRightReef = new Pose2d();
+  public Pose2d nearestPoseToAlgaeRemove = new Pose2d();
 
   private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
       .getStructTopic("Robot Pose", Pose2d.struct).publish();
@@ -97,6 +96,8 @@ public class SwerveSubsystem extends SubsystemBase {
       .getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
   private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault()
       .getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher3 = NetworkTableInstance.getDefault()
+      .getStructTopic("Closest Algae Remove Pose", Pose2d.struct).publish(); 
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -152,6 +153,7 @@ public class SwerveSubsystem extends SubsystemBase {
     publisher.set(getPose());
     publisher1.set(getClosestLeftReefPose());
     publisher2.set(getClosestRightReefPose());
+    publisher3.set(getClosestAlgaeRemovePose());
 
     SmartDashboard.putNumber("Left Distance",
         getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
@@ -257,10 +259,26 @@ public class SwerveSubsystem extends SubsystemBase {
     return nearestPose;
   }
 
+  public Pose2d getClosestAlgaeRemovePose() {
+    Pose2d nearestPose = new Pose2d();
+    if (isRedAlliance()) {
+      nearestPose = getPose().nearest(FieldLayout.ALGAE.RED_ALGAE_POSES);
+    } else {
+      nearestPose = getPose().nearest(FieldLayout.ALGAE.BLUE_ALGAE_POSES);
+    }
+    return nearestPose;
+  }
+
   public Command updateClosestReefPoses() {
     return this.runOnce(() -> {
       nearestPoseToLeftReef = getClosestLeftReefPose();
       nearestPoseToRightReef = getClosestRightReefPose();
+    });
+  }
+
+  public Command updateClosestAlgaePose() {
+    return this.runOnce(() -> {
+      nearestPoseToAlgaeRemove = getClosestAlgaeRemovePose();
     });
   }
 

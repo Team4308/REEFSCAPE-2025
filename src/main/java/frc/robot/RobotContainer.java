@@ -161,6 +161,10 @@ public class RobotContainer {
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
                 driver.RB.whileTrue(drivebase.updateClosestReefPoses()
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToRightReef)));
+                driver.A.whileTrue(drivebase.updateClosestAlgaePose()
+                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToAlgaeRemove)));
+                driver.Y.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+                driver.X.onTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
@@ -177,21 +181,9 @@ public class RobotContainer {
                                                                                          // above!
 
                         driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                        driver.Y.whileTrue(drivebase.driveToDistanceCommand(1.0, 0.2));
-                        driver.Start.onTrue((Commands.runOnce(drivebase::zeroGyro)));
                         driver.Back.whileTrue(drivebase.centerModulesCommand());
                         driver.RightStickButton.onTrue(Commands.none());
-                } else {
-                        driver.A.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-                        driver.X.onTrue(Commands.runOnce(drivebase::addFakeVisionReading));
-                        driver.Y.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                        driver.B.whileTrue(
-                                        drivebase.driveToPose(
-                                                        new Pose2d(new Translation2d(4, 4),
-                                                                        Rotation2d.fromDegrees(0))));
-                        driver.Start.whileTrue(Commands.none());
-                        driver.Back.whileTrue(Commands.none());
-                }
+                } 
         }
 
         private void configureOperatorBindings() {
