@@ -29,10 +29,4 @@ public class DefaultRoller extends Command {
     public void end(boolean interrupted) {
         subsystem.stopControllers();
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
-
 }
