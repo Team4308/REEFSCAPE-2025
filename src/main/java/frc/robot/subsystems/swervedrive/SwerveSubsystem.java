@@ -286,8 +286,10 @@ public class SwerveSubsystem extends SubsystemBase {
     Translation2d currentTranslation2d = getPose().getTranslation();
     Translation2d closestLeftReefTranslation2d = getClosestLeftReefPose().getTranslation();
     Translation2d closestRightReefTranslation2d = getClosestRightReefPose().getTranslation();
+    Translation2d closestAlgaeRemoveTranslation2d = getClosestAlgaeRemovePose().getTranslation();
     if (currentTranslation2d.getDistance(closestLeftReefTranslation2d) < Swerve.Align.Translation.TOLERANCE
-        || currentTranslation2d.getDistance(closestRightReefTranslation2d) < Swerve.Align.Translation.TOLERANCE) {
+        || currentTranslation2d.getDistance(closestRightReefTranslation2d) < Swerve.Align.Translation.TOLERANCE
+        || currentTranslation2d.getDistance(closestAlgaeRemoveTranslation2d) < Swerve.Align.Translation.TOLERANCE) {
       return true;
     } else {
       return false;
@@ -299,10 +301,13 @@ public class SwerveSubsystem extends SubsystemBase {
     double currentHeading = getPose().getRotation().getDegrees();
     double closestLeftReefHeading = getClosestLeftReefPose().getRotation().getDegrees();
     double closestRightReefHeading = getClosestRightReefPose().getRotation().getDegrees();
+    double closestAlgaeRemoveHeading = getClosestAlgaeRemovePose().getRotation().getDegrees();
     if ((Math.abs(currentHeading - closestLeftReefHeading) < Swerve.Align.Heading.TOLERANCE)
         || (Math.abs(currentHeading - closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)
+        || (Math.abs(currentHeading - closestAlgaeRemoveHeading) < Swerve.Align.Heading.TOLERANCE)
         || (Math.abs(currentHeading + closestLeftReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading + closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)) {
+        || (Math.abs(currentHeading + closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)
+        || (Math.abs(currentHeading + closestAlgaeRemoveHeading) < Swerve.Align.Heading.TOLERANCE)) {
       return true;
     } else {
       return false;
