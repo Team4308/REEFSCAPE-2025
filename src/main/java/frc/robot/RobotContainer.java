@@ -309,26 +309,16 @@ public class RobotContainer {
         }
 
         private double joystickAlgaeArm() {
-                if (Math.abs(deadZone(operator.getLeftY())) > 0.15) {
-                        new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(m_AlgaeArmSubsystem.targetAngle));
-                }
                 return -deadZone(operator.getLeftY()) * 5;
         }
 
         public double joystickElevatorControl() {
-                if (Math.abs(deadZone(operator.getRightY())) > 0.15) {
-                        new InstantCommand(() -> m_ElevatorSubsystem.setPosition(m_ElevatorSubsystem.targetPosition));
-                }
                 return -deadZone(operator.getRightY()) / 10;
         }
 
         private double triggerRollerControl() {
                 double isPos = deadZone(operator.getRightTrigger()) * 15;
                 double isNeg = deadZone(operator.getLeftTrigger()) * 15;
-                if (isPos + isNeg > 0.15) {
-                        new InstantCommand(() -> m_CoralRollerSubsystem
-                                        .setRollerOutput(m_CoralRollerSubsystem.targetVelocity));
-                }
                 if (isPos > 0) {
                         return isPos;
                 } else {

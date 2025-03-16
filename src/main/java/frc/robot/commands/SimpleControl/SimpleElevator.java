@@ -2,9 +2,7 @@ package frc.robot.commands.SimpleControl;
 
 import java.util.function.Supplier;
 
-import ca.team4308.absolutelib.control.XBoxWrapper;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Ports;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class SimpleElevator extends Command {
@@ -34,7 +32,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public boolean isFinished() {
-        return (subsystem.isAtPosition()) || (Math.abs(new XBoxWrapper(Ports.Joysticks.OPERATOR).getRightY()) > 0.15);
+        return (subsystem.isAtPosition());
     }
 
 }

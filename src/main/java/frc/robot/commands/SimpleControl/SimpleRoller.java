@@ -2,9 +2,7 @@ package frc.robot.commands.SimpleControl;
 
 import java.util.function.Supplier;
 
-import ca.team4308.absolutelib.control.XBoxWrapper;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Ports;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
 public class SimpleRoller extends Command {
@@ -34,8 +32,7 @@ public class SimpleRoller extends Command {
 
     @Override
     public boolean isFinished() {
-        return (subsystem.beamBreak.get()) || (new XBoxWrapper(Ports.Joysticks.OPERATOR).getLeftTrigger()
-                + new XBoxWrapper(Ports.Joysticks.OPERATOR).getRightTrigger() > 0.15);
+        return (subsystem.beamBreak.get());
     }
 
 }
