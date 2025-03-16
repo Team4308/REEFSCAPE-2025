@@ -196,6 +196,7 @@ public class RobotContainer {
 
         private void configureOperatorBindings() {
                 // Automatic Scoring
+                operator.A.onTrue(m_ElevatorSubsystem.goToLevel(0));
                 operator.X.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.Y.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
@@ -203,23 +204,25 @@ public class RobotContainer {
                 // m_AlgaeArmSubsystem));
 
                 // Automatic Algae Removal
-                operator.LeftStickButton
+                operator.RB
                                 .onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.RightStickButton
+                operator.LB
                                 .onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+
+                // Intake
+                operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
+                                m_CoralRollerSubsystem)
+                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
 
                 // *** These are failsafes, that should be already covered by the previous
                 // commands ***
                 // Coral
-                operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
-                                m_CoralRollerSubsystem)
-                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get())); // INTAKING
                 operator.Back.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
                                 m_CoralRollerSubsystem)
                                 .until(() -> m_CoralRollerSubsystem.beamBreak.get())); // SHOOTING
 
                 // Algae
-                operator.RB.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem
+                operator.LeftStickButton.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem
                                 .setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
                                 .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem
                                                 .setAlgaePosition(Constants.constEndEffector.algaePivot.MAX_ANGLE)))); // Set
@@ -227,7 +230,7 @@ public class RobotContainer {
                                                                                                                        // to
                                                                                                                        // remove
                                                                                                                        // algae
-                operator.RB.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL,
+                operator.LeftStickButton.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL,
                                 m_CoralRollerSubsystem))
                                 .onFalse(new DefaultRoller(() -> 0.0, m_CoralRollerSubsystem));
 
@@ -236,7 +239,6 @@ public class RobotContainer {
                 operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(2));
                 operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(0));
                 operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(1));
-                operator.A.onTrue(m_ElevatorSubsystem.goToLevel(0));
         }
 
         private void configureOtherTriggers() {
