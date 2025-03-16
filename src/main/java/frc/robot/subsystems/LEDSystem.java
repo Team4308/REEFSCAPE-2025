@@ -102,7 +102,7 @@ public class LEDSystem extends SubsystemBase {
     if (status == null || status.trim().isEmpty()) {
       return;
     }
-    System.out.println(status);
+
     // The base state will never be a temporary state
     if (!states.get(status).getState()) {
       baseState = status;
