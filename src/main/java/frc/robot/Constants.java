@@ -115,7 +115,7 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final double TOLERANCE = 5.0;
+            public static final double TOLERANCE = 6.0;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
@@ -126,7 +126,7 @@ public final class Constants {
 
             // Angles (degrees)
             public static final double MIN_ANGLE = -90.0;
-            public static final double MAX_ANGLE = 100.0;
+            public static final double MAX_ANGLE = 95.0;
             public static final double REMOVAL_ANGLE = -30;
         }
 
