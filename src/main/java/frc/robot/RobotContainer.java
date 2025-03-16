@@ -99,17 +99,8 @@ public class RobotContainer {
         // Derive the heading axis with math!
         SwerveInputStream driveDirectAngleKeyboard = driveAngularVelocityKeyboard.copy()
                         .withControllerHeadingAxis(() -> Math.sin(
-                                        driver.getLeftTrigger() *
-                                                        Math.PI)
-                                        *
-                                        (Math.PI *
-                                                        2),
-                                        () -> Math.cos(
-                                                        driver.getLeftTrigger() *
-                                                                        Math.PI)
-                                                        *
-                                                        (Math.PI *
-                                                                        2))
+                                        driver.getLeftTrigger() * Math.PI) * (Math.PI * 2),
+                                        () -> Math.cos(driver.getLeftTrigger() * Math.PI) * (Math.PI * 2))
                         .headingWhile(true);
 
         // Reef align
