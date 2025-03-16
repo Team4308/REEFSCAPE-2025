@@ -67,7 +67,7 @@ public class LEDSystem extends SubsystemBase {
     }
 
     states.put("Coral", new LEDTuple(true, 3.4));
-    states.put("Align", new LEDTuple(false, 0.0));
+    states.put("Aligned", new LEDTuple(false, 0.0));
     states.put("Fault", new LEDTuple(true, 3.4));
     states.put("Idle", new LEDTuple(false, 0.0));
     states.put("Auto", new LEDTuple(false, 0.0));
@@ -102,9 +102,9 @@ public class LEDSystem extends SubsystemBase {
     if (status == null || status.trim().isEmpty()) {
       return;
     }
-
+    System.out.println(status);
     // The base state will never be a temporary state
-    if (!states.get(currentState).getState()) {
+    if (!states.get(status).getState()) {
       baseState = status;
     }
 
