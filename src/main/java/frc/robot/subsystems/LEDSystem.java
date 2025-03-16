@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.math.Pair;
 
 public class LEDSystem extends SubsystemBase {
   private ElevatorSubsystem m_elevator;

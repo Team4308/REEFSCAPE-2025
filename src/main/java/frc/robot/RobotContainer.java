@@ -10,8 +10,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -164,25 +162,12 @@ public class RobotContainer {
                 driver.A.whileTrue(drivebase.updateClosestAlgaePose()
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToAlgaeRemove)));
                 driver.Y.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-                driver.X.onTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+                driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
                 } else {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-                }
-                if (Robot.isSimulation()) {
-                        driver.Y.onTrue(Commands
-                                        .runOnce(() -> drivebase.resetOdometry(new Pose2d(15, 4, new Rotation2d()))));
-                        driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
-                }
-                if (DriverStation.isTest()) {
-                        drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command
-                                                                                         // above!
-
-                        driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                        driver.Back.whileTrue(drivebase.centerModulesCommand());
-                        driver.RightStickButton.onTrue(Commands.none());
                 }
         }
 
