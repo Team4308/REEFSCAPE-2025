@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Operator;
 import frc.robot.Constants.constEndEffector;
+import frc.robot.Constants.constEndEffector.algaePivot;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
 import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
@@ -263,6 +264,8 @@ public class RobotContainer {
                 operator.X.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.B.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.Y.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                operator.RB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                operator.LB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
         }
 
         public void configureNamedCommands() {
@@ -307,16 +310,26 @@ public class RobotContainer {
         }
 
         private double joystickAlgaeArm() {
+                if (Math.abs(deadZone(operator.getLeftY())) > 0.15) {
+                        new InstantCommand(() -> m_AlgaeArmSubsystem.setAlgaePosition(m_AlgaeArmSubsystem.targetAngle));
+                }
                 return -deadZone(operator.getLeftY()) * 5;
         }
 
         public double joystickElevatorControl() {
+                if (Math.abs(deadZone(operator.getRightY())) > 0.15) {
+                        new InstantCommand(() -> m_ElevatorSubsystem.setPosition(m_ElevatorSubsystem.targetPosition));
+                }
                 return -deadZone(operator.getRightY()) / 10;
         }
 
         private double triggerRollerControl() {
                 double isPos = deadZone(operator.getRightTrigger()) * 15;
                 double isNeg = deadZone(operator.getLeftTrigger()) * 15;
+                if (isPos + isNeg > 0.15) {
+                        new InstantCommand(() -> m_CoralRollerSubsystem
+                                        .setRollerOutput(m_CoralRollerSubsystem.targetVelocity));
+                }
                 if (isPos > 0) {
                         return isPos;
                 } else {

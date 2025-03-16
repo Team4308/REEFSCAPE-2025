@@ -20,5 +20,5 @@ public class FastL1 extends SequentialCommandGroup {
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L1, rollerSubsystem),
                 new SimpleElevator(() -> constElevator.L3, elevatorSubsystem),
                 new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem));
-    }   
+    }
 }

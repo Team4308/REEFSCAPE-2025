@@ -21,6 +21,8 @@ public class CoralRollerSubsystem extends LogSubsystem {
 
     public DigitalInput beamBreak = new DigitalInput(Ports.EndEffector.INDEX_BEAM_BREAK);
 
+    public double targetVelocity = 0;
+
     public CoralRollerSubsystem() {
         var config = new Slot0Configs();
         config.kS = 0.1; // Add 0.1 V output to overcome static friction
@@ -37,6 +39,7 @@ public class CoralRollerSubsystem extends LogSubsystem {
     }
 
     public void setRollerOutput(double velocity) {
+        targetVelocity = velocity;
         rollerMotor.setControl(rollerVelocity.withVelocity(velocity));
     }
 
