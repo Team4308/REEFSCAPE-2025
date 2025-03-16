@@ -41,7 +41,7 @@ public class LEDSystem extends SubsystemBase {
   private String baseState = ""; // Add this to track the underlying state
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
-  private static final double STATUS_DURATION = 1.0;
+  private static final double STATUS_DURATION = 2.8;
 
   public LEDSystem(RobotContainer robotContainer) {
     this.robotContainer = robotContainer;
