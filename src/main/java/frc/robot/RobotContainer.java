@@ -242,9 +242,8 @@ public class RobotContainer {
                 }));
                 drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Aligned")));
                 drivebaseAlignedTrigger.onFalse(new InstantCommand(() -> {
-                        if (m_ledSubsystem.getLedState().equals("Aligned")) {
-                                m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
-                        }
+                        m_ledSubsystem.setLedState(m_ledSubsystem.baseState);
+
                 }));
 
                 coralIntakeTrigger.onTrue(new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
@@ -252,6 +251,7 @@ public class RobotContainer {
                 drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1)));
                 drivebaseAlignedTrigger
                                 .onFalse(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+
                 operator.X.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.B.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.Y.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));

@@ -39,7 +39,7 @@ public class LEDSystem extends SubsystemBase {
 
   public String previousState = "";
   public String currentState = "";
-  private String baseState = ""; // Add this to track the underlying state
+  public String baseState = ""; // Add this to track the underlying state
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
 
@@ -67,7 +67,7 @@ public class LEDSystem extends SubsystemBase {
     }
 
     states.put("Coral", new LEDTuple(true, 3.4));
-    states.put("Aligned", new LEDTuple(false, 0.0));
+    states.put("Aligned", new LEDTuple(true, 1111110.0));
     states.put("Fault", new LEDTuple(true, 3.4));
     states.put("Idle", new LEDTuple(false, 0.0));
     states.put("Auto", new LEDTuple(false, 0.0));
@@ -105,6 +105,7 @@ public class LEDSystem extends SubsystemBase {
 
     // The base state will never be a temporary state
     if (!states.get(status).getState()) {
+      System.out.println(status);
       baseState = status;
     }
 
