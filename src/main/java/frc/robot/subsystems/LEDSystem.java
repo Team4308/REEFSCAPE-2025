@@ -43,7 +43,7 @@ public class LEDSystem extends SubsystemBase {
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
 
-  private HashMap<String, LEDTuple> states;
+  private HashMap<String, LEDTuple> states = new HashMap<String, LEDTuple>();
 
   public LEDSystem(RobotContainer robotContainer) {
     m_led = new AddressableLED(Constants.constLED.LED_PORT);
@@ -67,12 +67,12 @@ public class LEDSystem extends SubsystemBase {
     }
 
     states.put("Coral", new LEDTuple(true, 3.4));
-    states.put("Align", new LEDTuple(false, null));
+    states.put("Align", new LEDTuple(false, 0.0));
     states.put("Fault", new LEDTuple(true, 3.4));
-    states.put("Idle", new LEDTuple(false, null));
-    states.put("Auto", new LEDTuple(false, null));
-    states.put("Teleop", new LEDTuple(false, null));
-    states.put("Test", new LEDTuple(false, null));
+    states.put("Idle", new LEDTuple(false, 0.0));
+    states.put("Auto", new LEDTuple(false, 0.0));
+    states.put("Teleop", new LEDTuple(false, 0.0));
+    states.put("Test", new LEDTuple(false, 0.0));
   }
 
   /**
