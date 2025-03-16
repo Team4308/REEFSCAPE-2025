@@ -60,7 +60,7 @@ public class CoralRollerSubsystem extends LogSubsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Is Coral Intook", !beamBreak.get());
+        SmartDashboard.putBoolean("Intaken?", !beamBreak.get());
     }
 
 }

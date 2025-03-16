@@ -131,6 +131,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     double voltage = calculateVoltage();
+
+    if (targetPosition == constElevator.MIN_HEIGHT && getPositionInMeters() < 0.15) {
+      voltage = 0.0;
+    }
+
     rightMotorLeader.setVoltage(voltage);
     leftMotorFollower.setVoltage(voltage);
 
