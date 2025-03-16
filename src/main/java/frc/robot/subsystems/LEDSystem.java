@@ -16,10 +16,12 @@ import frc.robot.Constants.constLED;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.math.Pair;
 
 public class LEDSystem extends SubsystemBase {
   private ElevatorSubsystem m_elevator;
@@ -40,7 +42,8 @@ public class LEDSystem extends SubsystemBase {
   private String baseState = ""; // Add this to track the underlying state
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
-  private static final double STATUS_DURATION = 3.4;
+
+  private HashMap<String, LEDTuple> states;
 
   public LEDSystem(RobotContainer robotContainer) {
     m_led = new AddressableLED(Constants.constLED.LED_PORT);
@@ -62,6 +65,14 @@ public class LEDSystem extends SubsystemBase {
       m_simB = m_simDevice.createDouble("B", SimDevice.Direction.kOutput, 0.0);
       m_simBrightness = m_simDevice.createDouble("Brightness", SimDevice.Direction.kOutput, 0.0);
     }
+
+    states.put("Coral", new LEDTuple(true, 3.4));
+    states.put("Align", new LEDTuple(false, null));
+    states.put("Fault", new LEDTuple(true, 3.4));
+    states.put("Idle", new LEDTuple(false, null));
+    states.put("Auto", new LEDTuple(false, null));
+    states.put("Teleop", new LEDTuple(false, null));
+    states.put("Test", new LEDTuple(false, null));
   }
 
   /**
@@ -92,8 +103,8 @@ public class LEDSystem extends SubsystemBase {
       return;
     }
 
-    // Store base state for non-status states
-    if (!status.equals("Coral") && !status.equals("Aligned") && !status.equals("Fault")) {
+    // The base state will always be a pernament state
+    if (!status.equals("Coral") && !status.equals("Fault")) {
       baseState = status;
     }
 
@@ -120,10 +131,9 @@ public class LEDSystem extends SubsystemBase {
         isShowingStatus = false;
         currentState = baseState; // Return to base state instead of previous state
       }
-    } else if (currentState.equals("Coral") || currentState.equals("Fault")) {
-      isShowingStatus = true;
-      statusTimer = STATUS_DURATION;
     }
+    isShowingStatus = states.get(currentState).getState();
+    statusTimer = states.get(currentState).getDuration();
 
     applyPattern(currentState);
     m_led.setData(m_buffer);
@@ -297,5 +307,23 @@ public class LEDSystem extends SubsystemBase {
       return (double) (patternLength - position) / constLED.TRAIL_LENGTH;
     }
     return 1.0;
+  }
+
+  public class LEDTuple {
+    public final Boolean isTemporary;
+    public final Double statusDuration;
+
+    public LEDTuple(Boolean isTemporary, Double statusDuration) {
+      this.isTemporary = isTemporary;
+      this.statusDuration = statusDuration;
+    }
+
+    public Boolean getState() {
+      return this.isTemporary;
+    }
+
+    public Double getDuration() {
+      return this.statusDuration;
+    }
   }
 }
