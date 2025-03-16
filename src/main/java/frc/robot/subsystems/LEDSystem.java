@@ -103,8 +103,8 @@ public class LEDSystem extends SubsystemBase {
       return;
     }
 
-    // The base state will always be a pernament state
-    if (!status.equals("Coral") && !status.equals("Fault")) {
+    // The base state will never be a temporary state
+    if (!states.get(currentState).getState()) {
       baseState = status;
     }
 
