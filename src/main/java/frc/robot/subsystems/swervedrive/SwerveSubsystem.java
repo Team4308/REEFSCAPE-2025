@@ -41,6 +41,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,6 +50,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 import frc.robot.FieldLayout;
+import frc.robot.Robot;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -290,6 +292,9 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAligned() {
+    if (Robot.isSimulation()) {
+      return new XboxController(0).getBButton();
+    }
     // System.out.println("Translation: " + isTranslationAligned());
     // System.out.println("Heading: " + isHeadingAligned());
     if (isTranslationAligned() && isHeadingAligned()) {

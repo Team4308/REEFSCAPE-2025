@@ -8,8 +8,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Ports;
+import frc.robot.Robot;
 
 public class CoralRollerSubsystem extends LogSubsystem {
 
@@ -47,6 +49,9 @@ public class CoralRollerSubsystem extends LogSubsystem {
     }
 
     public boolean getBeamBreak() {
+        if (Robot.isSimulation()) {
+            return new XboxController(0).getAButton();
+        }
         return !beamBreak.get();
     }
 

@@ -257,8 +257,12 @@ public class RobotContainer {
 
                 coralIntakeTrigger.onTrue(new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
                                 .withTimeout(1).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
-                drivebaseAlignedTrigger.onTrue(new RunCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1))
-                                .withTimeout(1).finallyDo(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1)));
+                drivebaseAlignedTrigger
+                                .onFalse(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                operator.X.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                operator.B.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                operator.Y.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
         }
 
         public void configureNamedCommands() {

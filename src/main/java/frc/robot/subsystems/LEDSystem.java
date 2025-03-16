@@ -41,7 +41,7 @@ public class LEDSystem extends SubsystemBase {
   private String baseState = ""; // Add this to track the underlying state
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
-  private static final double STATUS_DURATION = 2.8;
+  private static final double STATUS_DURATION = 3.4;
 
   public LEDSystem(RobotContainer robotContainer) {
     this.robotContainer = robotContainer;
@@ -95,7 +95,7 @@ public class LEDSystem extends SubsystemBase {
     }
 
     // Store base state for non-status states
-    if (!status.equals("Aligned") && !status.equals("Fault")) {
+    if (!status.equals("Coral") && !status.equals("Aligned") && !status.equals("Fault")) {
       baseState = status;
     }
 
@@ -122,7 +122,7 @@ public class LEDSystem extends SubsystemBase {
         isShowingStatus = false;
         currentState = baseState; // Return to base state instead of previous state
       }
-    } else if (currentState.equals("Aligned") || currentState.equals("Fault")) {
+    } else if (currentState.equals("Coral") || currentState.equals("Fault")) {
       isShowingStatus = true;
       statusTimer = STATUS_DURATION;
     }
@@ -196,7 +196,9 @@ public class LEDSystem extends SubsystemBase {
         break;
 
       case "Aligned":
-        LEDPattern.solid(Color.kGreen).applyTo(m_buffer);
+        LEDPattern.solid(Color.kGreen)
+            .blink(Units.Seconds.of(0.2))
+            .applyTo(m_buffer);
         break;
 
       case "Coral":
