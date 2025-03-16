@@ -16,17 +16,7 @@ public class DefaultAlgae extends Command {
     }
 
     @Override
-    public void initialize() {
-        subsystem.stopControllers();
-    }
-
-    @Override
     public void execute() {
         subsystem.setAlgaePosition(subsystem.targetAngle + angle.get());
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        subsystem.stopControllers();
     }
 }

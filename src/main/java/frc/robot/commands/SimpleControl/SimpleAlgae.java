@@ -16,18 +16,8 @@ public class SimpleAlgae extends Command {
     }
 
     @Override
-    public void initialize() {
-        subsystem.stopControllers();
-    }
-
-    @Override
     public void execute() {
         subsystem.setAlgaePosition(angle.get());
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        subsystem.stopControllers();
     }
 
     @Override

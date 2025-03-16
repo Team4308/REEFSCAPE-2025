@@ -16,17 +16,7 @@ public class DefaultElevator extends Command {
     }
 
     @Override
-    public void initialize() {
-        subsystem.stopControllers();
-    }
-
-    @Override
     public void execute() {
         subsystem.setPosition(subsystem.targetPosition + angle.get());
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        subsystem.stopControllers();
     }
 }
