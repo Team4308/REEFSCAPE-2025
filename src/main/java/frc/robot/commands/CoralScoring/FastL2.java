@@ -1,4 +1,3 @@
-
 package frc.robot.commands.CoralScoring;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;

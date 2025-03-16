@@ -1,4 +1,3 @@
-
 package frc.robot.commands.SimpleControl;
 
 import java.util.function.Supplier;

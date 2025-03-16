@@ -1,12 +1,7 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.sim.TalonFXSimState;
-
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -50,6 +45,7 @@ public class Simulation {
         m_elevatorSubsystem = a;
         m_algaeArmSubsystem = b;
         m_coralRollerSubsystem = c;
+        c = m_coralRollerSubsystem;
     }
 
     public void run() {

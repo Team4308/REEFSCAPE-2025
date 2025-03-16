@@ -26,7 +26,6 @@ public class LEDSystem extends SubsystemBase {
 
   private final AddressableLED m_led;
   private final AddressableLEDBuffer m_buffer;
-  private final RobotContainer robotContainer;
 
   private int scrollOffset = 0;
 
@@ -44,7 +43,6 @@ public class LEDSystem extends SubsystemBase {
   private static final double STATUS_DURATION = 3.4;
 
   public LEDSystem(RobotContainer robotContainer) {
-    this.robotContainer = robotContainer;
     m_led = new AddressableLED(Constants.constLED.LED_PORT);
     m_buffer = new AddressableLEDBuffer(Constants.constLED.LED_LENGTH);
 
