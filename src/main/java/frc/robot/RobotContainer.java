@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Operator;
 import frc.robot.Constants.constEndEffector;
@@ -246,9 +247,9 @@ public class RobotContainer {
                         }
                 }));
 
-                coralIntakeTrigger.onTrue(new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
+                coralIntakeTrigger.onTrue(new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
                                 .withTimeout(1).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
-                drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1))
+                drivebaseAlignedTrigger.onTrue(new RunCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1))
                                 .withTimeout(1).finallyDo(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
         }
 
