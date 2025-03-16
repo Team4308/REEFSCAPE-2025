@@ -183,7 +183,7 @@ public class RobotContainer {
                         driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
                         driver.Back.whileTrue(drivebase.centerModulesCommand());
                         driver.RightStickButton.onTrue(Commands.none());
-                } 
+                }
         }
 
         private void configureOperatorBindings() {
@@ -287,7 +287,7 @@ public class RobotContainer {
                 return autoChooser.getSelected();
         }
 
-        public void periodic() {
+        public void teleopPeriodic() {
         }
 
         public void simulationPerodic() {
