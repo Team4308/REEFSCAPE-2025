@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -104,7 +104,7 @@ public class LEDSystem extends SubsystemBase {
 
     // The base state will never be a temporary state
     if (!states.get(status).getState()) {
-      System.out.println(status);
+      // System.out.println(status);
       baseState = status;
     }
 
@@ -116,9 +116,9 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putString("currentState", currentState);
-    SmartDashboard.putString("Last LED status", previousState);
-    SmartDashboard.putString("Base State", baseState); // Debug output
+    // SmartDashboard.putString("currentState", currentState);
+    // SmartDashboard.putString("Last LED status", previousState);
+    // SmartDashboard.putString("Base State", baseState); // Debug output
 
     // Skip if no valid state
     if (currentState == null || currentState.trim().isEmpty()) {

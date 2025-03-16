@@ -4,7 +4,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -51,7 +51,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     double totalVoltage = DoubleUtils.clamp(pidOutput + feedforwardVoltage, -12.0, 12.0);
 
-    SmartDashboard.putNumber("Setpoint Position", constElevator.PID_CONTROLLER.getSetpoint().position);
+    // SmartDashboard.putNumber("Setpoint Position", constElevator.PID_CONTROLLER.getSetpoint().position);
 
     return totalVoltage;
   }
@@ -143,7 +143,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
-    SmartDashboard.putBoolean("Elevator At Position", isAtPosition());
-    SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
+    // SmartDashboard.putBoolean("Elevator At Position", isAtPosition());
+    // SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
   }
 }

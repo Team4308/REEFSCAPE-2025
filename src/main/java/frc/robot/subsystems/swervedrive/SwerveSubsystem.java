@@ -37,8 +37,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
+// import edu.wpi.first.networktables.NetworkTableInstance;
+// import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -90,19 +90,19 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d nearestPoseToRightReef = new Pose2d();
   public Pose2d nearestPoseToAlgaeRemove = new Pose2d();
 
-  private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
-      .getStructTopic("Robot Pose", Pose2d.struct).publish();
-  private StructPublisher<Pose2d> publisher1 = NetworkTableInstance.getDefault()
-      .getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
-  private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault()
-      .getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
-  private StructPublisher<Pose2d> publisher3 = NetworkTableInstance.getDefault()
-      .getStructTopic("Closest Algae Remove Pose", Pose2d.struct).publish(); 
+  // private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+  //     .getStructTopic("Robot Pose", Pose2d.struct).publish();
+  // private StructPublisher<Pose2d> publisher1 = NetworkTableInstance.getDefault()
+  //     .getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
+  // private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault()
+  //     .getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
+  // private StructPublisher<Pose2d> publisher3 = NetworkTableInstance.getDefault()
+  //     .getStructTopic("Closest Algae Remove Pose", Pose2d.struct).publish(); 
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
     // objects being created.
-    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.HIGH;
+    SwerveDriveTelemetry.verbosity = TelemetryVerbosity.NONE;
     try {
       swerveDrive = new SwerveParser(directory).createSwerveDrive(Constants.MAX_SPEED,
           new Pose2d(new Translation2d(Meter.of(1),
@@ -150,15 +150,15 @@ public class SwerveSubsystem extends SubsystemBase {
       vision.updatePoseEstimation(swerveDrive);
     }
     checkTunableValues();
-    publisher.set(getPose());
-    publisher1.set(getClosestLeftReefPose());
-    publisher2.set(getClosestRightReefPose());
-    publisher3.set(getClosestAlgaeRemovePose());
+    // publisher.set(getPose());
+    // publisher1.set(getClosestLeftReefPose());
+    // publisher2.set(getClosestRightReefPose());
+    // publisher3.set(getClosestAlgaeRemovePose());
 
-    SmartDashboard.putNumber("Left Distance",
-        getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
-    SmartDashboard.putNumber("Right Distance",
-        getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
+    // SmartDashboard.putNumber("Left Distance",
+    //     getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
+    // SmartDashboard.putNumber("Right Distance",
+    //     getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
     SmartDashboard.putBoolean("isAligned", isAligned());
   }
 
@@ -318,8 +318,6 @@ public class SwerveSubsystem extends SubsystemBase {
     if (Robot.isSimulation()) {
       return new XboxController(0).getBButton();
     }
-    // System.out.println("Translation: " + isTranslationAligned());
-    // System.out.println("Heading: " + isHeadingAligned());
     if (isTranslationAligned() && isHeadingAligned()) {
       return true;
     } else {
