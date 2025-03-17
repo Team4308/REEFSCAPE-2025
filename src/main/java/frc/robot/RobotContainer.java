@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Operator;
+import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Reset;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
@@ -72,7 +72,7 @@ public class RobotContainer {
                         () -> driver.getLeftY() * -1,
                         () -> driver.getLeftX() * -1)
                         .withControllerRotationAxis(() -> driver.getRightX() * -1)
-                        .deadband(Operator.DEADBAND)
+                        .deadband(Driver.DEADBAND)
                         .scaleTranslation(1.0)
                         .allianceRelativeControl(true);
 
@@ -91,7 +91,7 @@ public class RobotContainer {
                         () -> -driver.getLeftY(),
                         () -> -driver.getLeftX())
                         .withControllerRotationAxis(() -> driver.getRightX())
-                        .deadband(Operator.DEADBAND)
+                        .deadband(Driver.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
 
@@ -308,7 +308,7 @@ public class RobotContainer {
         }
 
         private static double deadZone(double integer) {
-                if (Math.abs(integer) < Operator.DEADBAND) {
+                if (Math.abs(integer) < 0.1) {
                         integer = 0;
                 }
                 return integer;
