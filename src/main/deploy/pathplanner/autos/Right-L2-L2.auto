@@ -7,19 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Right-D"
+            "pathName": "Right-F"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Preset"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "D-Coral"
+            "pathName": "F-Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Coral-C"
+            "pathName": "Coral-E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Preset"
           }
         }
       ]
