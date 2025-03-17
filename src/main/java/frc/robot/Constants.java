@@ -14,7 +14,7 @@ import swervelib.math.Matter;
 
 public final class Constants {
 
-    public static final double ROBOT_MASS = 100 * 0.453592;
+    public static final double ROBOT_MASS = 123 * 0.453592;
     public static final Matter CHASSIS = new Matter(new Translation3d(Units.inchesToMeters(27), Units.inchesToMeters(27), Units.inchesToMeters(40)), ROBOT_MASS);
     public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
     public static final double MAX_SPEED = Units.feetToMeters(15.1);
@@ -52,9 +52,9 @@ public final class Constants {
         }
     }
 
-    public static class Operator {
+    public static class Driver {
         // Joystick Deadband
-        public static final double DEADBAND = 0.1;
+        public static final double DEADBAND = 0.0;
         public static final double LEFT_Y_DEADBAND = 0.1;
         public static final double RIGHT_X_DEADBAND = 0.1;
         public static final double TURN_CONSTANT = 6;
@@ -92,7 +92,7 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 10.0;    // m/s^2
 
         // Controllers
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(2.1, 0.0, 0.0,
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(2.3, 0.0, 0.0,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
         public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.36, 2.3, 0.0);
 
@@ -103,7 +103,7 @@ public final class Constants {
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
 
         // Preset heights in inches
-        public static final double L1 = Units.inchesToMeters(6.0);
+        public static final double L1 = Units.inchesToMeters(6.5);
         public static final double L2 = Units.inchesToMeters(17.0);
         public static final double L3 = Units.inchesToMeters(33.0);
         public static final double ALGAE1 = Units.inchesToMeters(33.0);
@@ -115,7 +115,7 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final double TOLERANCE = 5.0;
+            public static final double TOLERANCE = 8.0;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
@@ -126,7 +126,7 @@ public final class Constants {
 
             // Angles (degrees)
             public static final double MIN_ANGLE = -90.0;
-            public static final double MAX_ANGLE = 100.0;
+            public static final double MAX_ANGLE = 95.0;
             public static final double REMOVAL_ANGLE = -30;
         }
 

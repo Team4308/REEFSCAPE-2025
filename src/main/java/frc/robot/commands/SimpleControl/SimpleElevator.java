@@ -16,18 +16,8 @@ public class SimpleElevator extends Command {
     }
 
     @Override
-    public void initialize() {
-        subsystem.stopControllers();
-    }
-
-    @Override
     public void execute() {
         subsystem.setPosition(control.get());
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        subsystem.stopControllers();
     }
 
     @Override

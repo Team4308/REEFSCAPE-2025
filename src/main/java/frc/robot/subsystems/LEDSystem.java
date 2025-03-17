@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -16,6 +16,7 @@ import frc.robot.Constants.constLED;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import edu.wpi.first.hal.SimDevice;
@@ -37,10 +38,11 @@ public class LEDSystem extends SubsystemBase {
 
   public String previousState = "";
   public String currentState = "";
-  private String baseState = ""; // Add this to track the underlying state
+  public String baseState = ""; // Add this to track the underlying state
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
-  private static final double STATUS_DURATION = 3.4;
+
+  private HashMap<String, LEDTuple> states = new HashMap<String, LEDTuple>();
 
   public LEDSystem(RobotContainer robotContainer) {
     m_led = new AddressableLED(Constants.constLED.LED_PORT);
@@ -62,6 +64,14 @@ public class LEDSystem extends SubsystemBase {
       m_simB = m_simDevice.createDouble("B", SimDevice.Direction.kOutput, 0.0);
       m_simBrightness = m_simDevice.createDouble("Brightness", SimDevice.Direction.kOutput, 0.0);
     }
+
+    states.put("Coral", new LEDTuple(true, 3.4));
+    states.put("Aligned", new LEDTuple(true, 1111110.0));
+    states.put("Fault", new LEDTuple(true, 3.4));
+    states.put("Idle", new LEDTuple(false, 0.0));
+    states.put("Auto", new LEDTuple(false, 0.0));
+    states.put("Teleop", new LEDTuple(false, 0.0));
+    states.put("Test", new LEDTuple(false, 0.0));
   }
 
   /**
@@ -92,8 +102,9 @@ public class LEDSystem extends SubsystemBase {
       return;
     }
 
-    // Store base state for non-status states
-    if (!status.equals("Coral") && !status.equals("Aligned") && !status.equals("Fault")) {
+    // The base state will never be a temporary state
+    if (!states.get(status).getState()) {
+      // System.out.println(status);
       baseState = status;
     }
 
@@ -105,9 +116,9 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putString("currentState", currentState);
-    SmartDashboard.putString("Last LED status", previousState);
-    SmartDashboard.putString("Base State", baseState); // Debug output
+    // SmartDashboard.putString("currentState", currentState);
+    // SmartDashboard.putString("Last LED status", previousState);
+    // SmartDashboard.putString("Base State", baseState); // Debug output
 
     // Skip if no valid state
     if (currentState == null || currentState.trim().isEmpty()) {
@@ -120,10 +131,9 @@ public class LEDSystem extends SubsystemBase {
         isShowingStatus = false;
         currentState = baseState; // Return to base state instead of previous state
       }
-    } else if (currentState.equals("Coral") || currentState.equals("Fault")) {
-      isShowingStatus = true;
-      statusTimer = STATUS_DURATION;
     }
+    isShowingStatus = states.get(currentState).getState();
+    statusTimer = states.get(currentState).getDuration();
 
     applyPattern(currentState);
     m_led.setData(m_buffer);
@@ -297,5 +307,23 @@ public class LEDSystem extends SubsystemBase {
       return (double) (patternLength - position) / constLED.TRAIL_LENGTH;
     }
     return 1.0;
+  }
+
+  public class LEDTuple {
+    public final Boolean isTemporary;
+    public final Double statusDuration;
+
+    public LEDTuple(Boolean isTemporary, Double statusDuration) {
+      this.isTemporary = isTemporary;
+      this.statusDuration = statusDuration;
+    }
+
+    public Boolean getState() {
+      return this.isTemporary;
+    }
+
+    public Double getDuration() {
+      return this.statusDuration;
+    }
   }
 }
