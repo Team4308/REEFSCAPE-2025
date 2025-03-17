@@ -35,9 +35,6 @@
         "header": {
           "open": false
         }
-      },
-      "window": {
-        "visible": false
       }
     }
   },
@@ -50,79 +47,23 @@
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/IMU": "Alerts",
       "/SmartDashboard/JSON": "Alerts",
+      "/SmartDashboard/MainMech": "Mechanism2d",
       "/SmartDashboard/Motors": "Alerts",
       "/SmartDashboard/PathPlanner": "Alerts",
       "/SmartDashboard/PhotonAlerts": "Alerts",
       "/SmartDashboard/Pigeon 2 (v6) [0]": "Gyro",
       "/SmartDashboard/Swerve Drive": "Alerts",
-      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": "Field2d",
-      "/SmartDashboard/elevatorMech": "Mechanism2d"
-    },
-    "windows": {
-      "/SmartDashboard/Field": {
-        "OdometryPose": {
-          "arrowColor": [
-            240.00001525878906,
-            255.0,
-            0.0,
-            255.0
-          ],
-          "color": [
-            247.5,
-            0.0,
-            255.0,
-            255.0
-          ],
-          "length": 0.8640000224113464,
-          "width": 0.8640000224113464
-        },
-        "XModules": {
-          "length": 0.25,
-          "width": 0.25
-        },
-        "bottom": 1638,
-        "builtin": "2025 Reefscape",
-        "height": 8.051901817321777,
-        "left": 534,
-        "right": 3466,
-        "top": 291,
-        "width": 17.54825210571289,
-        "window": {
-          "visible": true
-        }
-      },
-      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": {
-        "bottom": 1476,
-        "height": 8.210550308227539,
-        "left": 150,
-        "right": 2961,
-        "top": 79,
-        "width": 16.541748046875
-      }
+      "/SmartDashboard/VisionSystemSim-Vision/Sim Field": "Field2d"
     }
   },
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
-        "BatterySim": {
-          "open": false
-        },
-        "Field": {
-          "open": false
-        },
-        "swerve": {
-          "open": false
-        }
+        "open": true
       }
     }
   },
   "NetworkTables Info": {
-    "Connections": {
-      "open": true
-    },
     "visible": true
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

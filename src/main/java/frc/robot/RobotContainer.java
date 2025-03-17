@@ -237,12 +237,13 @@ public class RobotContainer {
                 coralIntakeTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Coral")));
                 coralIntakeTrigger.onFalse(new InstantCommand(() -> {
                         if (m_ledSubsystem.getLedState().equals("Coral")) {
-                                m_ledSubsystem.setLedState(m_ledSubsystem.previousState);
+                                m_ledSubsystem.clearStatus();
                         }
                 }));
                 drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Aligned")));
                 drivebaseAlignedTrigger.onFalse(new InstantCommand(() -> {
-                        m_ledSubsystem.setLedState(m_ledSubsystem.baseState);
+                        m_ledSubsystem.clearTemporary();
+                        ;
 
                 }));
 

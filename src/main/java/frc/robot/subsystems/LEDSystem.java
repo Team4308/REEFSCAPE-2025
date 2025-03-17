@@ -3,31 +3,41 @@ package frc.robot.subsystems;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.constElevator;
 import frc.robot.Constants.constLED;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.math.Pair;
+
+/*
+ * three types of states:
+ *    default(idle, teleop, auton)
+ *    temporary, runs continusly while true(aligned)
+ *    status, flashes once(intake)
+ */
 
 public class LEDSystem extends SubsystemBase {
   private ElevatorSubsystem m_elevator;
 
   private final AddressableLED m_led;
   private final AddressableLEDBuffer m_buffer;
+  private final AddressableLEDBufferView m_elevatorBuffer;
+  private final AddressableLEDBufferView m_funnelVertBuffer;
+  private final AddressableLEDBufferView m_funnelHoriBuffer;
 
   private int scrollOffset = 0;
 
@@ -37,20 +47,23 @@ public class LEDSystem extends SubsystemBase {
   private SimDouble m_simB;
   private SimDouble m_simBrightness;
 
-  public String previousState = "";
-  public String currentState = "";
-  public String baseState = ""; // Add this to track the underlying state
+  public HashMap<String, String> stateCarrier;
   private boolean isShowingStatus = false;
   private double statusTimer = 0;
 
-  private HashMap<String, LEDTuple> states = new HashMap<String, LEDTuple>();
+  private HashMap<String, LEDTuple> states;
 
   public LEDSystem(RobotContainer robotContainer) {
-    m_led = new AddressableLED(Constants.constLED.LED_PORT);
-    m_buffer = new AddressableLEDBuffer(Constants.constLED.LED_LENGTH);
+    m_led = new AddressableLED(constLED.LED_PORT);
+    m_buffer = new AddressableLEDBuffer(constLED.LED_LENGTH);
+    m_elevatorBuffer = m_buffer.createView(constLED.Elevator_Ends.getFirst(), constLED.Elevator_Ends.getSecond());
+    m_funnelVertBuffer = m_buffer.createView(constLED.Funnel_Vert_Ends.getFirst(),
+        constLED.Funnel_Vert_Ends.getSecond());
+    m_funnelHoriBuffer = m_buffer.createView(constLED.Funnel_Hori_Ends.getFirst(),
+        constLED.Funnel_Hori_Ends.getSecond());
 
     try {
-      m_led.setLength(Constants.constLED.LED_LENGTH);
+      m_led.setLength(constLED.LED_LENGTH);
       m_led.start();
     } catch (Exception e) {
       System.err.println("Error with LED strip: " + e.getMessage());
@@ -66,13 +79,19 @@ public class LEDSystem extends SubsystemBase {
       m_simBrightness = m_simDevice.createDouble("Brightness", SimDevice.Direction.kOutput, 0.0);
     }
 
-    states.put("Coral", new LEDTuple(true, 3.4));
-    states.put("Aligned", new LEDTuple(true, 1111110.0));
-    states.put("Fault", new LEDTuple(true, 3.4));
-    states.put("Idle", new LEDTuple(false, 0.0));
-    states.put("Auto", new LEDTuple(false, 0.0));
-    states.put("Teleop", new LEDTuple(false, 0.0));
-    states.put("Test", new LEDTuple(false, 0.0));
+    stateCarrier = new HashMap<String, String>();
+    stateCarrier.put("DefaultState", null);
+    stateCarrier.put("TemporaryState", null);
+    stateCarrier.put("StatusState", null);
+
+    states = new HashMap<String, LEDTuple>();
+    states.put("Coral", new LEDTuple(true, 2.0, "StatusState"));
+    states.put("Aligned", new LEDTuple(false, 0.0, "TemporaryState"));
+    states.put("Fault", new LEDTuple(true, 2.0, "StatusState"));
+    states.put("Idle", new LEDTuple(false, 0.0, "DefaultState"));
+    states.put("Auto", new LEDTuple(false, 0.0, "DefaultState"));
+    states.put("Teleop", new LEDTuple(false, 0.0, "DefaultState"));
+    states.put("Test", new LEDTuple(false, 0.0, "DefaultState"));
   }
 
   /**
@@ -90,6 +109,20 @@ public class LEDSystem extends SubsystemBase {
    * @return led_status
    */
   public String getLedState() {
+    String currentState = null;
+    for (String stateType : new ArrayList<String>() {
+      {
+        add("StatusState");
+        add("TemporaryState");
+        add("DefaultState");
+      }
+    }) {
+      currentState = stateCarrier.get(stateType);
+
+      if (currentState == null || currentState.trim().isEmpty()) {
+        continue;
+      }
+    }
     return currentState;
   }
 
@@ -99,29 +132,41 @@ public class LEDSystem extends SubsystemBase {
    * @param status
    */
   public void setLedState(String status) {
-    if (status == null || status.trim().isEmpty()) {
+    if (status == null || status.trim().isEmpty() || !states.containsKey(status)) {
       return;
     }
 
-    // The base state will never be a temporary state
-    if (!states.get(status).getState()) {
-      System.out.println(status);
-      baseState = status;
-    }
+    String stateType = states.get(status).stateType;
 
-    if (!status.equals(currentState)) {
-      previousState = currentState;
-      currentState = status;
-    }
+    System.out.print("Changing state to: ");
+    System.out.println(status);
+    stateCarrier.replace(stateType, status);
+
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putString("currentState", currentState);
-    SmartDashboard.putString("Last LED status", previousState);
-    SmartDashboard.putString("Base State", baseState); // Debug output
+    String defaultState = stateCarrier.get("DefaultState") == null ? "None" : stateCarrier.get("DefaultState");
+    String tempState = stateCarrier.get("TemporaryState") == null ? "None" : stateCarrier.get("TemporaryState");
+    String statState = stateCarrier.get("StatusState") == null ? "None" : stateCarrier.get("StatusState");
+    SmartDashboard.putString("Default State:", defaultState);
+    SmartDashboard.putString("Temporary State", tempState);
+    SmartDashboard.putString("Status State", statState); // Debug output
 
-    // Skip if no valid state
+    String currentState = null;
+    // starts in order from status, temp, default
+    for (String stateType : new ArrayList<String>() {
+      {
+        add("StatusState");
+        add("TemporaryState");
+        add("DefaultState");
+      }
+    }) {
+      currentState = stateCarrier.get(stateType);
+      if (currentState != null) {
+        break;
+      }
+    }
     if (currentState == null || currentState.trim().isEmpty()) {
       return;
     }
@@ -129,16 +174,30 @@ public class LEDSystem extends SubsystemBase {
     if (isShowingStatus) {
       statusTimer -= 0.02;
       if (statusTimer <= 0) {
+        stateCarrier.replace("StatusState", null);
         isShowingStatus = false;
-        currentState = baseState; // Return to base state instead of previous state
       }
+    } else {
+      isShowingStatus = states.get(currentState).getState();
+      statusTimer = 0.0;
+      if (isShowingStatus)
+        statusTimer = states.get(currentState).getDuration();
     }
-    isShowingStatus = states.get(currentState).getState();
-    statusTimer = states.get(currentState).getDuration();
 
-    applyPattern(currentState);
+    applyState(currentState);
     m_led.setData(m_buffer);
     updateSimulation();
+
+    return;
+
+  }
+
+  public void clearStatus() {
+    stateCarrier.replace("StatusState", null);
+  }
+
+  public void clearTemporary() {
+    stateCarrier.replace("TemporaryState", null);
   }
 
   /**
@@ -147,32 +206,10 @@ public class LEDSystem extends SubsystemBase {
    * @param state
    */
 
-  private void applyPattern(String state) {
-    // Show brief status indication by modifying the normal patterns
-    if (isShowingStatus) {
-      switch (state) {
-        case "Aligned":
-          LEDPattern.solid(Color.kGreen)
-              .blink(Units.Seconds.of(0.2))
-              .applyTo(m_buffer);
-          return;
-        case "Coral":
-          LEDPattern.solid(Color.kYellow)
-              .blink(Units.Seconds.of(0.2))
-              .applyTo(m_buffer);
-          return;
-        case "Fault":
-          LEDPattern.solid(Color.kRed)
-              .blink(Units.Seconds.of(0.2))
-              .applyTo(m_buffer);
-          return;
-      }
-    }
-
-    // Normal pattern handling
+  private void applyState(String state) {
     switch (state) {
       case "Idle":
-        for (int i = 0; i < Constants.constLED.LED_LENGTH; i++) {
+        for (int i = 0; i < constLED.LED_LENGTH; i++) {
           int position = (i + scrollOffset) % (constLED.PATTERN_LENGTH * 3);
           Optional<Alliance> alliance = DriverStation.getAlliance();
           double r = 1.0, g = 0.0, b = 0.0; // Default to red
@@ -211,8 +248,10 @@ public class LEDSystem extends SubsystemBase {
         break;
 
       case "Coral":
-        LEDPattern.solid(Color.kYellow).applyTo(m_buffer);
-        break;
+        LEDPattern.solid(Color.kYellow)
+            .blink(Units.Seconds.of(0.2))
+            .applyTo(m_buffer);
+        return;
 
       case "Test":
         LEDPattern.solid(Color.kYellow)
@@ -222,8 +261,10 @@ public class LEDSystem extends SubsystemBase {
 
       // only called on fault from roborio this is if somthing really bad happens
       case "Fault":
-        LEDPattern.solid(Color.kRed).applyTo(m_buffer);
-        break;
+        LEDPattern.solid(Color.kRed)
+            .blink(Units.Seconds.of(0.2))
+            .applyTo(m_buffer);
+        return;
 
       default:
         LEDPattern.solid(Color.kBlue)
@@ -313,10 +354,12 @@ public class LEDSystem extends SubsystemBase {
   public class LEDTuple {
     public final Boolean isTemporary;
     public final Double statusDuration;
+    public final String stateType;
 
-    public LEDTuple(Boolean isTemporary, Double statusDuration) {
+    public LEDTuple(Boolean isTemporary, Double statusDuration, String stateType) {
       this.isTemporary = isTemporary;
       this.statusDuration = statusDuration;
+      this.stateType = stateType;
     }
 
     public Boolean getState() {
@@ -325,6 +368,10 @@ public class LEDSystem extends SubsystemBase {
 
     public Double getDuration() {
       return this.statusDuration;
+    }
+
+    public String getType() {
+      return this.stateType;
     }
   }
 }

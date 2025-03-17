@@ -52,7 +52,7 @@ public class Simulation {
         elevator();
         algaeSlapdown();
 
-        SmartDashboard.putData("MainMech", mech);
+        // SmartDashboard.putData("MainMech", mech);
     }
 
     private void algaeSlapdownInit() {
