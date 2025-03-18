@@ -125,7 +125,7 @@ public final class Constants {
             public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.30, 0.003, 0.0);
 
             // Angles (degrees)
-            public static final double MIN_ANGLE = -90.0;
+            public static final double MIN_ANGLE = -68.0;
             public static final double MAX_ANGLE = 90.0;
             public static final double REMOVAL_ANGLE = -30;
         }
