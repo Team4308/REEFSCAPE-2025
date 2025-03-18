@@ -6,16 +6,12 @@ import frc.robot.Constants.constEndEffector;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.constElevator;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
 import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.DefaultControl.DefaultRoller;
-import frc.robot.commands.SimpleControl.SimpleAlgae;
-import frc.robot.commands.SimpleControl.SimpleElevator;
-import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
