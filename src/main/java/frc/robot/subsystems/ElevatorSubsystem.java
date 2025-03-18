@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports.Elevator;
@@ -97,13 +96,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Speed Control
   public void setConstraints(double velocity, double acceleration) {
     constElevator.PID_CONTROLLER.setConstraints(new TrapezoidProfile.Constraints(velocity, acceleration));
-  }
-
-  public Pair<Double, Double> getConstraints() {
-    TrapezoidProfile.Constraints x = constElevator.PID_CONTROLLER.getConstraints();
-    Double Velocity = x.maxVelocity;
-    Double Accel = x.maxAcceleration;
-    return new Pair<Double, Double>(Velocity, Accel);
   }
 
   // Elevator data
