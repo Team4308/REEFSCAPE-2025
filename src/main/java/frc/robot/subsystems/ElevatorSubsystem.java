@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Acceleration;
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports.Elevator;
 import frc.robot.Robot;
