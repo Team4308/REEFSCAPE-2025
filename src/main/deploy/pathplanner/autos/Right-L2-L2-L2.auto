@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Left-I"
+            "pathName": "Right-F"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "I-Coral"
+            "pathName": "F-Coral"
           }
         },
         {
@@ -31,7 +31,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Coral-J"
+            "pathName": "Coral-E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Preset"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E-Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral-B"
           }
         },
         {
@@ -44,6 +68,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "Left",
+  "folder": "Right",
   "choreoAuto": false
 }

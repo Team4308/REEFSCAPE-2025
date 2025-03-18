@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
@@ -254,7 +254,7 @@ public class LEDSystem extends SubsystemBase {
         return;
 
       case "Test":
-        LEDPattern.solid(Color.kYellow)
+        LEDPattern.solid(Color.kPurple)
             .blink(Units.Seconds.of(0.2))
             .applyTo(m_buffer);
         break;

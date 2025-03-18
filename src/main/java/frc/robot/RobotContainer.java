@@ -10,8 +10,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -24,9 +22,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Operator;
+import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Reset;
+import frc.robot.commands.SystemsCheck;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
 import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
@@ -56,7 +55,7 @@ public class RobotContainer {
         private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
         private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
-        // Failsafe commands
+        // Commands
         private final DefaultRoller DefaultRollerCommand;
         private final DefaultAlgae DefaultAlgaeCommand;
         private final DefaultElevator DefaultElevatorCommand;
@@ -74,7 +73,7 @@ public class RobotContainer {
                         () -> driver.getLeftY() * -1,
                         () -> driver.getLeftX() * -1)
                         .withControllerRotationAxis(() -> driver.getRightX() * -1)
-                        .deadband(Operator.DEADBAND)
+                        .deadband(Driver.DEADBAND)
                         .scaleTranslation(1.0)
                         .allianceRelativeControl(true);
 
@@ -93,7 +92,7 @@ public class RobotContainer {
                         () -> -driver.getLeftY(),
                         () -> -driver.getLeftX())
                         .withControllerRotationAxis(() -> driver.getRightX())
-                        .deadband(Operator.DEADBAND)
+                        .deadband(Driver.DEADBAND)
                         .scaleTranslation(0.8)
                         .allianceRelativeControl(true);
 
@@ -164,33 +163,20 @@ public class RobotContainer {
                 driver.A.whileTrue(drivebase.updateClosestAlgaePose()
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToAlgaeRemove)));
                 driver.Y.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-                driver.X.onTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+                driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
                 } else {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
                 }
-                if (Robot.isSimulation()) {
-                        driver.Y.onTrue(Commands
-                                        .runOnce(() -> drivebase.resetOdometry(new Pose2d(15, 4, new Rotation2d()))));
-                        driver.A.whileTrue(drivebase.sysIdDriveMotorCommand());
-                }
-                if (DriverStation.isTest()) {
-                        drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command
-                                                                                         // above!
-
-                        driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                        driver.Back.whileTrue(drivebase.centerModulesCommand());
-                        driver.RightStickButton.onTrue(Commands.none());
-                }
         }
 
         private void configureOperatorBindings() {
                 // Automatic Scoring
-                operator.A.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.X.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.B.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.X.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.Y.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 // operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem,
                 // m_AlgaeArmSubsystem));
@@ -248,13 +234,13 @@ public class RobotContainer {
                 }));
 
                 coralIntakeTrigger.onTrue(new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
-                                .withTimeout(1).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
+                                .withTimeout(0.5).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
                 drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1)));
                 drivebaseAlignedTrigger
                                 .onFalse(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
 
                 operator.X.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
-                operator.B.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                operator.A.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.Y.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.RB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.LB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
@@ -319,12 +305,17 @@ public class RobotContainer {
                 }
         }
 
+        public void runSystemsCheck() {
+                new SystemsCheck(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem, drivebase)
+                                .schedule();
+        }
+
         public void setMotorBrake(boolean brake) {
                 drivebase.setMotorBrake(brake);
         }
 
         private static double deadZone(double integer) {
-                if (Math.abs(integer) < Operator.DEADBAND) {
+                if (Math.abs(integer) < 0.1) {
                         integer = 0;
                 }
                 return integer;

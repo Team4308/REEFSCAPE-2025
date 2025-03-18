@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Ports.EndEffector;
 
@@ -37,8 +37,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
                                                                                 constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
-        SmartDashboard.putNumber("Algae Arm Angle", currentAngle);
-        SmartDashboard.putNumber("Algae Arm Target", constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
+        // SmartDashboard.putNumber("Algae Arm Angle", currentAngle);
+        // SmartDashboard.putNumber("Algae Arm Target", constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
 
         algaeMotor.setVoltage(DoubleUtils.clamp(feedforwardOutput + motorVoltage, -12, 12));
     }
@@ -54,7 +54,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     @Override
     public void periodic() {
         goToTargetPosition();
-        SmartDashboard.putBoolean("Pivot At Position", isAtPosition());
+        // SmartDashboard.putBoolean("Pivot At Position", isAtPosition());
     }
 
     public void stopControllers() {

@@ -134,6 +134,8 @@ public class Robot extends TimedRobot {
     // Cancels all running commands at the start of test mode.
     m_robotContainer.getLEDSystem().setLedState("Test");
     CommandScheduler.getInstance().cancelAll();
+
+    m_robotContainer.runSystemsCheck();
   }
 
   @Override
