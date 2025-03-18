@@ -214,7 +214,7 @@ public class LEDSystem extends SubsystemBase {
         break;
 
       case "Test":
-        LEDPattern.solid(Color.kYellow)
+        LEDPattern.solid(Color.kPurple)
             .blink(Units.Seconds.of(0.2))
             .applyTo(m_buffer);
         break;

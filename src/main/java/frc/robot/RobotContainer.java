@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Reset;
+import frc.robot.commands.SystemsCheck;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
 import frc.robot.commands.AlgaeRemoval.RemoveL2;
 import frc.robot.commands.CoralScoring.FastL1;
@@ -54,7 +55,7 @@ public class RobotContainer {
         private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
         private final CoralRollerSubsystem m_CoralRollerSubsystem;
 
-        // Failsafe commands
+        // Commands
         private final DefaultRoller DefaultRollerCommand;
         private final DefaultAlgae DefaultAlgaeCommand;
         private final DefaultElevator DefaultElevatorCommand;
@@ -301,6 +302,11 @@ public class RobotContainer {
                 } else {
                         return -isNeg;
                 }
+        }
+
+        public void runSystemsCheck() {
+                new SystemsCheck(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem, drivebase)
+                                .schedule();
         }
 
         public void setMotorBrake(boolean brake) {
