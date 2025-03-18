@@ -115,18 +115,18 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final double TOLERANCE = 8.0;
+            public static final double TOLERANCE = 10.0;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
             // Controllers
             public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.004, 0.0, 0.0,
                     new TrapezoidProfile.Constraints(360, 720));    // degrees
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.29, 0.003, 0.0);
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.30, 0.003, 0.0);
 
             // Angles (degrees)
             public static final double MIN_ANGLE = -90.0;
-            public static final double MAX_ANGLE = 95.0;
+            public static final double MAX_ANGLE = 90.0;
             public static final double REMOVAL_ANGLE = -30;
         }
 
