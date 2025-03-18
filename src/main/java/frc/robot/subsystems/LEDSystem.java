@@ -146,12 +146,12 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    String defaultState = stateCarrier.get("DefaultState") == null ? "None" : stateCarrier.get("DefaultState");
-    String tempState = stateCarrier.get("TemporaryState") == null ? "None" : stateCarrier.get("TemporaryState");
-    String statState = stateCarrier.get("StatusState") == null ? "None" : stateCarrier.get("StatusState");
-    SmartDashboard.putString("Default State:", defaultState);
-    SmartDashboard.putString("Temporary State", tempState);
-    SmartDashboard.putString("Status State", statState); // Debug output
+    // String defaultState = stateCarrier.get("DefaultState") == null ? "None" : stateCarrier.get("DefaultState");
+    // String tempState = stateCarrier.get("TemporaryState") == null ? "None" : stateCarrier.get("TemporaryState");
+    // String statState = stateCarrier.get("StatusState") == null ? "None" : stateCarrier.get("StatusState");
+    // SmartDashboard.putString("Default State:", defaultState);
+    // SmartDashboard.putString("Temporary State", tempState);
+    // SmartDashboard.putString("Status State", statState); // Debug output
 
     String currentState = null;
     // starts in order from status, temp, default
