@@ -92,7 +92,7 @@ public final class Constants {
         public static final double MAX_ACCELERATION = 10.0;    // m/s^2
 
         // Controllers
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(2.3, 0.0, 0.0,
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(2.5, 0.0, 0.0,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
         public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.36, 2.3, 0.0);
 
