@@ -174,9 +174,9 @@ public class RobotContainer {
 
         private void configureOperatorBindings() {
                 // Automatic Scoring
-                operator.A.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.X.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.B.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.B.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.X.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.Y.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 // operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem,
                 // m_AlgaeArmSubsystem));
@@ -239,7 +239,7 @@ public class RobotContainer {
                                 .onFalse(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
 
                 operator.X.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
-                operator.B.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+                operator.A.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.Y.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.RB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.LB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
