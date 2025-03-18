@@ -16,6 +16,7 @@ public class RemoveL1 extends SequentialCommandGroup {
         public RemoveL1(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
                         AlgaeArmSubsystem algaeArmSubsystem) {
                 addCommands(
+                                new SimpleAlgae(() -> constEndEffector.algaePivot.MAX_ANGLE, algaeArmSubsystem),
                                 new SimpleElevator(() -> constElevator.ALGAE1, elevatorSubsystem),
                                 new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE, algaeArmSubsystem),
                                 new InstantCommand(() -> elevatorSubsystem.setConstraints(

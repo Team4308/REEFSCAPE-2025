@@ -30,7 +30,7 @@ public final class Constants {
 
         public static final class Align {
             public static final class Heading {
-                public static final double TOLERANCE = 2; // in degrees
+                public static final double TOLERANCE = 2.5; // in degrees
             }
             public static final class Translation { 
                 public static final double TOLERANCE = Units.inchesToMeters(1.0);
@@ -115,7 +115,7 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final double TOLERANCE = 10.0;
+            public static final double TOLERANCE = 20.0;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 40.0;
 
