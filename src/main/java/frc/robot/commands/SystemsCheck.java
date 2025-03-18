@@ -4,6 +4,8 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.Constants.constEndEffector;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
@@ -34,11 +36,12 @@ public class SystemsCheck extends SequentialCommandGroup {
     public SystemsCheck(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
             AlgaeArmSubsystem algaeArmSubsystem, SwerveSubsystem swerveSubsystem) {
         addCommands(
-                swerveSubsystem.driveCommand(() -> 5, () -> 0, () -> 0),
-                new WaitCommand(1),
-                swerveSubsystem.driveCommand(() -> 0, () -> 5, () -> 0),
-                new WaitCommand(1),
-                swerveSubsystem.driveCommand(() -> 0, () -> 0, () -> 5),
+                new ParallelDeadlineGroup(new WaitCommand(1), swerveSubsystem.driveCommand(() -> 5, () -> 0, () -> 0)),
+                
+                new ParallelDeadlineGroup(new WaitCommand(1), swerveSubsystem.driveCommand(() -> 0, () -> 5, () -> 0)),
+
+                new ParallelDeadlineGroup(new WaitCommand(1), swerveSubsystem.driveCommand(() -> 0, () -> 0, () -> 5)),
+
                 new WaitCommand(1),
                 new InstantCommand(() -> swerveSubsystem.lock()),
 
