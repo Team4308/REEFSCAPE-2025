@@ -212,24 +212,6 @@ public class LEDSystem extends SubsystemBase {
     stateCarrier.replace("TemporaryState", null);
   }
 
-  double timer = 0;
-
-  private void runpingpong() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    double r = 1.0, g = 0.0, b = 0.0; // Default to red
-    if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-      r = 0.0;
-      b = 1.0;
-    }
-
-    LEDPattern base = LEDPattern.solid(new Color(r, g, b));
-    LEDPattern pattern = base.breathe(Units.Seconds.of(2));
-
-    // Apply the LED pattern to the data buffer
-    pattern.applyTo(m_funnelHoriBuffer);
-
-  }
-
   /**
    * Direcly applys and updated the buffer of the leds
    * 
@@ -264,7 +246,18 @@ public class LEDSystem extends SubsystemBase {
         }
         scrollOffsetVertFunnel = (scrollOffsetVertFunnel + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
 
-        runpingpong();
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        double r = 1.0, g = 0.0, b = 0.0; // Default to red
+        if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+          r = 0.0;
+          b = 1.0;
+        }
+
+        LEDPattern base = LEDPattern.solid(new Color(r, g, b));
+        LEDPattern pattern = base.breathe(Units.Seconds.of(2));
+
+        // Apply the LED pattern to the data buffer
+        pattern.applyTo(m_funnelHoriBuffer);
 
         break;
 
@@ -283,20 +276,23 @@ public class LEDSystem extends SubsystemBase {
             .progressMaskLayer(() -> m_elevator.getPositionInMeters() - 0.1 / constElevator.MAX_HEIGHT);
         teleopBase.mask(heightMask).applyTo(m_elevatorBuffer);
 
-        // dont know what to do, so it just runs the idle animation
-        for (int i = 0; i < constLED.Funnel_Vert_Length; i++) {
-          int position = (i + scrollOffsetVertFunnel) % (constLED.PATTERN_LENGTH * 3);
-          Optional<Alliance> alliance = DriverStation.getAlliance();
-          double r = 1.0, g = 0.0, b = 0.0; // Default to red
-          if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-            r = 0.0;
-            b = 1.0;
-          }
-          setIdlePattern(m_funnelVertBuffer, i, position, r, g, b);
+        Optional<Alliance> alliance2 = DriverStation.getAlliance();
+        double r2 = 1.0, g2 = 0.0, b2 = 0.0; // Default to red
+        if (alliance2.isPresent() && alliance2.get() == Alliance.Blue) {
+          r2 = 0.0;
+          b2 = 1.0;
         }
-        scrollOffsetVertFunnel = (scrollOffsetVertFunnel + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
+        LEDPattern base2 = LEDPattern.solid(new Color(r2, g2, b2));
+        LEDPattern pattern2 = base2.breathe(Units.Seconds.of(2));
 
-        runpingpong();
+        // Apply the LED pattern to the data buffer
+        pattern2.applyTo(m_funnelVertBuffer);
+
+        base2 = LEDPattern.solid(new Color(r2, g2, b2));
+        pattern2 = base2.breathe(Units.Seconds.of(2));
+
+        // Apply the LED pattern to the data buffer
+        pattern2.applyTo(m_funnelHoriBuffer);
 
         break;
 
