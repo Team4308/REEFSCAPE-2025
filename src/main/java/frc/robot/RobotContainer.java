@@ -214,9 +214,9 @@ public class RobotContainer {
 
                 // Elevator
                 operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(3));
-                operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(2));
-                operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(0));
-                operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(1));
+                operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(0));
+                operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(1));
+                operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(2));
         }
 
         private void configureOtherTriggers() {
