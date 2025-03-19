@@ -346,23 +346,23 @@ public class LEDSystem extends SubsystemBase {
       double fade = getFadeValue(position, constLED.PATTERN_LENGTH);
       double blendFactor = fade * 0.3;
       buffer.setLED(i, new Color(
-          baseR + (blendFactor * (1.0 - baseR)),
-          baseG + (blendFactor * (1.0 - baseG)),
-          baseB + (blendFactor * (1.0 - baseB))));
+          baseR + (blendFactor * (1.0 - baseR)) / 2,
+          baseG + (blendFactor * (1.0 - baseG)) / 2,
+          baseB + (blendFactor * (1.0 - baseB)) / 2));
     } else if (position < constLED.PATTERN_LENGTH * 2) {
       double fade = getFadeValue(position - constLED.PATTERN_LENGTH, constLED.PATTERN_LENGTH);
       double blendFactor = 0.3 + (fade * 0.4);
       buffer.setLED(i, new Color(
-          baseR + (blendFactor * (1.0 - baseR)),
-          baseG + (blendFactor * (1.0 - baseG)),
-          baseB + (blendFactor * (1.0 - baseB))));
+          baseR + (blendFactor * (1.0 - baseR)) / 2,
+          baseG + (blendFactor * (1.0 - baseG)) / 2,
+          baseB + (blendFactor * (1.0 - baseB)) / 2));
     } else {
       double fade = getFadeValue(position - (constLED.PATTERN_LENGTH * 2), constLED.PATTERN_LENGTH);
       double blendFactor = 0.7 + (fade * 0.3);
       buffer.setLED(i, new Color(
-          baseR + (blendFactor * (1.0 - baseR)),
-          baseG + (blendFactor * (1.0 - baseG)),
-          baseB + (blendFactor * (1.0 - baseB))));
+          baseR + (blendFactor * (1.0 - baseR)) / 2,
+          baseG + (blendFactor * (1.0 - baseG)) / 2,
+          baseB + (blendFactor * (1.0 - baseB)) / 2));
     }
   }
 

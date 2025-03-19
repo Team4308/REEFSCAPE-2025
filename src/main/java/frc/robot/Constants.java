@@ -67,9 +67,9 @@ public final class Constants {
     public static class constLED {
         public static final int LED_PORT = 0;
 
-        public static final int Elevator_Length = 56;
+        public static final int Elevator_Length = 48;
         public static final int Funnel_Vert_Length = 46;
-        public static final int Funnel_Hori_Length = 14;
+        public static final int Funnel_Hori_Length = 22;
 
         public static final int LED_LENGTH = Elevator_Length + Funnel_Vert_Length + Funnel_Hori_Length;
         public static final Pair<Integer, Integer> Elevator_Ends = new Pair<Integer, Integer>(0, Elevator_Length - 1);
