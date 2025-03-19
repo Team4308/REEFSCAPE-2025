@@ -95,7 +95,7 @@ public final class Constants {
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         }
 
-        public static final double TOLERANCE = Units.inchesToMeters(0.5); // m
+        public static final double TOLERANCE = 0.015; // m
         public static final double MAX_VELOCITY = 5.0; // m/s
         public static final double MAX_ACCELERATION = 10.0; // m/s^2
 
