@@ -303,8 +303,8 @@ public class RobotContainer {
         }
 
         private double triggerRollerControl() {
-                double isPos = deadZone(operator.getRightTrigger()) * 15;
-                double isNeg = deadZone(operator.getLeftTrigger()) * 15;
+                double isPos = deadZone(operator.getRightTrigger()) * 50;
+                double isNeg = deadZone(operator.getLeftTrigger()) * 50;
                 if (isPos > 0) {
                         return isPos;
                 } else {
