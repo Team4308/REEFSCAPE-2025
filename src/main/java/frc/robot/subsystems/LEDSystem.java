@@ -1,24 +1,32 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.LEDPattern.GradientType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.constElevator;
 import frc.robot.Constants.constLED;
+
+import static edu.wpi.first.units.Units.Centimeter;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.TimerTask;
+import java.util.function.ToLongFunction;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
@@ -39,7 +47,8 @@ public class LEDSystem extends SubsystemBase {
   private final AddressableLEDBufferView m_funnelVertBuffer;
   private final AddressableLEDBufferView m_funnelHoriBuffer;
 
-  private int scrollOffset = 0;
+  private int scrollOffsetElevator = 0;
+  private int scrollOffsetVertFunnel = 0;
 
   private SimDevice m_simDevice;
   private SimDouble m_simR;
@@ -146,9 +155,12 @@ public class LEDSystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // String defaultState = stateCarrier.get("DefaultState") == null ? "None" : stateCarrier.get("DefaultState");
-    // String tempState = stateCarrier.get("TemporaryState") == null ? "None" : stateCarrier.get("TemporaryState");
-    // String statState = stateCarrier.get("StatusState") == null ? "None" : stateCarrier.get("StatusState");
+    // String defaultState = stateCarrier.get("DefaultState") == null ? "None" :
+    // stateCarrier.get("DefaultState");
+    // String tempState = stateCarrier.get("TemporaryState") == null ? "None" :
+    // stateCarrier.get("TemporaryState");
+    // String statState = stateCarrier.get("StatusState") == null ? "None" :
+    // stateCarrier.get("StatusState");
     // SmartDashboard.putString("Default State:", defaultState);
     // SmartDashboard.putString("Temporary State", tempState);
     // SmartDashboard.putString("Status State", statState); // Debug output
@@ -200,6 +212,24 @@ public class LEDSystem extends SubsystemBase {
     stateCarrier.replace("TemporaryState", null);
   }
 
+  double timer = 0;
+
+  private void runpingpong() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    double r = 1.0, g = 0.0, b = 0.0; // Default to red
+    if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+      r = 0.0;
+      b = 1.0;
+    }
+
+    LEDPattern base = LEDPattern.solid(new Color(r, g, b));
+    LEDPattern pattern = base.breathe(Units.Seconds.of(2));
+
+    // Apply the LED pattern to the data buffer
+    pattern.applyTo(m_funnelHoriBuffer);
+
+  }
+
   /**
    * Direcly applys and updated the buffer of the leds
    * 
@@ -209,20 +239,33 @@ public class LEDSystem extends SubsystemBase {
   private void applyState(String state) {
     switch (state) {
       case "Idle":
-        for (int i = 0; i < constLED.LED_LENGTH; i++) {
-          int position = (i + scrollOffset) % (constLED.PATTERN_LENGTH * 3);
+        for (int i = 0; i < constLED.Elevator_Length; i++) {
+          int position = (i + scrollOffsetElevator) % (constLED.PATTERN_LENGTH * 3);
           Optional<Alliance> alliance = DriverStation.getAlliance();
           double r = 1.0, g = 0.0, b = 0.0; // Default to red
-
           if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
             r = 0.0;
             g = 0.0;
             b = 1.0;
           }
-
-          setIdlePattern(m_buffer, i, position, r, g, b);
+          setIdlePattern(m_elevatorBuffer, i, position, r, g, b);
         }
-        scrollOffset = (scrollOffset + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
+        scrollOffsetElevator = (scrollOffsetElevator + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
+
+        for (int i = 0; i < constLED.Funnel_Vert_Length; i++) {
+          int position = (i + scrollOffsetVertFunnel) % (constLED.PATTERN_LENGTH * 3);
+          Optional<Alliance> alliance = DriverStation.getAlliance();
+          double r = 1.0, g = 0.0, b = 0.0; // Default to red
+          if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+            r = 0.0;
+            b = 1.0;
+          }
+          setIdlePattern(m_funnelVertBuffer, i, position, r, g, b);
+        }
+        scrollOffsetVertFunnel = (scrollOffsetVertFunnel + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
+
+        runpingpong();
+
         break;
 
       case "Auto":
@@ -238,7 +281,23 @@ public class LEDSystem extends SubsystemBase {
             .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.7), Meters.of(1.0 / constLED.LED_LENGTH));
         LEDPattern heightMask = LEDPattern
             .progressMaskLayer(() -> m_elevator.getPositionInMeters() - 0.1 / constElevator.MAX_HEIGHT);
-        teleopBase.mask(heightMask).applyTo(m_buffer);
+        teleopBase.mask(heightMask).applyTo(m_elevatorBuffer);
+
+        // dont know what to do, so it just runs the idle animation
+        for (int i = 0; i < constLED.Funnel_Vert_Length; i++) {
+          int position = (i + scrollOffsetVertFunnel) % (constLED.PATTERN_LENGTH * 3);
+          Optional<Alliance> alliance = DriverStation.getAlliance();
+          double r = 1.0, g = 0.0, b = 0.0; // Default to red
+          if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+            r = 0.0;
+            b = 1.0;
+          }
+          setIdlePattern(m_funnelVertBuffer, i, position, r, g, b);
+        }
+        scrollOffsetVertFunnel = (scrollOffsetVertFunnel + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
+
+        runpingpong();
+
         break;
 
       case "Aligned":
@@ -251,6 +310,7 @@ public class LEDSystem extends SubsystemBase {
         LEDPattern.solid(Color.kYellow)
             .blink(Units.Seconds.of(0.2))
             .applyTo(m_buffer);
+
         return;
 
       case "Test":
@@ -284,7 +344,7 @@ public class LEDSystem extends SubsystemBase {
    * @param baseG    Green
    * @param baseB    Blue
    */
-  private void setIdlePattern(AddressableLEDBuffer buffer, int i, int position, double baseR, double baseG,
+  private void setIdlePattern(AddressableLEDBufferView buffer, int i, int position, double baseR, double baseG,
       double baseB) {
     if (position < constLED.PATTERN_LENGTH) {
       double fade = getFadeValue(position, constLED.PATTERN_LENGTH);

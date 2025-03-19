@@ -115,6 +115,9 @@ public class ElevatorSubsystem extends SubsystemBase {
    * @return Double
    */
   public double getPositionInMeters() {
+    if (Robot.isSimulation()) {
+      return targetPosition;
+    }
     return (getPosition() * constElevator.SPOOL_CIRCUMFERENCE) + constElevator.MIN_HEIGHT;
   }
 
@@ -150,5 +153,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
     // SmartDashboard.putBoolean("Elevator At Position", isAtPosition());
     SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
+    SmartDashboard.putNumber("Elevator Target Position", targetPosition);
   }
 }

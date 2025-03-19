@@ -91,13 +91,16 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d nearestPoseToAlgaeRemove = new Pose2d();
 
   // private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
-  //     .getStructTopic("Robot Pose", Pose2d.struct).publish();
-  // private StructPublisher<Pose2d> publisher1 = NetworkTableInstance.getDefault()
-  //     .getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
-  // private StructPublisher<Pose2d> publisher2 = NetworkTableInstance.getDefault()
-  //     .getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
-  // private StructPublisher<Pose2d> publisher3 = NetworkTableInstance.getDefault()
-  //     .getStructTopic("Closest Algae Remove Pose", Pose2d.struct).publish(); 
+  // .getStructTopic("Robot Pose", Pose2d.struct).publish();
+  // private StructPublisher<Pose2d> publisher1 =
+  // NetworkTableInstance.getDefault()
+  // .getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
+  // private StructPublisher<Pose2d> publisher2 =
+  // NetworkTableInstance.getDefault()
+  // .getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
+  // private StructPublisher<Pose2d> publisher3 =
+  // NetworkTableInstance.getDefault()
+  // .getStructTopic("Closest Algae Remove Pose", Pose2d.struct).publish();
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -156,9 +159,9 @@ public class SwerveSubsystem extends SubsystemBase {
     // publisher3.set(getClosestAlgaeRemovePose());
 
     // SmartDashboard.putNumber("Left Distance",
-    //     getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
+    // getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
     // SmartDashboard.putNumber("Right Distance",
-    //     getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
+    // getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
     SmartDashboard.putBoolean("Aligned?", isAligned());
   }
 
