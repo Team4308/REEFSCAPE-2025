@@ -119,7 +119,7 @@ public final class Constants {
         public static final double ALGAE2 = Units.inchesToMeters(46.0);
 
         // Speed constants (in meters per second)
-        public static final double ALGAE_REMOVAL_SPEED = 1;
+        public static final double ALGAE_REMOVAL_SPEED = 3;
     }
 
     public static class constEndEffector {
@@ -141,7 +141,7 @@ public final class Constants {
 
         public static class rollerSpeeds { // m/s
             public static final double L1 = 3;
-            public static final double L23 = 50;
+            public static final double L23 = 80;
             public static final double L4 = 10;
 
             public static final double DEFAULT_CORAL = 10;
