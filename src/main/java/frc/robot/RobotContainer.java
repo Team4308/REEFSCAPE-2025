@@ -235,16 +235,18 @@ public class RobotContainer {
 
                 coralIntakeTrigger.onTrue(new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
                                 .withTimeout(1.0).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
-                coralIntakeTrigger.onTrue(new RunCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1))
-                                .withTimeout(1.0).finallyDo(() -> operator.setRumble(RumbleType.kBothRumble, 0)));      
+                // coralIntakeTrigger.onTrue(new RunCommand(() ->
+                // operator.setRumble(RumbleType.kBothRumble, 1)).withTimeout(1.0).finallyDo(()
+                // -> operator.setRumble(RumbleType.kBothRumble, 0)));
 
                 drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 1)));
                 drivebaseAlignedTrigger
                                 .onFalse(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
 
-                drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1)));
-                drivebaseAlignedTrigger
-                                .onFalse(new InstantCommand(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
+                // drivebaseAlignedTrigger.onTrue(new InstantCommand(() ->
+                // driver.setRumble(RumbleType.kBothRumble, 1)));
+                // drivebaseAlignedTrigger.onFalse(new InstantCommand(() ->
+                // driver.setRumble(RumbleType.kBothRumble, 0)));
 
                 operator.X.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.A.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));

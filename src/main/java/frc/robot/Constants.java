@@ -144,7 +144,7 @@ public final class Constants {
             public static final double L23 = 80;
             public static final double L4 = 10;
 
-            public static final double DEFAULT_CORAL = 10;
+            public static final double DEFAULT_CORAL = L23;
             public static final double ALGAE_REMOVAL = -50;
         }
     }
