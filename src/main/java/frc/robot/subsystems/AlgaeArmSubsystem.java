@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -26,7 +28,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public double getAlgaePosition() {
-        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset) * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.MAX_ANGLE;
+        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset)
+                * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.MAX_ANGLE;
     }
 
     public void goToTargetPosition() {
@@ -35,16 +38,24 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double motorVoltage = constEndEffector.algaePivot.PID_CONTROLLER.calculate(currentAngle, targetAngle);
 
         double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
-                                                                                constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
+                constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
         // SmartDashboard.putNumber("Algae Arm Angle", currentAngle);
-        // SmartDashboard.putNumber("Algae Arm Target", constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
+        // SmartDashboard.putNumber("Algae Arm Target",
+        // constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
 
-        algaeMotor.setVoltage(DoubleUtils.clamp(feedforwardOutput + motorVoltage, -12, 12));
+        double totalVoltage = DoubleUtils.clamp(feedforwardOutput + motorVoltage, -12, 12);
+        algaeMotor.setVoltage(totalVoltage);
+
+        Logger.recordOutput("Subsystems/Algae/Target Angle", targetAngle);
+        Logger.recordOutput("Subsystems/Algae/Current Angle", getAlgaePosition());
+        Logger.recordOutput("Subsystems/Algae/Is At Angle", isAtPosition());
+        Logger.recordOutput("Subsystems/Algae/Voltage", totalVoltage);
     }
 
     public void setAlgaePosition(double degree) {
-        targetAngle = DoubleUtils.clamp(degree, constEndEffector.algaePivot.MIN_ANGLE, constEndEffector.algaePivot.MAX_ANGLE);
+        targetAngle = DoubleUtils.clamp(degree, constEndEffector.algaePivot.MIN_ANGLE,
+                constEndEffector.algaePivot.MAX_ANGLE);
     }
 
     public boolean isAtPosition() {

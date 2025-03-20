@@ -20,6 +20,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.hal.SimDevice;
 import edu.wpi.first.hal.SimDouble;
@@ -193,8 +194,24 @@ public class LEDSystem extends SubsystemBase {
     m_led.setData(m_buffer);
     updateSimulation();
 
-    return;
+    Logger.recordOutput("Subsystems/LED", m_buffer.toString());
 
+    if (m_simDevice != null) {
+      double totalR = 0, totalG = 0, totalB = 0;
+
+      for (int i = 0; i < m_buffer.getLength(); i++) {
+        Color color = m_buffer.getLED(i);
+        totalR += color.red;
+        totalG += color.green;
+        totalB += color.blue;
+      }
+
+      double length = m_buffer.getLength();
+      m_simR.set(totalR / length);
+      m_simG.set(totalG / length);
+      m_simB.set(totalB / length);
+      m_simBrightness.set(Math.max(Math.max(totalR, totalG), totalB) / length);
+    }
   }
 
   public void clearStatus() {

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
@@ -51,7 +53,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     double totalVoltage = DoubleUtils.clamp(pidOutput + feedforwardVoltage, -12.0, 12.0);
 
-    //SmartDashboard.putNumber("Setpoint Position", constElevator.PID_CONTROLLER.getSetpoint().position);
+    // SmartDashboard.putNumber("Setpoint Position",
+    // constElevator.PID_CONTROLLER.getSetpoint().position);
 
     return totalVoltage;
   }
@@ -152,7 +155,12 @@ public class ElevatorSubsystem extends SubsystemBase {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
     // SmartDashboard.putBoolean("Elevator At Position", isAtPosition());
-    //SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
-    //SmartDashboard.putNumber("Elevator Target Position", targetPosition);
+    // SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
+    // SmartDashboard.putNumber("Elevator Target Position", targetPosition);
+
+    Logger.recordOutput("Subsystems/Elevator/Target Position", targetPosition);
+    Logger.recordOutput("Subsystems/Elevator/Current Position", getPositionInMeters());
+    Logger.recordOutput("Subsystems/Elevator/Is At Position", isAtPosition());
+    Logger.recordOutput("Subsystems/Elevator/Elevator Voltage", voltage);
   }
 }

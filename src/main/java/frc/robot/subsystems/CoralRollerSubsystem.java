@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -61,6 +63,8 @@ public class CoralRollerSubsystem extends LogSubsystem {
     @Override
     public void periodic() {
         SmartDashboard.putBoolean("Intaken?", !beamBreak.get());
+        Logger.recordOutput("Subsystems/Rollers/Is Intaken", !beamBreak.get());
+        Logger.recordOutput("Subsystems/Rollers/Target Velocity", targetVelocity);
     }
 
 }

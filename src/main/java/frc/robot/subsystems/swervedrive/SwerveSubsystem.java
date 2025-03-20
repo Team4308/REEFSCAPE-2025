@@ -15,6 +15,7 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.targeting.PhotonPipelineResult;
 
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -163,6 +164,9 @@ public class SwerveSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Right Distance",
     // getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
     SmartDashboard.putBoolean("Aligned?", isAligned());
+    Logger.recordOutput("Swerve/Is Aligned?", isAligned());
+    Logger.recordOutput("Swerve/Pose", getPose());
+    Logger.recordOutput("Swerve/Velocity", getRobotVelocity());
   }
 
   @Override
