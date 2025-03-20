@@ -136,7 +136,8 @@ public final class Constants {
             // Angles (degrees)
             public static final double MIN_ANGLE = -68.0;
             public static final double MAX_ANGLE = 90.0;
-            public static final double REMOVAL_ANGLE = -30;
+            public static final double REMOVAL_ANGLE_TOP = -30;
+            public static final double REMOVAL_ANGLE_BOTTOM = 60;
         }
 
         public static class rollerSpeeds { // m/s

@@ -201,7 +201,7 @@ public class RobotContainer {
 
                 // Algae
                 operator.LeftStickButton.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem
-                                .setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE)))
+                                .setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE_TOP)))
                                 .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem
                                                 .setAlgaePosition(Constants.constEndEffector.algaePivot.MAX_ANGLE)))); // Set
                                                                                                                        // position

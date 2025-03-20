@@ -18,7 +18,7 @@ public class RemoveL1 extends SequentialCommandGroup {
                 addCommands(
                                 new SimpleAlgae(() -> constEndEffector.algaePivot.MAX_ANGLE, algaeArmSubsystem),
                                 new SimpleElevator(() -> constElevator.ALGAE1, elevatorSubsystem),
-                                new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE, algaeArmSubsystem),
+                                new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_TOP, algaeArmSubsystem),
                                 new InstantCommand(() -> elevatorSubsystem.setConstraints(
                                                 constElevator.ALGAE_REMOVAL_SPEED, constElevator.MAX_ACCELERATION)),
                                 new ParallelDeadlineGroup(
