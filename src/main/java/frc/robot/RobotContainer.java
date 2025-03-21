@@ -34,6 +34,7 @@ import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.DefaultControl.DefaultAlgae;
 import frc.robot.commands.DefaultControl.DefaultElevator;
 import frc.robot.commands.DefaultControl.DefaultRoller;
+import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -191,6 +192,7 @@ public class RobotContainer {
                 operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
                                 m_CoralRollerSubsystem)
                                 .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
+                operator.Start.onTrue(new SimpleElevator(() -> 0.0, m_ElevatorSubsystem));
 
                 // *** These are failsafes, that should be already covered by the previous
                 // commands ***
