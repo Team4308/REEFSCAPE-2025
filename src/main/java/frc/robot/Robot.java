@@ -142,6 +142,7 @@ public class Robot extends LoggedRobot {
       CommandScheduler.getInstance().cancelAll();
     }
     m_robotContainer.getLEDSystem().setLedState("Teleop");
+    m_robotContainer.teleopInit();
   }
 
   @Override

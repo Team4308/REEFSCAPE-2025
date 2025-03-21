@@ -143,7 +143,6 @@ public final class Constants {
         public static class rollerSpeeds { // m/s
             public static final double L1 = 3;
             public static final double L23 = 80;
-            public static final double L4 = 10;
 
             public static final double DEFAULT_CORAL = L23;
             public static final double ALGAE_REMOVAL = -50;

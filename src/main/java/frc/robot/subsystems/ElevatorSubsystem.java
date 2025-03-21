@@ -33,6 +33,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
 
     stopControllers();
+    resetSensors();
   }
 
   /**
@@ -89,9 +90,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         case 3:
           setPosition(constElevator.L3);
           break;
-        case 4:
-          setPosition(constElevator.MAX_HEIGHT);
-          break;
       }
     });
   }
@@ -132,6 +130,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void stopControllers() {
     rightMotorLeader.set(0.0);
     leftMotorFollower.set(0.0);
+  }
+
+  public void resetSensors() {
+    resetSensors();
+    encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
   }
 
   @Override

@@ -283,6 +283,11 @@ public class RobotContainer {
                 return autoChooser.getSelected();
         }
 
+        public void teleopInit() {
+                m_AlgaeArmSubsystem.resetSensors();
+                m_ElevatorSubsystem.resetSensors();
+        }
+
         public void teleopPeriodic() {
         }
 
