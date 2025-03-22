@@ -24,6 +24,6 @@ public class ScoreAndRemove extends SequentialCommandGroup {
                                                 new SimpleElevator(() -> constElevator.ALGAE1, elevatorSubsystem),
                                                 new DefaultRoller(() -> -constEndEffector.rollerSpeeds.ALGAE_REMOVAL,
                                                                 rollerSubsystem)),
-                                new SimpleAlgae(() -> constEndEffector.algaePivot.MAX_ANGLE, algaeArmSubsystem));
+                                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, algaeArmSubsystem));
         }
 }

@@ -113,10 +113,10 @@ public final class Constants {
 
         // Preset heights in inches
         public static final double L1 = Units.inchesToMeters(6.5);
-        public static final double L2 = Units.inchesToMeters(17.0);
-        public static final double L3 = Units.inchesToMeters(33.0);
+        public static final double L2 = Units.inchesToMeters(23.0);
+        public static final double L3 = Units.inchesToMeters(39.0);
         public static final double ALGAE1 = Units.inchesToMeters(30.0);
-        public static final double ALGAE2 = Units.inchesToMeters(46.0);
+        public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 3;
@@ -134,9 +134,8 @@ public final class Constants {
             public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.3, 0.003, 0.0);
 
             // Angles (degrees)
-            public static final double MIN_ANGLE = -68.0;
-            public static final double MAX_ANGLE = 90.0;
-            public static final double REMOVAL_ANGLE_TOP = -30;
+            public static final double REST_ANGLE = 270.0; // Straight Down
+            public static final double REMOVAL_ANGLE_TOP = 330;
             public static final double REMOVAL_ANGLE_BOTTOM = 60;
         }
 
@@ -144,7 +143,7 @@ public final class Constants {
             public static final double L1 = 3;
             public static final double L23 = 80;
 
-            public static final double DEFAULT_CORAL = L23;
+            public static final double DEFAULT_CORAL = 10;
             public static final double ALGAE_REMOVAL = -50;
         }
     }

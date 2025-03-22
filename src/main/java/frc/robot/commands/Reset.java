@@ -13,14 +13,14 @@ import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
 public class Reset extends ParallelDeadlineGroup {
-    public Reset(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
-            AlgaeArmSubsystem algaeArmSubsystem) {
-        super(new WaitCommand(0.01));
-        addCommands(
-                new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
-                        constElevator.MAX_ACCELERATION)),
-                new SimpleAlgae(() -> constEndEffector.algaePivot.MAX_ANGLE, algaeArmSubsystem),
-                new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem),
-                new SimpleRoller(() -> 0.0, rollerSubsystem));
-    }
+        public Reset(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
+                        AlgaeArmSubsystem algaeArmSubsystem) {
+                super(new WaitCommand(0.01));
+                addCommands(
+                                new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
+                                                constElevator.MAX_ACCELERATION)),
+                                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, algaeArmSubsystem),
+                                new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem),
+                                new SimpleRoller(() -> 0.0, rollerSubsystem));
+        }
 }

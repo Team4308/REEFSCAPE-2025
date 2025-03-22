@@ -16,7 +16,7 @@ public class RemoveL2 extends SequentialCommandGroup {
         public RemoveL2(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
                         AlgaeArmSubsystem algaeArmSubsystem) {
                 addCommands(
-                                new SimpleAlgae(() -> constEndEffector.algaePivot.MAX_ANGLE, algaeArmSubsystem),
+                                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, algaeArmSubsystem),
                                 new SimpleElevator(() -> constElevator.ALGAE2, elevatorSubsystem),
                                 new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_TOP, algaeArmSubsystem),
                                 new InstantCommand(() -> elevatorSubsystem.setConstraints(
@@ -27,6 +27,6 @@ public class RemoveL2 extends SequentialCommandGroup {
                                                                 rollerSubsystem)),
                                 new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
                                                 constElevator.MAX_ACCELERATION)),
-                                new SimpleAlgae(() -> constEndEffector.algaePivot.MAX_ANGLE, algaeArmSubsystem));
+                                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, algaeArmSubsystem));
         }
 }

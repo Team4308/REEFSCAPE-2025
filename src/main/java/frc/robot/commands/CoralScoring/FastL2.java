@@ -14,7 +14,7 @@ public class FastL2 extends SequentialCommandGroup {
     public FastL2(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
             AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
-                new SimpleAlgae(() -> constEndEffector.algaePivot.MAX_ANGLE, algaeArmSubsystem),
+                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, algaeArmSubsystem),
                 new SimpleElevator(() -> constElevator.L2, elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, rollerSubsystem),
                 new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem));

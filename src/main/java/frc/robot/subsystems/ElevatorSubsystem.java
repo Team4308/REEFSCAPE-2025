@@ -133,7 +133,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void resetSensors() {
-    resetSensors();
+    stopControllers();
     encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
   }
 
@@ -157,7 +157,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     if (bottomLimitSwitch.get()) {
       encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
     }
-    SmartDashboard.putBoolean("Elevator At Position", isAtPosition());
+    // SmartDashboard.putBoolean("Elevator At Position", isAtPosition());
     // SmartDashboard.putNumber("Elevator Position", getPositionInMeters());
     // SmartDashboard.putNumber("Elevator Target Position", targetPosition);
 

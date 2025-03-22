@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Reset;
+import frc.robot.commands.ScoreAndRemove;
 import frc.robot.commands.SystemsCheck;
 import frc.robot.commands.AlgaeRemoval.RemoveL1;
 import frc.robot.commands.AlgaeRemoval.RemoveL2;
@@ -188,6 +189,8 @@ public class RobotContainer {
                 operator.LB
                                 .onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
 
+                operator.RightStickButton.onTrue(
+                                new ScoreAndRemove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 // Intake
                 operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
                                 m_CoralRollerSubsystem)
@@ -205,11 +208,11 @@ public class RobotContainer {
                 operator.LeftStickButton.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem
                                 .setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE_TOP)))
                                 .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem
-                                                .setAlgaePosition(Constants.constEndEffector.algaePivot.MAX_ANGLE)))); // Set
-                                                                                                                       // position
-                                                                                                                       // to
-                                                                                                                       // remove
-                                                                                                                       // algae
+                                                .setAlgaePosition(Constants.constEndEffector.algaePivot.REST_ANGLE)))); // Set
+                                                                                                                        // position
+                                                                                                                        // to
+                                                                                                                        // remove
+                                                                                                                        // algae
                 operator.LeftStickButton.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL,
                                 m_CoralRollerSubsystem))
                                 .onFalse(new DefaultRoller(() -> 0.0, m_CoralRollerSubsystem));

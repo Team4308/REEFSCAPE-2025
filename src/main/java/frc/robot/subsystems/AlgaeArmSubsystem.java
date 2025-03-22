@@ -7,7 +7,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Ports.EndEffector;
@@ -15,12 +18,14 @@ import frc.robot.Ports.EndEffector;
 public class AlgaeArmSubsystem extends LogSubsystem {
     private TalonFX algaeMotor = new TalonFX(EndEffector.ALGAE_MOTOR);
 
-    public double targetAngle = constEndEffector.algaePivot.MAX_ANGLE;
+    public double targetAngle = constEndEffector.algaePivot.REST_ANGLE;
 
     private double encoderOffset;
 
     public AlgaeArmSubsystem() {
         algaeMotor.setNeutralMode(NeutralModeValue.Brake);
+
+        constEndEffector.algaePivot.PID_CONTROLLER.enableContinuousInput(0, 360);
 
         resetSensors();
         stopControllers();
@@ -28,7 +33,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     public double getAlgaePosition() {
         return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset)
-                * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.MAX_ANGLE;
+                * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.REST_ANGLE;
     }
 
     public void goToTargetPosition() {
@@ -39,11 +44,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
                 constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
-        // SmartDashboard.putNumber("Algae Arm Angle", currentAngle);
-        // SmartDashboard.putNumber("Algae Arm Target",
-        // constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
-
-        double totalVoltage = DoubleUtils.clamp(feedforwardOutput + motorVoltage, -12, 12);
+        double totalVoltage = feedforwardOutput + motorVoltage;
         algaeMotor.setVoltage(totalVoltage);
 
         Logger.recordOutput("Subsystems/Algae/Target Angle", targetAngle);
@@ -53,8 +54,8 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public void setAlgaePosition(double degree) {
-        targetAngle = DoubleUtils.clamp(degree, constEndEffector.algaePivot.MIN_ANGLE,
-                constEndEffector.algaePivot.MAX_ANGLE);
+        // continous rotation, pushes back to 360 if goes below 0
+        targetAngle = (3600 + degree) % 360;
     }
 
     public boolean isAtPosition() {
@@ -64,7 +65,6 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     @Override
     public void periodic() {
         goToTargetPosition();
-        // SmartDashboard.putBoolean("Pivot At Position", isAtPosition());
     }
 
     public void stopControllers() {

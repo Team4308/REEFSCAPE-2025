@@ -163,7 +163,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
     // SmartDashboard.putNumber("Right Distance",
     // getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
-    SmartDashboard.putBoolean("Aligned?", isAligned());
+    // SmartDashboard.putBoolean("Aligned?", isAligned());
     Logger.recordOutput("Swerve/Is Aligned?", isAligned());
     Logger.recordOutput("Swerve/Pose", getPose());
     Logger.recordOutput("Swerve/Velocity", getRobotVelocity());

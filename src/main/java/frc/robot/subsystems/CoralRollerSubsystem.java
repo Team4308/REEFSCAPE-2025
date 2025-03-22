@@ -62,8 +62,8 @@ public class CoralRollerSubsystem extends LogSubsystem {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Intaken?", !beamBreak.get());
-        Logger.recordOutput("Subsystems/Rollers/Is Intaken", !beamBreak.get());
+        // SmartDashboard.putBoolean("Intaken?", !beamBreak.get());
+        Logger.recordOutput("Subsystems/Rollers/Is Intaken?", !beamBreak.get());
         Logger.recordOutput("Subsystems/Rollers/Target Velocity", targetVelocity);
     }
 
