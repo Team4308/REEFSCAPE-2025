@@ -8,10 +8,13 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 // import java.io.File;
 // import java.io.IOException;
@@ -137,11 +140,20 @@ public class Robot extends LoggedRobot {
     }
     m_robotContainer.getLEDSystem().setLedState("Teleop");
     m_robotContainer.teleopInit();
+
+    if (m_robotContainer.isSysIdTest)
+      Commands.runOnce(SignalLogger::start);
   }
 
   @Override
   public void teleopPeriodic() {
     m_robotContainer.teleopPeriodic();
+  }
+
+  @Override
+  public void teleopExit() {
+    if (m_robotContainer.isSysIdTest)
+      Commands.runOnce(SignalLogger::stop);
   }
 
   @Override

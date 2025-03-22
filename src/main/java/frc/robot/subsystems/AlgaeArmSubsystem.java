@@ -1,12 +1,17 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Ports.EndEffector;
@@ -17,6 +22,19 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     public double targetAngle = constEndEffector.algaePivot.REST_ANGLE;
 
     private double encoderOffset;
+    private double totalVoltage;
+
+    private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
+            new SysIdRoutine.Config(
+                    null, // Use default ramp rate (1 V/s)
+                    Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+                    null, // Use default timeout (10 s)
+                          // Log state with Phoenix SignalLogger class
+                    (state) -> SignalLogger.writeString("state", state.toString())),
+            new SysIdRoutine.Mechanism(
+                    (volts) -> algaeMotor.set(totalVoltage),
+                    null,
+                    this));
 
     public AlgaeArmSubsystem() {
         algaeMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -40,7 +58,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
                 constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
-        double totalVoltage = feedforwardOutput + motorVoltage;
+        totalVoltage = feedforwardOutput + motorVoltage;
         algaeMotor.setVoltage(totalVoltage);
 
         Logger.recordOutput("Subsystems/Algae/Target Angle", targetAngle);
@@ -70,6 +88,14 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     public void resetSensors() {
         stopControllers();
         encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
+    }
+
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutine.quasistatic(direction);
+    }
+
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return m_sysIdRoutine.dynamic(direction);
     }
 
     public Sendable log() {

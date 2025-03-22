@@ -2,16 +2,19 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports.Elevator;
 import frc.robot.Robot;
+import static edu.wpi.first.units.Units.Volts;
 
 public class ElevatorSubsystem extends SubsystemBase {
   public double targetPosition = constElevator.MIN_HEIGHT;
@@ -20,6 +23,19 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
   private double encoderOffset;
+  private double totalVoltage;
+
+  private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(
+          null, // Use default ramp rate (1 V/s)
+          Volts.of(4), // Reduce dynamic step voltage to 4 to prevent brownout
+          null, // Use default timeout (10 s)
+                // Log state with Phoenix SignalLogger class
+          (state) -> SignalLogger.writeString("state", state.toString())),
+      new SysIdRoutine.Mechanism(
+          (volts) -> rightMotorLeader.set(totalVoltage),
+          null,
+          this));
 
   public ElevatorSubsystem() {
     leftMotorFollower = new TalonFX(Elevator.ELEVATOR_FOLLOWER);
@@ -51,7 +67,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     double feedforwardVoltage = constElevator.FEEDFORWARD
         .calculate(constElevator.PID_CONTROLLER.getSetpoint().velocity);
 
-    double totalVoltage = DoubleUtils.clamp(pidOutput + feedforwardVoltage, -12.0, 12.0);
+    totalVoltage = DoubleUtils.clamp(pidOutput + feedforwardVoltage, -12.0, 12.0);
 
     // SmartDashboard.putNumber("Setpoint Position",
     // constElevator.PID_CONTROLLER.getSetpoint().position);
@@ -134,6 +150,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void resetSensors() {
     stopControllers();
     encoderOffset = -rightMotorLeader.getPosition().getValueAsDouble();
+  }
+
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
   }
 
   @Override

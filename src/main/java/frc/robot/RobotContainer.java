@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Reset;
@@ -68,6 +69,8 @@ public class RobotContainer {
 
         private final Trigger coralIntakeTrigger;
         private final Trigger drivebaseAlignedTrigger;
+
+        public final boolean isSysIdTest = false;
 
         // Converts driver input into a field-relative ChassisSpeeds that is controlled
         // by angular velocity.
@@ -135,12 +138,16 @@ public class RobotContainer {
                 drivebaseAlignedTrigger = new Trigger(drivebase::isAligned);
 
                 configureNamedCommands();
-                configureDriverBindings();
-                configureOperatorBindings();
-                configureOtherTriggers();
-                DriverStation.silenceJoystickConnectionWarning(true);
-                autoChooser = AutoBuilder.buildAutoChooser();
-                SmartDashboard.putData("Auto Chooser", autoChooser);
+                if (!isSysIdTest) {
+                        configureDriverBindings();
+                        configureOperatorBindings();
+                        configureOtherTriggers();
+                        DriverStation.silenceJoystickConnectionWarning(true);
+                        autoChooser = AutoBuilder.buildAutoChooser();
+                        SmartDashboard.putData("Auto Chooser", autoChooser);
+                } else {
+                        sysIdBindings();
+                }
         }
 
         private void configureDriverBindings() {
@@ -258,6 +265,18 @@ public class RobotContainer {
                 operator.Y.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.RB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
                 operator.LB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
+        }
+
+        public void sysIdBindings() {
+                operator.Y.whileTrue(m_AlgaeArmSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                operator.A.whileTrue(m_AlgaeArmSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                operator.B.whileTrue(m_AlgaeArmSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                operator.X.whileTrue(m_AlgaeArmSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+                operator.povUp.whileTrue(m_ElevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                operator.povDown.whileTrue(m_ElevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                operator.povRight.whileTrue(m_ElevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                operator.povLeft.whileTrue(m_ElevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         }
 
         public void configureNamedCommands() {
