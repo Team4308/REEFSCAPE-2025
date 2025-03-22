@@ -120,6 +120,8 @@ public final class Constants {
 
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 3;
+
+        public static final double TIMEOUT_SECONDS = 3;
     }
 
     public static class constEndEffector {
@@ -137,6 +139,8 @@ public final class Constants {
             public static final double REST_ANGLE = 270.0; // Straight Down
             public static final double REMOVAL_ANGLE_TOP = 330;
             public static final double REMOVAL_ANGLE_BOTTOM = 60;
+
+            public static final double TIMEOUT_SECONDS = 3;
         }
 
         public static class rollerSpeeds { // m/s
@@ -146,25 +150,5 @@ public final class Constants {
             public static final double DEFAULT_CORAL = 10;
             public static final double ALGAE_REMOVAL = -50;
         }
-    }
-
-    public static class constSlapdown {
-        // The angle that the pivot motor should be at when the arm is at the top.
-        public static final double PIVOT_TOP_ANGLE = 90.0; // degrees
-
-        // The angle that the pivot motor should be at when the arm is at the bottom.
-        public static final double PIVOT_BOTTOM_ANGLE = 45.0; // degrees
-
-        // The precentage output of the intake motor while it is running.
-        public static final double INTAKE_SPEED = 0.2; // precentage
-
-        // Controllers
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0, 0, 0,
-                new TrapezoidProfile.Constraints(180, 360)); // degrees
-        public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0, 0, 0, 0);
-
-        // Conversions
-        public static final double ENCODER_TO_DEGREE_RATIO = 10.0;
-        public static final double GEAR_RATIO = 2.0;
     }
 }
