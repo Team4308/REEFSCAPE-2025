@@ -72,8 +72,10 @@ public class FieldLayout {
         public static final Pose2d LEFT_FAR = new Pose2d(Units.inchesToMeters(60.171594), Units.inchesToMeters(289.529997), Rotation2d.fromDegrees(-54));
         public static final Pose2d LEFT_NEAR = new Pose2d(Units.inchesToMeters(27.880330), Units.inchesToMeters(265.923340), Rotation2d.fromDegrees(-54));
 
-        public static final List<Pose2d> BLUE_CORAL_STATION_POSES = List.of(LEFT_FAR, LEFT_NEAR, RIGHT_FAR, RIGHT_NEAR);
-        public static final List<Pose2d> RED_CORAL_STATION_POSES = new ArrayList<>(getRedCoralStationPoses());
+        public static final List<Pose2d> BLUE_FAR_STATION_POSES = List.of(LEFT_FAR, RIGHT_FAR);
+        public static final List<Pose2d> BLUE_NEAR_STATION_POSES = List.of(LEFT_NEAR, RIGHT_NEAR);
+        public static final List<Pose2d> RED_FAR_STATION_POSES = new ArrayList<>(getRedFarStationPoses());
+        public static final List<Pose2d> RED_NEAR_STATION_POSES = new ArrayList<>(getRedNearStationPoses());
     }
 
     public static Pose2d getRedAlliancePose(Pose2d bluePose) {
@@ -106,11 +108,19 @@ public class FieldLayout {
         return new ArrayList<>(Arrays.asList(RED_ALGAE_POSES));
     }
 
-    public static List<Pose2d> getRedCoralStationPoses() {
-        Pose2d[] RED_CORAL_STATION_POSES = new Pose2d[CORAL_STATION.BLUE_CORAL_STATION_POSES.size()];
-        for (int i = 0; i < CORAL_STATION.BLUE_CORAL_STATION_POSES.size(); i++) {
-            RED_CORAL_STATION_POSES[i] = getRedAlliancePose(CORAL_STATION.BLUE_CORAL_STATION_POSES.get(i));
+    public static List<Pose2d> getRedFarStationPoses() {
+        Pose2d[] RED_FAR_STATION_POSES = new Pose2d[CORAL_STATION.BLUE_FAR_STATION_POSES.size()];
+        for (int i = 0; i < CORAL_STATION.BLUE_FAR_STATION_POSES.size(); i++) {
+            RED_FAR_STATION_POSES[i] = getRedAlliancePose(CORAL_STATION.BLUE_FAR_STATION_POSES.get(i));
         }
-        return new ArrayList<>(Arrays.asList(RED_CORAL_STATION_POSES));
+        return new ArrayList<>(Arrays.asList(RED_FAR_STATION_POSES));
+    }
+
+    public static List<Pose2d> getRedNearStationPoses() {
+        Pose2d[] RED_NEAR_STATION_POSES = new Pose2d[CORAL_STATION.BLUE_NEAR_STATION_POSES.size()];
+        for (int i = 0; i < CORAL_STATION.BLUE_NEAR_STATION_POSES.size(); i++) {
+            RED_NEAR_STATION_POSES[i] = getRedAlliancePose(CORAL_STATION.BLUE_NEAR_STATION_POSES.get(i));
+        }
+        return new ArrayList<>(Arrays.asList(RED_NEAR_STATION_POSES));
     }
 }

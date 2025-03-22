@@ -89,6 +89,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d nearestPoseToLeftReef = new Pose2d();
   public Pose2d nearestPoseToRightReef = new Pose2d();
   public Pose2d nearestPoseToAlgaeRemove = new Pose2d();
+  public Pose2d nearestPoseToFarCoralStation = new Pose2d();
+  public Pose2d nearestPoseToNearCoralStation = new Pose2d();
 
   // private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
   // .getStructTopic("Robot Pose", Pose2d.struct).publish();
@@ -275,6 +277,26 @@ public class SwerveSubsystem extends SubsystemBase {
     return nearestPose;
   }
 
+  public Pose2d getClosestFarCoralStationPose() {
+    Pose2d nearestPose = new Pose2d();
+    if (isRedAlliance()) {
+      nearestPose = getPose().nearest(FieldLayout.CORAL_STATION.RED_FAR_STATION_POSES);
+    } else {
+      nearestPose = getPose().nearest(FieldLayout.CORAL_STATION.BLUE_FAR_STATION_POSES);
+    }
+    return nearestPose;
+  }
+
+  public Pose2d getClosestNearCoralStationPose() {
+    Pose2d nearestPose = new Pose2d();
+    if (isRedAlliance()) {
+      nearestPose = getPose().nearest(FieldLayout.CORAL_STATION.RED_NEAR_STATION_POSES);
+    } else {
+      nearestPose = getPose().nearest(FieldLayout.CORAL_STATION.BLUE_NEAR_STATION_POSES);
+    }
+    return nearestPose;
+  }
+
   public Command updateClosestReefPoses() {
     return this.runOnce(() -> {
       nearestPoseToLeftReef = getClosestLeftReefPose();
@@ -285,6 +307,13 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command updateClosestAlgaePose() {
     return this.runOnce(() -> {
       nearestPoseToAlgaeRemove = getClosestAlgaeRemovePose();
+    });
+  }
+
+  public Command updateClosestStationPose() {
+    return this.runOnce(() -> {
+      nearestPoseToFarCoralStation = getClosestFarCoralStationPose();
+      nearestPoseToNearCoralStation = getClosestNearCoralStationPose();
     });
   }
 

@@ -173,6 +173,10 @@ public class RobotContainer {
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToAlgaeRemove)));
                 driver.Y.onTrue((Commands.runOnce(drivebase::zeroGyro)));
                 driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
+                driver.povUp.whileTrue(drivebase.updateClosestStationPose()
+                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToFarCoralStation)));
+                driver.povDown.whileTrue(drivebase.updateClosestStationPose()
+                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToNearCoralStation)));
 
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
