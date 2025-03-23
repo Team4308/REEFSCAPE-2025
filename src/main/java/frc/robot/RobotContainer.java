@@ -65,13 +65,12 @@ public class RobotContainer {
         private final ElevatorSubsystem m_ElevatorSubsystem;
         private final AlgaeArmSubsystem m_AlgaeArmSubsystem;
         private final CoralRollerSubsystem m_CoralRollerSubsystem;
+        private final AutoChooser m_AutoChooser;
 
         // Commands
         private final DefaultRoller DefaultRollerCommand;
         private final DefaultAlgae DefaultAlgaeCommand;
         private final DefaultElevator DefaultElevatorCommand;
-
-        private final SendableChooser<Command> autoChooser;
 
         private final Simulation m_simulation;
 
@@ -128,6 +127,7 @@ public class RobotContainer {
                 m_CoralRollerSubsystem = new CoralRollerSubsystem();
                 m_simulation = new Simulation();
                 m_simulation.setupsubsystems(m_ElevatorSubsystem, m_AlgaeArmSubsystem, m_CoralRollerSubsystem);
+                m_AutoChooser = new AutoChooser(this);
 
                 DefaultRollerCommand = new DefaultRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
                 DefaultAlgaeCommand = new DefaultAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
@@ -151,8 +151,6 @@ public class RobotContainer {
                         configureOperatorBindings();
                         configureOtherTriggers();
                         DriverStation.silenceJoystickConnectionWarning(true);
-                        autoChooser = AutoBuilder.buildAutoChooser();
-                        SmartDashboard.putData("Auto Chooser", autoChooser);
                 } else {
                         sysIdBindings();
                 }
@@ -327,7 +325,7 @@ public class RobotContainer {
          * @return the command to run in autonomous
          */
         public Command getAutonomousCommand() {
-                return autoChooser.getSelected();
+                return m_AutoChooser.getAutonomousCommand();
         }
 
         public void teleopInit() {
