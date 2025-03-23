@@ -39,11 +39,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-// import edu.wpi.first.networktables.NetworkTableInstance;
-// import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,7 +51,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.Swerve;
 import frc.robot.FieldLayout;
-import frc.robot.Robot;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -89,23 +88,16 @@ public class SwerveSubsystem extends SubsystemBase {
   private final boolean visionDriveTest = true;
   private Vision vision;
 
+  private Pose2d targetPose = new Pose2d();
+
   public Pose2d nearestPoseToLeftReef = new Pose2d();
   public Pose2d nearestPoseToRightReef = new Pose2d();
   public Pose2d nearestPoseToAlgaeRemove = new Pose2d();
   public Pose2d nearestPoseToFarCoralStation = new Pose2d();
   public Pose2d nearestPoseToNearCoralStation = new Pose2d();
 
-  // private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
-  // .getStructTopic("Robot Pose", Pose2d.struct).publish();
-  // private StructPublisher<Pose2d> publisher1 =
-  // NetworkTableInstance.getDefault()
-  // .getStructTopic("Closest Left Reef Pose", Pose2d.struct).publish();
-  // private StructPublisher<Pose2d> publisher2 =
-  // NetworkTableInstance.getDefault()
-  // .getStructTopic("Closest Right Reef Pose", Pose2d.struct).publish();
-  // private StructPublisher<Pose2d> publisher3 =
-  // NetworkTableInstance.getDefault()
-  // .getStructTopic("Closest Algae Remove Pose", Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+  .getStructTopic("Robot Pose", Pose2d.struct).publish();
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -165,16 +157,10 @@ public class SwerveSubsystem extends SubsystemBase {
       vision.updatePoseEstimation(swerveDrive);
     }
     checkTunableValues();
-    // publisher.set(getPose());
-    // publisher1.set(getClosestLeftReefPose());
-    // publisher2.set(getClosestRightReefPose());
-    // publisher3.set(getClosestAlgaeRemovePose());
 
-    // SmartDashboard.putNumber("Left Distance",
-    // getPose().getTranslation().getDistance(getClosestLeftReefPose().getTranslation()));
-    // SmartDashboard.putNumber("Right Distance",
-    // getPose().getTranslation().getDistance(getClosestRightReefPose().getTranslation()));
-    // SmartDashboard.putBoolean("Aligned?", isAligned());
+    publisher.set(getPose());
+
+    SmartDashboard.putBoolean("Aligned?", isAligned());
     Logger.recordOutput("Swerve/Is Aligned?", isAligned());
     Logger.recordOutput("Swerve/Pose", getPose());
     Logger.recordOutput("Swerve/Velocity", getRobotVelocity());
@@ -324,30 +310,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public boolean isTranslationAligned() {
     Translation2d currentTranslation2d = getPose().getTranslation();
-    Translation2d closestLeftReefTranslation2d = getClosestLeftReefPose().getTranslation();
-    Translation2d closestRightReefTranslation2d = getClosestRightReefPose().getTranslation();
-    Translation2d closestAlgaeRemoveTranslation2d = getClosestAlgaeRemovePose().getTranslation();
-    if (currentTranslation2d.getDistance(closestLeftReefTranslation2d) < Swerve.Align.Translation.TOLERANCE
-        || currentTranslation2d.getDistance(closestRightReefTranslation2d) < Swerve.Align.Translation.TOLERANCE
-        || currentTranslation2d.getDistance(closestAlgaeRemoveTranslation2d) < Swerve.Align.Translation.TOLERANCE) {
+    Translation2d targetTranslation2d = targetPose.getTranslation();
+    if (currentTranslation2d.getDistance(targetTranslation2d) < Swerve.Align.Translation.TOLERANCE) {
       return true;
     } else {
       return false;
     }
-
   }
 
   public boolean isHeadingAligned() {
     double currentHeading = getPose().getRotation().getDegrees();
-    double closestLeftReefHeading = getClosestLeftReefPose().getRotation().getDegrees();
-    double closestRightReefHeading = getClosestRightReefPose().getRotation().getDegrees();
-    double closestAlgaeRemoveHeading = getClosestAlgaeRemovePose().getRotation().getDegrees();
-    if ((Math.abs(currentHeading - closestLeftReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading - closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading - closestAlgaeRemoveHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading + closestLeftReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading + closestRightReefHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading + closestAlgaeRemoveHeading) < Swerve.Align.Heading.TOLERANCE)) {
+    double targetHeading = targetPose.getRotation().getDegrees();
+    if ((Math.abs(currentHeading - targetHeading) < Swerve.Align.Heading.TOLERANCE)
+        || (Math.abs(currentHeading + targetHeading) < Swerve.Align.Heading.TOLERANCE)) {
       return true;
     } else {
       return false;
@@ -355,9 +330,6 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public boolean isAligned() {
-    if (Robot.isSimulation()) {
-      return new XboxController(0).getBButton();
-    }
     if (isTranslationAligned() && isHeadingAligned()) {
       return true;
     } else {
@@ -376,16 +348,19 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Command driveToPose(Pose2d pose) {
+    // Change target pose
+    targetPose = pose;
+
     // Create the constraints to use while pathfinding
     PathConstraints constraints = new PathConstraints(
-        swerveDrive.getMaximumChassisVelocity(), 1.5,
-        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(360));
+        swerveDrive.getMaximumChassisVelocity(), 3.0,
+        swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
     
     // Create the goal state
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState();
     goalState.pose = pose;
 
-    // Since AutoBuilder is configured, we can use it to build pathfinding commands
+    // // Since AutoBuilder is configured, we can use it to build pathfinding commands
     // return AutoBuilder.pathfindToPose(
     //     pose,
     //     constraints,
