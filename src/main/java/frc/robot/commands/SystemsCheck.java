@@ -56,9 +56,9 @@ public class SystemsCheck extends SequentialCommandGroup {
                                 new RemoveA2(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
 
                                 new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, rollerSubsystem)
-                                                .until(() -> !rollerSubsystem.beamBreak.get()),
+                                                .until(() -> rollerSubsystem.getBeamBreak()),
                                 new WaitCommand(1),
                                 new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, rollerSubsystem)
-                                                .until(() -> rollerSubsystem.beamBreak.get()));
+                                                .until(() -> !rollerSubsystem.getBeamBreak()));
         }
 }

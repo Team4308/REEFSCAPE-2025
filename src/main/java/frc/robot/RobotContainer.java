@@ -219,7 +219,7 @@ public class RobotContainer {
                 // Intake
                 operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
                                 m_CoralRollerSubsystem)
-                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
+                                .until(() -> m_CoralRollerSubsystem.getBeamBreak()));
                 operator.Start.onTrue(new SimpleElevator(() -> 0.0, m_ElevatorSubsystem));
 
                 // Dual Cycles
@@ -291,7 +291,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Intake Coral",
                                 new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
                                                 m_CoralRollerSubsystem)
-                                                .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
+                                                .until(() -> m_CoralRollerSubsystem.getBeamBreak()));
                 NamedCommands.registerCommand("L2 Preset",
                                 new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("L3 Preset",

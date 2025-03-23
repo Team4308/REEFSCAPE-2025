@@ -32,7 +32,7 @@ public class SimpleRoller extends Command {
 
     @Override
     public boolean isFinished() {
-        return (subsystem.beamBreak.get());
+        return (!subsystem.getBeamBreak());
     }
 
 }

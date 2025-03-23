@@ -20,7 +20,7 @@ public class CoralRollerSubsystem extends LogSubsystem {
 
     private VelocityVoltage rollerVelocity = new VelocityVoltage(0.0);
 
-    public DigitalInput beamBreak = new DigitalInput(Ports.EndEffector.INDEX_BEAM_BREAK);
+    private DigitalInput beamBreak = new DigitalInput(Ports.EndEffector.INDEX_BEAM_BREAK);
 
     public double targetVelocity = 0;
 
@@ -54,7 +54,7 @@ public class CoralRollerSubsystem extends LogSubsystem {
 
     public boolean getBeamBreak() {
         if (Robot.isSimulation()) {
-            return new XboxController(0).getAButton();
+            return new XboxController(0).getLeftTriggerAxis() > 0.5;
         }
         return !beamBreak.get();
     }
