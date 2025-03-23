@@ -13,6 +13,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Align To Left Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "L2 Preset"
           }
         },
@@ -25,6 +31,12 @@
         {
           "type": "named",
           "data": {
+            "name": "Align To Far Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Intake Coral"
           }
         },
@@ -32,6 +44,12 @@
           "type": "path",
           "data": {
             "pathName": "Coral-J"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Right Reef"
           }
         },
         {
