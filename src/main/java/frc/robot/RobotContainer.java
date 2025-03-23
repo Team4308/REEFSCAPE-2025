@@ -172,18 +172,18 @@ public class RobotContainer {
                 // Command driveSetpointGenKeyboard = drivebase
                 // .driveWithSetpointGeneratorFieldRelative(driveDirectAngleKeyboard);
 
-                driver.LB.whileTrue(drivebase.updateClosestReefPoses()
+                // driver.A.whileTrue(drivebase.updateClosestAlgaePose()
+                // .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToAlgaeRemove)));
+                driver.A.whileTrue(drivebase.updateClosestReefPoses()
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
-                driver.RB.whileTrue(drivebase.updateClosestReefPoses()
+                driver.B.whileTrue(drivebase.updateClosestReefPoses()
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToRightReef)));
-                driver.A.whileTrue(drivebase.updateClosestAlgaePose()
-                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToAlgaeRemove)));
-                driver.Y.onTrue((Commands.runOnce(drivebase::zeroGyro)));
-                driver.X.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-                driver.povUp.whileTrue(drivebase.updateClosestStationPose()
+                driver.X.whileTrue(drivebase.updateClosestStationPose()
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToFarCoralStation)));
-                driver.povDown.whileTrue(drivebase.updateClosestStationPose()
+                driver.Y.whileTrue(drivebase.updateClosestStationPose()
                                 .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToNearCoralStation)));
+                driver.LB.onTrue((Commands.runOnce(drivebase::zeroGyro)));
+                driver.RB.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
@@ -300,6 +300,18 @@ public class RobotContainer {
                                 new RemoveA1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove Algae L2",
                                 new RemoveA2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Align To Left Reef",
+                                drivebase.driveToPose(() -> drivebase.getClosestLeftReefPose())
+                                                .until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Align To Right Reef",
+                                drivebase.driveToPose(() -> drivebase.getClosestRightReefPose())
+                                                .until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Align To Far Station",
+                                drivebase.driveToPose(() -> drivebase.getClosestFarCoralStationPose())
+                                                .until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Align To Near Station",
+                                drivebase.driveToPose(() -> drivebase.getClosestNearCoralStationPose())
+                                                .until(drivebaseAlignedTrigger));
         }
 
         public LEDSystem getLEDSystem() {
