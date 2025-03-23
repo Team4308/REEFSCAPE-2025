@@ -7,6 +7,7 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.StructPublisher;
@@ -34,6 +35,10 @@ public class Simulation {
 
     private Pose3d zeroPos = new Pose3d();
 
+    private Pose3d elevatorS1 = new Pose3d(new Translation3d(0.0, 0.1, 0.0), new Rotation3d());
+    private Pose3d elevatorS2 = new Pose3d(new Translation3d(0.0, 0.2, 0.0), new Rotation3d());
+    private Pose3d algaeArm = new Pose3d();
+
     public Simulation() {
         mech = new LoggedMechanism2d(10, 10);
         elevatorInit();
@@ -51,6 +56,9 @@ public class Simulation {
 
         Logger.recordOutput("Mechanism", mech);
         Logger.recordOutput("Zeroed Pose", zeroPos);
+
+        Logger.recordOutput("/ElevatorSim/Stage1Pose", elevatorS1);
+        Logger.recordOutput("/ElevatorSim/Stage2Pose", elevatorS2);
     }
 
     private void elevatorInit() {
@@ -86,5 +94,12 @@ public class Simulation {
 
         m_elevatorSim.update(0.020);
         m_elevatorMech2d.setLength(m_elevatorSim.getPositionMeters());
+
+        elevatorS1 = new Pose3d(
+                new Translation3d(0.0, 0.1, m_elevatorSim.getPositionMeters() / 2 + Units.inchesToMeters(1)),
+                new Rotation3d());
+        elevatorS2 = new Pose3d(
+                new Translation3d(0.0, 0.1, m_elevatorSim.getPositionMeters() - Units.inchesToMeters(1)),
+                new Rotation3d());
     }
 }
