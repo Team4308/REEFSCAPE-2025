@@ -20,7 +20,7 @@ public final class Constants {
             new Translation3d(Units.inchesToMeters(27), Units.inchesToMeters(27), Units.inchesToMeters(40)),
             ROBOT_MASS);
     public static final double LOOP_TIME = 0.13; // s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED = Units.feetToMeters(15.1);
+    public static final double MAX_SPEED = Units.feetToMeters(12.5);
     // Maximum speed of the robot in meters per second, used to limit acceleration.
 
     public static final class LoggedDashboard {
