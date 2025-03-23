@@ -296,6 +296,14 @@ public class RobotContainer {
                                 new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove Algae L2",
                                 new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Align To Left Reef", 
+                                drivebase.driveToPose(() -> drivebase.getClosestLeftReefPose()).until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Align To Right Reef", 
+                                drivebase.driveToPose(() -> drivebase.getClosestRightReefPose()).until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Align To Far Station", 
+                                drivebase.driveToPose(() -> drivebase.getClosestFarCoralStationPose()).until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Align To Near Station", 
+                                drivebase.driveToPose(() -> drivebase.getClosestNearCoralStationPose()).until(drivebaseAlignedTrigger));
         }
 
         public LEDSystem getLEDSystem() {
