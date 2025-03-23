@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.AlgaeRemoval.RemoveL1;
-import frc.robot.commands.AlgaeRemoval.RemoveL2;
+import frc.robot.commands.AlgaeRemoval.RemoveA1;
+import frc.robot.commands.AlgaeRemoval.RemoveA2;
 import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
@@ -32,30 +32,33 @@ intake command
  */
 
 public class SystemsCheck extends SequentialCommandGroup {
-    public SystemsCheck(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
-            AlgaeArmSubsystem algaeArmSubsystem, SwerveSubsystem swerveSubsystem) {
-        addCommands(
-                new ParallelDeadlineGroup(new WaitCommand(1), swerveSubsystem.driveCommand(() -> 5, () -> 0, () -> 0)),
-                
-                new ParallelDeadlineGroup(new WaitCommand(1), swerveSubsystem.driveCommand(() -> 0, () -> 5, () -> 0)),
+        public SystemsCheck(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
+                        AlgaeArmSubsystem algaeArmSubsystem, SwerveSubsystem swerveSubsystem) {
+                addCommands(
+                                new ParallelDeadlineGroup(new WaitCommand(1),
+                                                swerveSubsystem.driveCommand(() -> 5, () -> 0, () -> 0)),
 
-                new ParallelDeadlineGroup(new WaitCommand(1), swerveSubsystem.driveCommand(() -> 0, () -> 0, () -> 5)),
+                                new ParallelDeadlineGroup(new WaitCommand(1),
+                                                swerveSubsystem.driveCommand(() -> 0, () -> 5, () -> 0)),
 
-                new WaitCommand(1),
-                new InstantCommand(() -> swerveSubsystem.lock()),
+                                new ParallelDeadlineGroup(new WaitCommand(1),
+                                                swerveSubsystem.driveCommand(() -> 0, () -> 0, () -> 5)),
 
-                elevatorSubsystem.goToLevel(0),
-                new FastL3(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
-                new FastL2(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
-                new FastL1(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
+                                new WaitCommand(1),
+                                new InstantCommand(() -> swerveSubsystem.lock()),
 
-                new RemoveL1(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
-                new RemoveL2(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
+                                elevatorSubsystem.goToLevel(0),
+                                new FastL3(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
+                                new FastL2(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
+                                new FastL1(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
 
-                new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, rollerSubsystem)
-                        .until(() -> !rollerSubsystem.beamBreak.get()),
-                new WaitCommand(1),
-                new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, rollerSubsystem)
-                        .until(() -> rollerSubsystem.beamBreak.get()));
-    }
+                                new RemoveA1(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
+                                new RemoveA2(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
+
+                                new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, rollerSubsystem)
+                                                .until(() -> !rollerSubsystem.beamBreak.get()),
+                                new WaitCommand(1),
+                                new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, rollerSubsystem)
+                                                .until(() -> rollerSubsystem.beamBreak.get()));
+        }
 }

@@ -87,7 +87,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     public void resetSensors() {
         stopControllers();
-        encoderOffset = -algaeMotor.getPosition().getValueAsDouble();
+        encoderOffset = -algaeMotor.getPosition().getValueAsDouble() - 90; // Starts & resets at straight town
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

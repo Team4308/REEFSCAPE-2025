@@ -26,10 +26,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.Reset;
-import frc.robot.commands.ScoreAndRemove;
 import frc.robot.commands.SystemsCheck;
-import frc.robot.commands.AlgaeRemoval.RemoveL1;
-import frc.robot.commands.AlgaeRemoval.RemoveL2;
+import frc.robot.commands.AlgaeRemoval.RemoveA1;
+import frc.robot.commands.AlgaeRemoval.RemoveA2;
+import frc.robot.commands.ButtonBindings.Algae1PreMove;
+import frc.robot.commands.ButtonBindings.Algae2PreMove;
+import frc.robot.commands.ButtonBindings.L2Algae1;
+import frc.robot.commands.ButtonBindings.L2Algae2;
+import frc.robot.commands.ButtonBindings.L2PreMove;
+import frc.robot.commands.ButtonBindings.L3Algae1;
+import frc.robot.commands.ButtonBindings.L3Algae2;
+import frc.robot.commands.ButtonBindings.L3PreMove;
 import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
@@ -186,49 +193,46 @@ public class RobotContainer {
         }
 
         private void configureOperatorBindings() {
+                /*
+                 * elevator failsafe(0,2,3)
+                 * intaking
+                 * auto:
+                 * L2, L3, A1, A2
+                 * L2A1, L2A2, L3A1, L3A2
+                 * manual control roller, elevator, algae
+                 */
+
                 // Automatic Scoring
                 operator.B.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.X.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.Y.onTrue(new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                // operator.Y.onTrue(new FastL4(m_ElevatorSubsystem, m_CoralRollerSubsystem,
-                // m_AlgaeArmSubsystem));
+                operator.X.onTrue(new L2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.Y.onTrue(new L3PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
 
                 // Automatic Algae Removal
                 operator.RB
-                                .onTrue(new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                .onTrue(new Algae1PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem,
+                                                m_AlgaeArmSubsystem));
                 operator.LB
-                                .onTrue(new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                .onTrue(new Algae2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem,
+                                                m_AlgaeArmSubsystem));
 
-                operator.RightStickButton.onTrue(
-                                new ScoreAndRemove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 // Intake
                 operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
                                 m_CoralRollerSubsystem)
                                 .until(() -> !m_CoralRollerSubsystem.beamBreak.get()));
                 operator.Start.onTrue(new SimpleElevator(() -> 0.0, m_ElevatorSubsystem));
 
-                // *** These are failsafes, that should be already covered by the previous
-                // commands ***
-                // Coral
-                operator.Back.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
-                                m_CoralRollerSubsystem)
-                                .until(() -> m_CoralRollerSubsystem.beamBreak.get())); // SHOOTING
+                // Dual Cycles
+                operator.X.and(operator.LB)
+                                .onTrue(new L2Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.X.and(operator.RB)
+                                .onTrue(new L2Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.Y.and(operator.LB)
+                                .onTrue(new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.Y.and(operator.RB)
+                                .onTrue(new L3Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
 
-                // Algae
-                operator.LeftStickButton.onTrue(new InstantCommand(() -> m_AlgaeArmSubsystem
-                                .setAlgaePosition(Constants.constEndEffector.algaePivot.REMOVAL_ANGLE_TOP)))
-                                .onFalse((new InstantCommand(() -> m_AlgaeArmSubsystem
-                                                .setAlgaePosition(Constants.constEndEffector.algaePivot.REST_ANGLE)))); // Set
-                                                                                                                        // position
-                                                                                                                        // to
-                                                                                                                        // remove
-                                                                                                                        // algae
-                operator.LeftStickButton.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL,
-                                m_CoralRollerSubsystem))
-                                .onFalse(new DefaultRoller(() -> 0.0, m_CoralRollerSubsystem));
-
-                // Elevator
+                // Elevator Failsafe
                 operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(3));
                 operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(0));
                 operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(1));
@@ -293,9 +297,9 @@ public class RobotContainer {
                 NamedCommands.registerCommand("L3 Preset",
                                 new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove Algae L1",
-                                new RemoveL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                new RemoveA1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove Algae L2",
-                                new RemoveL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                new RemoveA2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
         }
 
         public LEDSystem getLEDSystem() {
