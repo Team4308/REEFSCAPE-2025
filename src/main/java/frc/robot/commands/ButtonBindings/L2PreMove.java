@@ -44,4 +44,13 @@ public class L2PreMove extends Command {
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
     }
+
+    @Override
+    public boolean isFinished() {
+        if (m_elevatorSubsystem.isAtPosition("L2")) {
+            return m_elevatorSubsystem.isAtPosition("MIN");
+        } else {
+            return m_elevatorSubsystem.isAtPosition("L2");
+        }
+    }
 }

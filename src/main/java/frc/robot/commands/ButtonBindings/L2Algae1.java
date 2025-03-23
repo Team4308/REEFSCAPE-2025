@@ -54,4 +54,13 @@ public class L2Algae1 extends Command {
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
     }
+
+    @Override
+    public boolean isFinished() {
+        if (m_elevatorSubsystem.isAtPosition("A1P")) {
+            return m_elevatorSubsystem.isAtPosition("MIN");
+        } else {
+            return m_elevatorSubsystem.isAtPosition("A1P");
+        }
+    }
 }

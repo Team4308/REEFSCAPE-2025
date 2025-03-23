@@ -52,4 +52,13 @@ public class Algae1PreMove extends Command {
                         new DefaultElevator(() -> constElevator.ALGAE1, m_elevatorSubsystem)),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
     }
+
+    @Override
+    public boolean isFinished() {
+        if (m_elevatorSubsystem.isAtPosition("A1P")) {
+            return m_elevatorSubsystem.isAtPosition("MIN");
+        } else {
+            return m_elevatorSubsystem.isAtPosition("A1P");
+        }
+    }
 }

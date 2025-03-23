@@ -54,4 +54,13 @@ public class Algae2PreMove extends Command {
                                                                                                // instead, not sure yet
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
     }
+
+    @Override
+    public boolean isFinished() {
+        if (m_elevatorSubsystem.isAtPosition("A2P")) {
+            return m_elevatorSubsystem.isAtPosition("MIN");
+        } else {
+            return m_elevatorSubsystem.isAtPosition("A2P");
+        }
+    }
 }

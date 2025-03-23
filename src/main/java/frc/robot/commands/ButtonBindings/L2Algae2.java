@@ -54,4 +54,13 @@ public class L2Algae2 extends Command {
                         new SimpleElevator(() -> constElevator.ALGAE2, m_elevatorSubsystem)),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
     }
+
+    @Override
+    public boolean isFinished() {
+        if (m_elevatorSubsystem.isAtPosition("L2")) {
+            return m_elevatorSubsystem.isAtPosition("MIN");
+        } else {
+            return m_elevatorSubsystem.isAtPosition("L2");
+        }
+    }
 }
