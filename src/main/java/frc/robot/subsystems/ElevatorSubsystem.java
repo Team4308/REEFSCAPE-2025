@@ -23,7 +23,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput topLimitSwitch;
   private DigitalInput bottomLimitSwitch;
   private double encoderOffset;
-  private double totalVoltage;
+  public double totalVoltage;
 
   private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(
@@ -77,9 +77,34 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   public boolean isAtPosition() {
     if (Robot.isSimulation()) {
-      return true;
+      return Simulation.elevatorAtPositionSimulation;
     }
     return Math.abs(getPositionInMeters() - targetPosition) < constElevator.TOLERANCE;
+  }
+
+  public boolean isAtPosition(String type) {
+    double test = 0.0;
+    switch (type) {
+      case "MIN":
+        test = constElevator.MIN_HEIGHT;
+      case "L1":
+        test = constElevator.L1;
+      case "L2":
+        test = constElevator.L2;
+      case "L3":
+        test = constElevator.L3;
+      case "A1":
+        test = constElevator.ALGAE1;
+      case "A2":
+        test = constElevator.ALGAE2;
+      case "A1P":
+        test = constElevator.ALGAE1_PREMOVE;
+      case "A2P":
+        test = constElevator.ALGAE2_PREMOVE;
+      default:
+        test = targetPosition;
+    }
+    return Math.abs(getPositionInMeters() - test) < constElevator.TOLERANCE;
   }
 
   // Preset position commands
@@ -132,7 +157,7 @@ public class ElevatorSubsystem extends SubsystemBase {
    */
   public double getPositionInMeters() {
     if (Robot.isSimulation()) {
-      return targetPosition;
+      return Simulation.elevatorHeightSimulation;
     }
     return (getPosition() * constElevator.SPOOL_CIRCUMFERENCE) + constElevator.MIN_HEIGHT;
   }
