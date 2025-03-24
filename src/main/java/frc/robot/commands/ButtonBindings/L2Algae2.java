@@ -51,7 +51,7 @@ public class L2Algae2 extends Command {
                 new ParallelDeadlineGroup(
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem),
-                        new SimpleAlgae(() -> .90, m_algaeArmSubsystem)),
+                        new SimpleAlgae(() -> 90.0, m_algaeArmSubsystem)),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
     }
 
