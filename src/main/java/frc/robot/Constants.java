@@ -134,9 +134,9 @@ public final class Constants {
             public static final double ROTATION_TO_ANGLE_RATIO = 18.3333333;
 
             // Controllers
-            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.004, 0.0, 0.0,
-                    new TrapezoidProfile.Constraints(180 / 0.379, 720)); // degrees
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.3, 0.003, 0.0);
+            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.00, 0.0, 0.0,
+                    new TrapezoidProfile.Constraints(360, 720)); // degrees
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.12, 0.033, 0.0);
 
             // Angles (degrees)
             public static final double REST_ANGLE = 90.0; // Straight Up

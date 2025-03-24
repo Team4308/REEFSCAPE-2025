@@ -43,6 +43,7 @@ import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.DefaultControl.DefaultAlgae;
 import frc.robot.commands.DefaultControl.DefaultElevator;
 import frc.robot.commands.DefaultControl.DefaultRoller;
+import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
@@ -237,6 +238,8 @@ public class RobotContainer {
                 operator.povRight.onTrue(m_ElevatorSubsystem.goToLevel(0));
                 operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(1));
                 operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(2));
+
+                operator.RightStickButton.onTrue(new SimpleAlgae(() -> 90.0, m_AlgaeArmSubsystem));
         }
 
         private void configureOtherTriggers() {
