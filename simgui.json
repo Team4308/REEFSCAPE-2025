@@ -49,6 +49,7 @@
       "/AdvantageKit/RealOutputs/Encoders": "Alerts",
       "/AdvantageKit/RealOutputs/IMU": "Alerts",
       "/AdvantageKit/RealOutputs/JSON": "Alerts",
+      "/AdvantageKit/RealOutputs/Mechanism": "Mechanism2d",
       "/AdvantageKit/RealOutputs/Motors": "Alerts",
       "/AdvantageKit/RealOutputs/PathPlanner": "Alerts",
       "/AdvantageKit/RealOutputs/PhotonAlerts": "Alerts",
