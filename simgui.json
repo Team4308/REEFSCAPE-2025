@@ -57,6 +57,21 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Alerts": "Alerts",
       "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/Choice 1": "String Chooser",
+      "/SmartDashboard/Choice 10": "String Chooser",
+      "/SmartDashboard/Choice 11": "String Chooser",
+      "/SmartDashboard/Choice 12": "String Chooser",
+      "/SmartDashboard/Choice 13": "String Chooser",
+      "/SmartDashboard/Choice 14": "String Chooser",
+      "/SmartDashboard/Choice 15": "String Chooser",
+      "/SmartDashboard/Choice 2": "String Chooser",
+      "/SmartDashboard/Choice 3": "String Chooser",
+      "/SmartDashboard/Choice 4": "String Chooser",
+      "/SmartDashboard/Choice 5": "String Chooser",
+      "/SmartDashboard/Choice 6": "String Chooser",
+      "/SmartDashboard/Choice 7": "String Chooser",
+      "/SmartDashboard/Choice 8": "String Chooser",
+      "/SmartDashboard/Choice 9": "String Chooser",
       "/SmartDashboard/Encoders": "Alerts",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/IMU": "Alerts",
@@ -96,7 +111,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": -6
+          "height": 338
         }
       ]
     }

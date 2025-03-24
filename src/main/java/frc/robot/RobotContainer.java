@@ -333,6 +333,10 @@ public class RobotContainer {
                 m_ElevatorSubsystem.resetSensors();
         }
 
+        public void robotPeriodic() {
+                m_AutoChooser.periodic();
+        }
+
         public void teleopPeriodic() {
         }
 
