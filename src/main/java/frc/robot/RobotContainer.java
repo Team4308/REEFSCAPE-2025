@@ -349,7 +349,7 @@ public class RobotContainer {
         }
 
         private double joystickAlgaeArm() {
-                return -deadZone(operator.getLeftY()) * 5;
+                return -deadZone(operator.getLeftY()) * 3;
         }
 
         public double joystickElevatorControl() {
@@ -357,8 +357,8 @@ public class RobotContainer {
         }
 
         private double triggerRollerControl() {
-                double isPos = deadZone(operator.getRightTrigger()) * 50;
-                double isNeg = deadZone(operator.getLeftTrigger()) * 50;
+                double isPos = deadZone(operator.getRightTrigger()) * 25;
+                double isNeg = deadZone(operator.getLeftTrigger()) * 25;
                 if (isPos > 0) {
                         return isPos;
                 } else {
