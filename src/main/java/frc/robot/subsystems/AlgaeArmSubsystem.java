@@ -8,6 +8,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import ca.team4308.absolutelib.math.DoubleUtils;
 import ca.team4308.absolutelib.wrapper.LogSubsystem;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 // import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Ports.EndEffector;
+import frc.robot.Robot;
 
 public class AlgaeArmSubsystem extends LogSubsystem {
     private TalonFX algaeMotor = new TalonFX(EndEffector.ALGAE_MOTOR);
@@ -22,7 +24,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     public double targetAngle = constEndEffector.algaePivot.REST_ANGLE;
 
     private double encoderOffset;
-    private double totalVoltage;
+    public double totalVoltage;
 
     private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
             new SysIdRoutine.Config(
@@ -46,6 +48,9 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public double getAlgaePosition() {
+        if (Robot.isSimulation()) {
+            return Simulation.algaeAngleSimulation;
+        }
         return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset)
                 * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.REST_ANGLE;
     }
@@ -53,12 +58,13 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     public void goToTargetPosition() {
         double currentAngle = getAlgaePosition();
 
-        double motorVoltage = constEndEffector.algaePivot.PID_CONTROLLER.calculate(currentAngle, targetAngle);
+        double pidOutput = constEndEffector.algaePivot.PID_CONTROLLER.calculate(currentAngle, targetAngle);
 
         double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
                 constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
-        totalVoltage = feedforwardOutput + motorVoltage;
+        totalVoltage = feedforwardOutput + pidOutput;
+        totalVoltage = DoubleUtils.clamp(totalVoltage, -12, 12);
         algaeMotor.setVoltage(totalVoltage);
 
         Logger.recordOutput("Subsystems/Algae/Target Angle", targetAngle);
@@ -73,6 +79,9 @@ public class AlgaeArmSubsystem extends LogSubsystem {
     }
 
     public boolean isAtPosition() {
+        if (Robot.isSimulation()) {
+            return Simulation.algaeAtAngleSimulation;
+        }
         return Math.abs(getAlgaePosition() - targetAngle) < constEndEffector.algaePivot.TOLERANCE;
     }
 
