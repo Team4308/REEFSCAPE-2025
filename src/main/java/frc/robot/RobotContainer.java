@@ -200,7 +200,7 @@ public class RobotContainer {
 
                 // Automatic Scoring
                 operator.B.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.A.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.X.onTrue(new L2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.Y.onTrue(new L3PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
 
@@ -246,6 +246,8 @@ public class RobotContainer {
                 operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(1));
                 operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(2));
 
+                operator.LeftStickButton.whileTrue(drivebase.updateClosestStationPose()
+                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
                 operator.RightStickButton.onTrue(new SimpleAlgae(() -> 30.0, m_AlgaeArmSubsystem));
         }
 
@@ -310,6 +312,14 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Align To Near Station",
                                 drivebase.driveToPose(() -> drivebase.getClosestNearCoralStationPose())
                                                 .until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Remove Low Algae and Shoot L3",
+                                new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove Low Algae and Shoot L2",
+                                new L2Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove High Algae and Shoot L3",
+                                new L3Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove High Algae and Shoot L2",
+                                new L2Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
         }
 
         public LEDSystem getLEDSystem() {

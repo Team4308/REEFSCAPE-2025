@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
+import frc.robot.commands.Reset;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.commands.SimpleControl.SimpleRoller;
@@ -14,6 +15,7 @@ public class FastL1 extends SequentialCommandGroup {
     public FastL1(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
             AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
+                new Reset(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
                 new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, algaeArmSubsystem),
                 new SimpleElevator(() -> constElevator.L1, elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L1, rollerSubsystem),

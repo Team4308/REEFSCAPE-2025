@@ -145,7 +145,8 @@ public class Simulation {
         algaeAngleSimulation %= 360;
         algaeAngleSimulation = 360 - algaeAngleSimulation;
 
-        if (Math.abs(algaeAngleSimulation - targetAngle) < 30) {
+        if (Math.abs(algaeAngleSimulation - targetAngle) < 30
+                || Math.abs(360 - algaeAngleSimulation - targetAngle) < 30) {
             algaeAtAngleSimulation = true;
         } else {
             algaeAtAngleSimulation = false;
