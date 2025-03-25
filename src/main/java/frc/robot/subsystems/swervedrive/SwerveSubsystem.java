@@ -360,18 +360,18 @@ public class SwerveSubsystem extends SubsystemBase {
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState();
     goalState.pose = pose;
 
-    // // Since AutoBuilder is configured, we can use it to build pathfinding
-    // commands
-    Pose2d tValues = targetPose.relativeTo(getPose());
-    double pythagoreanDistance = Math.sqrt(Math.pow(tValues.getX(), 2) + Math.pow(tValues.getY(), 2));
-    if (Math.abs(pythagoreanDistance) > 1) {
-      return AutoBuilder.pathfindToPose(
-          pose,
-          constraints,
-          edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-      ).andThen(run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
+    // // // Since AutoBuilder is configured, we can use it to build pathfinding
+    // // commands
+    // Pose2d tValues = targetPose.relativeTo(getPose());
+    // double pythagoreanDistance = Math.sqrt(Math.pow(tValues.getX(), 2) + Math.pow(tValues.getY(), 2));
+    // if (Math.abs(pythagoreanDistance) > 1) {
+    //   return AutoBuilder.pathfindToPose(
+    //       pose,
+    //       constraints,
+    //       edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+    //   ).andThen(run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
 
-    }
+    // }
 
     // PID only test
     return run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
