@@ -82,29 +82,39 @@ public class ElevatorSubsystem extends SubsystemBase {
     return Math.abs(getPositionInMeters() - targetPosition) < constElevator.TOLERANCE;
   }
 
-  public boolean isAtPosition(String type) {
+  public boolean isAtPosition2(String type) {
     double test = 0.0;
     switch (type) {
       case "MIN":
         test = constElevator.MIN_HEIGHT;
+        break;
       case "L1":
         test = constElevator.L1;
+        break;
       case "L2":
         test = constElevator.L2;
+        break;
       case "L3":
         test = constElevator.L3;
+        break;
       case "A1":
         test = constElevator.ALGAE1;
+        break;
       case "A2":
         test = constElevator.ALGAE2;
+        break;
       case "A1P":
         test = constElevator.ALGAE1_PREMOVE;
+        break;
       case "A2P":
         test = constElevator.ALGAE2_PREMOVE;
-      default:
-        test = targetPosition;
+        break;
     }
     return Math.abs(getPositionInMeters() - test) < constElevator.TOLERANCE;
+  }
+
+  public boolean isAtPosition3(double posotion) {
+    return Math.abs(getPositionInMeters() - posotion) < constElevator.TOLERANCE;
   }
 
   // Preset position commands

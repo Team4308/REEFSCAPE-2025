@@ -22,14 +22,18 @@ public class SimpleAlgae extends Command {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         subsystem.setAlgaePosition(angle.get());
     }
 
     @Override
+    public void execute() {
+        // subsystem.setAlgaePosition(angle.get());
+    }
+
+    @Override
     public boolean isFinished() {
-        return (subsystem.isAtPosition())
-                || (Timer.getTimestamp() - startTime > constEndEffector.algaePivot.TIMEOUT_SECONDS);
+        return (subsystem.isAtPosition2(angle.get()));
     }
 
 }

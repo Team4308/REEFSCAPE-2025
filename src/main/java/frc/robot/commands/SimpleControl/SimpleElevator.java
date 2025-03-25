@@ -28,7 +28,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public boolean isFinished() {
-        return (subsystem.isAtPosition()) || (Timer.getTimestamp() - startTime >= constElevator.TIMEOUT_SECONDS);
+        return (subsystem.isAtPosition3(control.get()));
     }
 
 }

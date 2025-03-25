@@ -58,7 +58,7 @@ public final class Constants {
 
     public static class Driver {
         // Joystick Deadband
-        public static final double DEADBAND = 0.0;
+        public static final double DEADBAND = 0.1; // for simulation because bad controller
         public static final double LEFT_Y_DEADBAND = 0.1;
         public static final double RIGHT_X_DEADBAND = 0.1;
         public static final double TURN_CONSTANT = 6;
@@ -68,8 +68,8 @@ public final class Constants {
         public static final int LED_PORT = 0;
 
         public static final int Elevator_Length = 48;
-        public static final int Funnel_Vert_Length = 46;
-        public static final int Funnel_Hori_Length = 22;
+        public static final int Funnel_Vert_Length = 35;
+        public static final int Funnel_Hori_Length = 32;
 
         public static final int LED_LENGTH = Elevator_Length + Funnel_Vert_Length + Funnel_Hori_Length;
         public static final Pair<Integer, Integer> Elevator_Ends = new Pair<Integer, Integer>(0, Elevator_Length - 1);
@@ -102,7 +102,7 @@ public final class Constants {
         // Controllers
         public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(2.6, 0.0, 0.0,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
-        public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.38, 2.3, 0.0);
+        public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.37, 2.3, 0.0);
 
         // Elevator physical constants
         public static final double GEAR_RATIO = 175 / 36;
@@ -118,8 +118,8 @@ public final class Constants {
         public static final double ALGAE1 = Units.inchesToMeters(30.0);
         public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
-        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(28);
-        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(41);
+        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(10);
+        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(30);
 
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 3;
@@ -129,17 +129,17 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final double TOLERANCE = 20.0;
+            public static final double TOLERANCE = 5.0;
 
-            public static final double ROTATION_TO_ANGLE_RATIO = 18.3333333;
+            public static final double ROTATION_TO_ANGLE_RATIO = 360 / 18.3333333;
 
             // Controllers
-            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.00, 0.0, 0.0,
-                    new TrapezoidProfile.Constraints(1000, 7200)); // degrees
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.0, 0.12, 0.33, 0.0);
+            public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.01, 0.0, 0.0,
+                    new TrapezoidProfile.Constraints(720, 1440)); // degrees
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.13, 0.153, 0.0052, 0.0);
 
             // Angles (degrees)
-            public static final double REST_ANGLE = 90.0; // Straight Up
+            public static final double REST_ANGLE = -90.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
             public static final double REMOVAL_ANGLE_BOTTOM = 60;
 
@@ -151,8 +151,8 @@ public final class Constants {
             public static final double L23 = 80;
 
             public static final double DEFAULT_CORAL = 10;
-            public static final double ALGAE_REMOVAL_BOTTOM = 50;
-            public static final double ALGAE_REMOVAL_TOP = -50;
+            public static final double ALGAE_REMOVAL_BOTTOM = 300;
+            public static final double ALGAE_REMOVAL_TOP = 30;
         }
     }
 }

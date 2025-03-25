@@ -2,7 +2,7 @@
     "name": "DH", 
     "rotations": [{"axis": "x", "degrees": 90},
                     {"axis": "z", "degrees": 180}],
-    "position": [-1, -4, 0], 
+    "position": [0, 0, 0], 
     "cameras": [],
     "components": [
         {
