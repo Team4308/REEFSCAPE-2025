@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -37,6 +38,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -62,6 +64,7 @@ public class Vision {
   public Vision(Supplier<Pose2d> currentPose, Field2d field) {
     this.currentPose = currentPose;
     this.field2d = field;
+    SmartDashboard.putData("Playing Field", field);
 
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");
@@ -234,7 +237,7 @@ public class Vision {
      */
     FUNNEL_CAM("Funnelcam_OV9281",
         new Rotation3d(0, Math.toRadians(10), Math.toRadians(-10)),
-        new Translation3d(0.019511, -0.253941, 0.278601),
+        new Translation3d(-0.030, -0.260, 0.395),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     // Latency alert to use when high latency is detected.

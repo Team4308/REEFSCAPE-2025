@@ -50,13 +50,13 @@ public class L3Algae2 extends Command {
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new ParallelCommandGroup(
                         new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_TOP, m_algaeArmSubsystem)));
+                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)));
     }
 
     private Command stage2() {
         return new SequentialCommandGroup(
                 new ParallelDeadlineGroup(new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
-                        new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
+                        new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_TOP,
                                 m_coralRollerSubsystem)),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));

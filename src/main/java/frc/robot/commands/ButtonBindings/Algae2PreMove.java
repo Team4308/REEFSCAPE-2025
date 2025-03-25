@@ -1,5 +1,6 @@
 package frc.robot.commands.ButtonBindings;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -55,7 +56,8 @@ public class Algae2PreMove extends Command {
     private Command stage2() {
         return new SequentialCommandGroup(
                 new ParallelDeadlineGroup(
-                        new SimpleAlgae(() -> 90.0, m_algaeArmSubsystem),
+                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + Units.inchesToMeters(3),
+                                m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem)),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new InstantCommand(() -> stateFinished = true));

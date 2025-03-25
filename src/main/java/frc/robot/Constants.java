@@ -118,8 +118,8 @@ public final class Constants {
         public static final double ALGAE1 = Units.inchesToMeters(30.0);
         public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
-        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(12);
-        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(30);
+        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(9);
+        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(20);
 
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 3;
@@ -141,7 +141,7 @@ public final class Constants {
             // Angles (degrees)
             public static final double REST_ANGLE = -90.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
-            public static final double REMOVAL_ANGLE_BOTTOM = 60;
+            public static final double REMOVAL_ANGLE_BOTTOM = 0;
 
             public static final double TIMEOUT_SECONDS = 3;
         }
