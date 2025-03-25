@@ -337,7 +337,6 @@ public class RobotContainer {
 
         public void teleopInit() {
                 m_AlgaeArmSubsystem.resetSensors();
-                m_ElevatorSubsystem.resetSensors();
         }
 
         public void teleopPeriodic() {

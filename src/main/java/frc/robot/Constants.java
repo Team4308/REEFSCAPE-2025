@@ -49,7 +49,7 @@ public final class Constants {
             }
 
             public static class Translation {
-                public static final double kP = 2.5;
+                public static final double kP = 3.0;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
             }
@@ -58,7 +58,7 @@ public final class Constants {
 
     public static class Driver {
         // Joystick Deadband
-        public static final double DEADBAND = 0.1; // for simulation because bad controller
+        public static final double DEADBAND = 0.0; // for simulation because bad controller
         public static final double LEFT_Y_DEADBAND = 0.1;
         public static final double RIGHT_X_DEADBAND = 0.1;
         public static final double TURN_CONSTANT = 6;
