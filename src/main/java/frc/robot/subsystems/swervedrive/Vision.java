@@ -388,7 +388,7 @@ public class Vision {
       }
       resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
 
-      filter(); // Filter results
+      // filter(); // Filter results
 
       lastReadTimestamp = currentTimestamp;
       resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
