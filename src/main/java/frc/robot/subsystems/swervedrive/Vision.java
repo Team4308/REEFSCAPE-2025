@@ -237,7 +237,7 @@ public class Vision {
      */
     FUNNEL_CAM("Funnelcam_OV9281",
         new Rotation3d(0, Math.toRadians(10), Math.toRadians(-10)),
-        new Translation3d(-0.067, -0.260, 0.47),
+        new Translation3d(-0.067, -0.254, 0.47),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     // Latency alert to use when high latency is detected.
