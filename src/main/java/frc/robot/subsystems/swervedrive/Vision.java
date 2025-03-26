@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -37,6 +38,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -63,6 +65,7 @@ public class Vision {
   public Vision(Supplier<Pose2d> currentPose, Field2d field) {
     this.currentPose = currentPose;
     this.field2d = field;
+    SmartDashboard.putData("Playing Field", field);
 
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");
@@ -228,14 +231,14 @@ public class Vision {
      */
     FRONT_CAM("Frontcam_OV9281",
         new Rotation3d(0, Math.toRadians(-20), Math.toRadians(20)),
-        new Translation3d(0.266811, -0.037314, 0.182789),
+        new Translation3d(0.266811, -0.037314, 0.220889),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Right Camera
      */
     FUNNEL_CAM("Funnelcam_OV9281",
         new Rotation3d(0, Math.toRadians(10), Math.toRadians(-10)),
-        new Translation3d(0.019511, -0.253941, 0.418301),
+        new Translation3d(-0.059, -0.254, 0.446),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     // Latency alert to use when high latency is detected.
@@ -387,6 +390,9 @@ public class Vision {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
       resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
+
+      filter(); // Filter results
+
       lastReadTimestamp = currentTimestamp;
       resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
         return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
@@ -472,6 +478,19 @@ public class Vision {
             estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
           }
           curStdDevs = estStdDevs;
+        }
+      }
+    }
+
+    /*Filter maybe?*/
+    private void filter() {
+      for (PhotonPipelineResult result : resultsList) {
+        List<PhotonTrackedTarget> targets = result.getTargets();
+        for (PhotonTrackedTarget target : targets) {
+          if (target.getPoseAmbiguity() > 0.2) {
+            resultsList.remove(result);
+            break;
+          }
         }
       }
     }

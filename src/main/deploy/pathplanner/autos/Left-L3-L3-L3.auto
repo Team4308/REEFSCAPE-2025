@@ -19,7 +19,49 @@
         {
           "type": "named",
           "data": {
+            "name": "Remove High Algae and Shoot L3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Remove High Algae and Shoot L3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Align To Far Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Remove High Algae and Shoot L3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Remove High Algae and Shoot L3"
           }
         },
         {
@@ -37,13 +79,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Align To Far Station"
+            "name": "Intake Coral"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Align To Right Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3 Preset"
           }
         }
       ]

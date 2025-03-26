@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.constElevator;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class SimpleElevator extends Command {
@@ -28,7 +27,7 @@ public class SimpleElevator extends Command {
 
     @Override
     public boolean isFinished() {
-        return (subsystem.isAtPosition()) || (Timer.getTimestamp() - startTime >= constElevator.TIMEOUT_SECONDS);
+        return (subsystem.isAtPosition3(control.get())) || Math.abs(Timer.getTimestamp() - startTime) > 3;
     }
 
 }

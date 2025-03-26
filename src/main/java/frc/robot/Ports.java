@@ -33,6 +33,5 @@ public class Ports {
     public static class AlgaeSlapdown {
         public static final int ALGAE_PIVOT = 14;
         public static final int ALGAE_ROLLER = 15;
-        public static final int ALGAE_ENCODER = 69; // change
     }
 }

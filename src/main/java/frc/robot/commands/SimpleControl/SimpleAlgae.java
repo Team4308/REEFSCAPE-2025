@@ -4,7 +4,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.constEndEffector;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 
 public class SimpleAlgae extends Command {
@@ -22,14 +21,13 @@ public class SimpleAlgae extends Command {
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
         subsystem.setAlgaePosition(angle.get());
     }
 
     @Override
     public boolean isFinished() {
-        return (subsystem.isAtPosition())
-                || (Timer.getTimestamp() - startTime > constEndEffector.algaePivot.TIMEOUT_SECONDS);
+        return (subsystem.isAtPosition2(angle.get())) || Math.abs(Timer.getTimestamp() - startTime) > 3;
     }
 
 }

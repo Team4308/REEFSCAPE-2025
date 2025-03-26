@@ -22,9 +22,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Reset;
 import frc.robot.commands.SystemsCheck;
 import frc.robot.commands.AlgaeRemoval.RemoveA1;
@@ -37,7 +37,6 @@ import frc.robot.commands.ButtonBindings.L2PreMove;
 import frc.robot.commands.ButtonBindings.L3Algae1;
 import frc.robot.commands.ButtonBindings.L3Algae2;
 import frc.robot.commands.ButtonBindings.L3PreMove;
-import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.DefaultControl.DefaultAlgae;
@@ -55,7 +54,7 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
         // Controllers
-        private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
+        private XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
         private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
 
         // The robot's subsystems and commands are defined here...
@@ -77,8 +76,6 @@ public class RobotContainer {
 
         private final Trigger coralIntakeTrigger;
         private final Trigger drivebaseAlignedTrigger;
-
-        public final boolean isSysIdTest = false;
 
         // Converts driver input into a field-relative ChassisSpeeds that is controlled
         // by angular velocity.
@@ -145,16 +142,13 @@ public class RobotContainer {
                 drivebaseAlignedTrigger = new Trigger(drivebase::isAligned);
 
                 configureNamedCommands();
-                if (!isSysIdTest) {
-                        configureDriverBindings();
-                        configureOperatorBindings();
-                        configureOtherTriggers();
-                        DriverStation.silenceJoystickConnectionWarning(true);
-                        autoChooser = AutoBuilder.buildAutoChooser();
-                        SmartDashboard.putData("Auto Chooser", autoChooser);
-                } else {
-                        sysIdBindings();
-                }
+                configureDriverBindings();
+                configureOperatorBindings();
+                configureOtherTriggers();
+
+                DriverStation.silenceJoystickConnectionWarning(true);
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto Chooser", autoChooser);
         }
 
         private void configureDriverBindings() {
@@ -204,33 +198,43 @@ public class RobotContainer {
 
                 // Automatic Scoring
                 operator.B.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.A.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.X.onTrue(new L2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.Y.onTrue(new L3PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
 
                 // Automatic Algae Removal
-                operator.RB
+                operator.LB
                                 .onTrue(new Algae1PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem,
                                                 m_AlgaeArmSubsystem));
-                operator.LB
+                operator.RB
                                 .onTrue(new Algae2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem,
                                                 m_AlgaeArmSubsystem));
 
                 // Intake
-                operator.Start.onTrue(new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
-                                m_CoralRollerSubsystem)
-                                .until(() -> m_CoralRollerSubsystem.getBeamBreak()));
+                operator.Start.onTrue(new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
+                                m_CoralRollerSubsystem));
                 operator.Start.onTrue(new SimpleElevator(() -> 0.0, m_ElevatorSubsystem));
 
                 // Dual Cycles
                 operator.X.and(operator.LB)
-                                .onTrue(new L2Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                .onTrue(new L2Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem,
+                                                m_AlgaeArmSubsystem));
                 operator.X.and(operator.RB)
-                                .onTrue(new L2Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                .onTrue(new L2Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem,
+                                                m_AlgaeArmSubsystem));
                 operator.Y.and(operator.LB)
-                                .onTrue(new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                .onTrue(new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem,
+                                                m_AlgaeArmSubsystem));
                 operator.Y.and(operator.RB)
-                                .onTrue(new L3Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                                .onTrue(new L3Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem,
+                                                m_AlgaeArmSubsystem));
+
+                /*
+                 * L2A3
+                 * shoot, spin to remove
+                 * L3A3
+                 * remove, while aligning to l3 then shoot
+                 */
 
                 // Elevator Failsafe
                 operator.povUp.onTrue(m_ElevatorSubsystem.goToLevel(3));
@@ -238,7 +242,9 @@ public class RobotContainer {
                 operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(1));
                 operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(2));
 
-                operator.RightStickButton.onTrue(new SimpleAlgae(() -> 90.0, m_AlgaeArmSubsystem));
+                operator.LeftStickButton.whileTrue(drivebase.updateClosestStationPose()
+                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
+                operator.RightStickButton.onTrue(new SimpleAlgae(() -> 30.0, m_AlgaeArmSubsystem));
         }
 
         private void configureOtherTriggers() {
@@ -280,18 +286,6 @@ public class RobotContainer {
                 operator.LB.onTrue(new InstantCommand(() -> operator.setRumble(RumbleType.kBothRumble, 0)));
         }
 
-        public void sysIdBindings() {
-                operator.Y.whileTrue(m_AlgaeArmSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                operator.A.whileTrue(m_AlgaeArmSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                operator.B.whileTrue(m_AlgaeArmSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                operator.X.whileTrue(m_AlgaeArmSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-                operator.povUp.whileTrue(m_ElevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                operator.povDown.whileTrue(m_ElevatorSubsystem.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                operator.povRight.whileTrue(m_ElevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                operator.povLeft.whileTrue(m_ElevatorSubsystem.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-        }
-
         public void configureNamedCommands() {
                 NamedCommands.registerCommand("Intake Coral",
                                 new DefaultRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
@@ -317,6 +311,14 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Align To Near Station",
                                 drivebase.driveToPose(() -> drivebase.getClosestNearCoralStationPose())
                                                 .until(drivebaseAlignedTrigger));
+                NamedCommands.registerCommand("Remove Low Algae and Shoot L3",
+                                new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove Low Algae and Shoot L2",
+                                new L2Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove High Algae and Shoot L3",
+                                new L3Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("Remove High Algae and Shoot L2",
+                                new L2Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
         }
 
         public LEDSystem getLEDSystem() {
@@ -334,7 +336,6 @@ public class RobotContainer {
 
         public void teleopInit() {
                 m_AlgaeArmSubsystem.resetSensors();
-                m_ElevatorSubsystem.resetSensors();
         }
 
         public void teleopPeriodic() {
@@ -359,7 +360,7 @@ public class RobotContainer {
         }
 
         private double joystickAlgaeArm() {
-                return -deadZone(operator.getLeftY()) * 3;
+                return -deadZone(operator.getLeftY()) * 7;
         }
 
         public double joystickElevatorControl() {
@@ -367,8 +368,8 @@ public class RobotContainer {
         }
 
         private double triggerRollerControl() {
-                double isPos = deadZone(operator.getRightTrigger()) * 25;
-                double isNeg = deadZone(operator.getLeftTrigger()) * 25;
+                double isPos = deadZone(operator.getRightTrigger()) * 50;
+                double isNeg = deadZone(operator.getLeftTrigger()) * 50;
                 if (isPos > 0) {
                         return isPos;
                 } else {

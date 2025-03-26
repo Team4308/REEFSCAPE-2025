@@ -96,7 +96,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d nearestPoseToNearCoralStation = new Pose2d();
 
   private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
-  .getStructTopic("Robot Pose", Pose2d.struct).publish();
+      .getStructTopic("Robot Pose", Pose2d.struct).publish();
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -124,12 +124,13 @@ public class SwerveSubsystem extends SubsystemBase {
     ANGLE_CONTROLLER = new PIDConstants(kAngleP.get(), kAngleI.get(), kAngleD.get());
     TRANSLATION_CONTROLLER = new PIDConstants(kTranslationP.get(), kTranslationI.get(), kTranslationD.get());
 
-    DRIVE_CONTROLLER = new PPHolonomicDriveController(  // PPHolonomicController is the built in path following controller for
-                                                        // holonomic drive trains
-      // Translation PID constants
-      TRANSLATION_CONTROLLER,
-      // Rotation PID constants
-      ANGLE_CONTROLLER);
+    DRIVE_CONTROLLER = new PPHolonomicDriveController( // PPHolonomicController is the built in path following
+                                                       // controller for
+                                                       // holonomic drive trains
+        // Translation PID constants
+        TRANSLATION_CONTROLLER,
+        // Rotation PID constants
+        ANGLE_CONTROLLER);
 
     setupPathPlanner();
     // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyro));
@@ -355,20 +356,27 @@ public class SwerveSubsystem extends SubsystemBase {
     PathConstraints constraints = new PathConstraints(
         swerveDrive.getMaximumChassisVelocity(), 3.0,
         swerveDrive.getMaximumChassisAngularVelocity(), Units.degreesToRadians(720));
-    
+
     // Create the goal state
     PathPlannerTrajectoryState goalState = new PathPlannerTrajectoryState();
     goalState.pose = pose;
 
-    // // Since AutoBuilder is configured, we can use it to build pathfinding commands
-    // return AutoBuilder.pathfindToPose(
-    //     pose,
-    //     constraints,
-    //     edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-    // ).andThen(run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
+    // // // Since AutoBuilder is configured, we can use it to build pathfinding
+    // // commands
+    // Pose2d tValues = targetPose.relativeTo(getPose());
+    // double pythagoreanDistance = Math.sqrt(Math.pow(tValues.getX(), 2) + Math.pow(tValues.getY(), 2));
+    // if (Math.abs(pythagoreanDistance) > 1) {
+    //   return AutoBuilder.pathfindToPose(
+    //       pose,
+    //       constraints,
+    //       edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
+    //   ).andThen(run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
+
+    // }
 
     // PID only test
-    return run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState)));
+    return run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
+        goalState)));
   }
 
   public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond) {

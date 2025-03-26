@@ -51,8 +51,10 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         if (Robot.isSimulation()) {
             return Simulation.algaeAngleSimulation;
         }
-        return (algaeMotor.getPosition().getValueAsDouble() + encoderOffset)
-                * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO + constEndEffector.algaePivot.REST_ANGLE;
+        double value = (algaeMotor.getPosition().getValueAsDouble() + encoderOffset)
+                * constEndEffector.algaePivot.ROTATION_TO_ANGLE_RATIO - 90;
+        value += 360000000;
+        return value % 360;
     }
 
     public void goToTargetPosition() {
@@ -60,7 +62,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
         double pidOutput = constEndEffector.algaePivot.PID_CONTROLLER.calculate(currentAngle, targetAngle);
 
-        double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(currentAngle),
+        double feedforwardOutput = constEndEffector.algaePivot.FEEDFORWARD.calculate(Math.toRadians(targetAngle),
                 constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().velocity);
 
         totalVoltage = feedforwardOutput + pidOutput;
@@ -85,6 +87,13 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         return Math.abs(getAlgaePosition() - targetAngle) < constEndEffector.algaePivot.TOLERANCE;
     }
 
+    public boolean isAtPosition2(double check) {
+        if (Robot.isSimulation()) {
+            return (Math.abs(Simulation.algaeAngleSimulation - check) < constEndEffector.algaePivot.TOLERANCE);
+        }
+        return Math.abs(getAlgaePosition() - check) < constEndEffector.algaePivot.TOLERANCE;
+    }
+
     @Override
     public void periodic() {
         goToTargetPosition();
@@ -96,7 +105,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
 
     public void resetSensors() {
         stopControllers();
-        encoderOffset = -algaeMotor.getPosition().getValueAsDouble() - 90; // Starts & resets at straight town
+        encoderOffset = -algaeMotor.getPosition().getValueAsDouble(); // Starts & resets at straight town
     }
 
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {

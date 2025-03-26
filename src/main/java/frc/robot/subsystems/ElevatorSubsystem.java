@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import ca.team4308.absolutelib.math.DoubleUtils;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -69,8 +70,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     totalVoltage = DoubleUtils.clamp(pidOutput + feedforwardVoltage, -12.0, 12.0);
 
-    // SmartDashboard.putNumber("Setpoint Position",
-    // constElevator.PID_CONTROLLER.getSetpoint().position);
+    SmartDashboard.putNumber("Setpoint Position",
+        constElevator.PID_CONTROLLER.getSetpoint().position);
 
     return totalVoltage;
   }
@@ -82,29 +83,39 @@ public class ElevatorSubsystem extends SubsystemBase {
     return Math.abs(getPositionInMeters() - targetPosition) < constElevator.TOLERANCE;
   }
 
-  public boolean isAtPosition(String type) {
+  public boolean isAtPosition2(String type) {
     double test = 0.0;
     switch (type) {
       case "MIN":
         test = constElevator.MIN_HEIGHT;
+        break;
       case "L1":
         test = constElevator.L1;
+        break;
       case "L2":
         test = constElevator.L2;
+        break;
       case "L3":
         test = constElevator.L3;
+        break;
       case "A1":
         test = constElevator.ALGAE1;
+        break;
       case "A2":
         test = constElevator.ALGAE2;
+        break;
       case "A1P":
         test = constElevator.ALGAE1_PREMOVE;
+        break;
       case "A2P":
         test = constElevator.ALGAE2_PREMOVE;
-      default:
-        test = targetPosition;
+        break;
     }
     return Math.abs(getPositionInMeters() - test) < constElevator.TOLERANCE;
+  }
+
+  public boolean isAtPosition3(double posotion) {
+    return Math.abs(getPositionInMeters() - posotion) < constElevator.TOLERANCE;
   }
 
   // Preset position commands

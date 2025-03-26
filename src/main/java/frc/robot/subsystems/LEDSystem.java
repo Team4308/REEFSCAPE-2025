@@ -29,7 +29,7 @@ public class LEDSystem extends SubsystemBase {
     private LEDPattern currentPattern = null;
     
     public LEDSystem() {
-        leds = new Leds(constLED.LED_PORT, constLED.LED_LENGTH, constLED.debugMode);
+        leds = new Leds(constLED.LED_PORT, constLED.LED_LENGTH, true);
         leds.start();
         mainView = leds.createRangeBufferView(0, constLED.LED_LENGTH);
         startTime = Timer.getFPGATimestamp();
