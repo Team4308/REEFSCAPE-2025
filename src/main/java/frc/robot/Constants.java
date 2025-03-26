@@ -43,13 +43,13 @@ public final class Constants {
 
         public static class Auton {
             public static class Angle {
-                public static final double kP = 2.0;
+                public static final double kP = 5.0;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
             }
 
             public static class Translation {
-                public static final double kP = 4.0;
+                public static final double kP = 5.0;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
             }

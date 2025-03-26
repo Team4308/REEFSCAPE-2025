@@ -80,7 +80,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private PIDConstants ANGLE_CONTROLLER;
   private PIDConstants TRANSLATION_CONTROLLER;
 
-  private PPHolonomicDriveController DRIVE_CONTROLLER;
+  private PPHolonomicDriveController ALIGN_CONTROLLER;
 
   private final SwerveDrive swerveDrive;
 
@@ -124,13 +124,13 @@ public class SwerveSubsystem extends SubsystemBase {
     ANGLE_CONTROLLER = new PIDConstants(kAngleP.get(), kAngleI.get(), kAngleD.get());
     TRANSLATION_CONTROLLER = new PIDConstants(kTranslationP.get(), kTranslationI.get(), kTranslationD.get());
 
-    DRIVE_CONTROLLER = new PPHolonomicDriveController( // PPHolonomicController is the built in path following
+    ALIGN_CONTROLLER = new PPHolonomicDriveController( // PPHolonomicController is the built in path following
                                                        // controller for
                                                        // holonomic drive trains
         // Translation PID constants
-        TRANSLATION_CONTROLLER,
+        new PIDConstants(4.0, 0.0, 0.0),
         // Rotation PID constants
-        ANGLE_CONTROLLER);
+        new PIDConstants(2.0, 0.0, 0.0));
 
     setupPathPlanner();
     // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyro));
@@ -212,7 +212,12 @@ public class SwerveSubsystem extends SubsystemBase {
           },
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
           // optionally outputs individual module feedforwards
-          DRIVE_CONTROLLER,
+          new PPHolonomicDriveController( // PPHolonomicController is the built in path following
+                                                       // controller for holonomic drive trains
+            // Translation PID constants
+            TRANSLATION_CONTROLLER,
+            // Rotation PID constants
+            ANGLE_CONTROLLER),
           config,
           () -> {
             // Boolean supplier that controls when the path will be mirrored for the red
@@ -374,7 +379,7 @@ public class SwerveSubsystem extends SubsystemBase {
     // }
 
     // PID only test
-    return run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
+    return run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
         goalState)));
   }
 
