@@ -387,6 +387,9 @@ public class Vision {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
       }
       resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
+
+      filter(); // Filter results
+
       lastReadTimestamp = currentTimestamp;
       resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
         return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
@@ -472,6 +475,19 @@ public class Vision {
             estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
           }
           curStdDevs = estStdDevs;
+        }
+      }
+    }
+
+    /*Filter maybe?*/
+    private void filter() {
+      for (PhotonPipelineResult result : resultsList) {
+        List<PhotonTrackedTarget> targets = result.getTargets();
+        for (PhotonTrackedTarget target : targets) {
+          if (target.getPoseAmbiguity() > 0.2) {
+            resultsList.remove(result);
+            break;
+          }
         }
       }
     }
