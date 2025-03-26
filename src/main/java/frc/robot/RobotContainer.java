@@ -350,7 +350,7 @@ public class RobotContainer {
         }
 
         private double joystickAlgaeArm() {
-                return -deadZone(operator.getLeftY()) * 3;
+                return -deadZone(operator.getLeftY()) * 7;
         }
 
         public double joystickElevatorControl() {
