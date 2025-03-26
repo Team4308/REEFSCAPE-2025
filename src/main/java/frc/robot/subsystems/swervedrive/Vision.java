@@ -230,14 +230,14 @@ public class Vision {
      */
     FRONT_CAM("Frontcam_OV9281",
         new Rotation3d(0, Math.toRadians(-20), Math.toRadians(20)),
-        new Translation3d(0.266811, -0.037314, 0.182789),
+        new Translation3d(0.266811, -0.037314, 0.220889),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
     /**
      * Right Camera
      */
     FUNNEL_CAM("Funnelcam_OV9281",
         new Rotation3d(0, Math.toRadians(10), Math.toRadians(-10)),
-        new Translation3d(-0.067, -0.254, 0.47),
+        new Translation3d(-0.059, -0.254, 0.446),
         VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
 
     // Latency alert to use when high latency is detected.
