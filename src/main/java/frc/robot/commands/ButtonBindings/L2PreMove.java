@@ -44,7 +44,6 @@ public class L2PreMove extends Command {
 
     private Command stage1() {
         return new SequentialCommandGroup(
-                new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
                 new InstantCommand(() -> stateFinished = true));
     }

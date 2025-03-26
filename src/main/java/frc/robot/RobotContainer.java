@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.Driver;
 import frc.robot.Constants.constEndEffector;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Reset;
 import frc.robot.commands.SystemsCheck;
 import frc.robot.commands.AlgaeRemoval.RemoveA1;
@@ -213,10 +214,8 @@ public class RobotContainer {
                                                 m_AlgaeArmSubsystem));
 
                 // Intake
-                // operator.Start.onTrue(new DefaultRoller(() ->
-                // constEndEffector.rollerSpeeds.DEFAULT_CORAL,
-                // m_CoralRollerSubsystem)
-                // .until(() -> m_CoralRollerSubsystem.getBeamBreak()));
+                operator.Start.onTrue(new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
+                                m_CoralRollerSubsystem));
                 operator.Start.onTrue(new SimpleElevator(() -> 0.0, m_ElevatorSubsystem));
 
                 // Dual Cycles

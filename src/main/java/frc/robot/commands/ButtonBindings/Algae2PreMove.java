@@ -49,16 +49,17 @@ public class Algae2PreMove extends Command {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
                         new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> 0.0, m_algaeArmSubsystem)),
+                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)),
                 new InstantCommand(() -> stateFinished = true));
     }
 
     private Command stage2() {
         return new SequentialCommandGroup(
                 new ParallelDeadlineGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + Units.inchesToMeters(3),
+                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + Units.inchesToMeters(7),
                                 m_elevatorSubsystem),
-                        new DefaultRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem)),
+                        new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
+                                m_coralRollerSubsystem)),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new InstantCommand(() -> stateFinished = true));
     }

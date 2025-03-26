@@ -49,7 +49,7 @@ public final class Constants {
             }
 
             public static class Translation {
-                public static final double kP = 3.0;
+                public static final double kP = 5.0;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
             }
@@ -95,12 +95,12 @@ public final class Constants {
             ELEVATOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         }
 
-        public static final double TOLERANCE = 0.015; // m
+        public static final double TOLERANCE = 0.02; // m
         public static final double MAX_VELOCITY = 5.0; // m/s
         public static final double MAX_ACCELERATION = 10.0; // m/s^2
 
         // Controllers
-        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(2.6, 0.0, 0.0,
+        public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(2.9, 0.0, 0.0,
                 new TrapezoidProfile.Constraints(MAX_VELOCITY, MAX_ACCELERATION));
         public static final ElevatorFeedforward FEEDFORWARD = new ElevatorFeedforward(0.0, 0.37, 2.3, 0.0);
 
@@ -118,7 +118,7 @@ public final class Constants {
         public static final double ALGAE1 = Units.inchesToMeters(30.0);
         public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
-        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(9);
+        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(6);
         public static final double ALGAE2_PREMOVE = Units.inchesToMeters(20);
 
         // Speed constants (in meters per second)
@@ -139,19 +139,19 @@ public final class Constants {
             public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.13, 0.153, 0.0052, 0.0);
 
             // Angles (degrees)
-            public static final double REST_ANGLE = -90.0; // Straight Up
+            public static final double REST_ANGLE = 90.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
-            public static final double REMOVAL_ANGLE_BOTTOM = 0;
+            public static final double REMOVAL_ANGLE_BOTTOM = 45;
 
             public static final double TIMEOUT_SECONDS = 3;
         }
 
         public static class rollerSpeeds { // m/s
             public static final double L1 = 3;
-            public static final double L23 = 80;
+            public static final double L23 = 150;
 
             public static final double DEFAULT_CORAL = 10;
-            public static final double ALGAE_REMOVAL_BOTTOM = 300;
+            public static final double ALGAE_REMOVAL_BOTTOM = -100;
             public static final double ALGAE_REMOVAL_TOP = 30;
         }
     }
