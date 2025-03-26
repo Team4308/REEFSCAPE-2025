@@ -141,7 +141,7 @@ public final class Constants {
             // Angles (degrees)
             public static final double REST_ANGLE = 90.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
-            public static final double REMOVAL_ANGLE_BOTTOM = 45;
+            public static final double REMOVAL_ANGLE_BOTTOM = 15;
 
             public static final double TIMEOUT_SECONDS = 3;
         }
