@@ -45,6 +45,7 @@ public class Vision {
 
   public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   // Ambiguity defined as a value between (0,1). Could be used in filtering poses
+  @SuppressWarnings("unused")
   private final double maximumAmbiguity = 0.25;
   // Vision simulation instance.
   public VisionSystemSim visionSim;
@@ -260,6 +261,7 @@ public class Vision {
     // queries.
     public List<PhotonPipelineResult> resultsList = new ArrayList<>();
     // Last read from the camera timestamp to prevent lag due to slow data fetches.
+    @SuppressWarnings("unused")
     private double lastReadTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
 
     /**
@@ -379,6 +381,7 @@ public class Vision {
     private void updateUnreadResults() {
       double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
       double currentTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
+      @SuppressWarnings("unused")
       double debounceTime = Milliseconds.of(15).in(Seconds);
       for (PhotonPipelineResult result : resultsList) {
         mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());

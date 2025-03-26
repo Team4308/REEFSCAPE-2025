@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.DoubleSupplier;
-import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -56,9 +55,8 @@ public class LoggedTunableNumber implements DoubleSupplier {
     if (!hasDefault) {
       hasDefault = true;
       this.defaultValue = defaultValue;
-      if (Constants.LoggedDashboard.TUNING_MODE) {
+
         SmartDashboard.putNumber(key, SmartDashboard.getNumber(key, defaultValue));
-      }
     }
   }
 
@@ -71,7 +69,7 @@ public class LoggedTunableNumber implements DoubleSupplier {
     if (!hasDefault) {
       return 0.0;
     } else {
-      return Constants.LoggedDashboard.TUNING_MODE ? SmartDashboard.getNumber(key, defaultValue) : defaultValue;
+      return SmartDashboard.getNumber(key, defaultValue);
     }
   }
 

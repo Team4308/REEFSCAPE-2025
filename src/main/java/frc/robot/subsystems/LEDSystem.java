@@ -1,443 +1,214 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.AddressableLEDBufferView;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-import frc.robot.Constants.constElevator;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants.constLED;
+import ca.team4308.absolutelib.leds.AddressableLEDBufferView;
+import ca.team4308.absolutelib.leds.LEDPattern;
+import ca.team4308.absolutelib.leds.Leds;
+import ca.team4308.absolutelib.leds.Patterns;
+import ca.team4308.absolutelib.leds.TimeBasedLEDPattern;
+import ca.team4308.absolutelib.leds.Utils;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.hal.SimDevice;
-import edu.wpi.first.hal.SimDouble;
-
-/*
- * three types of states:
- *    default(idle, teleop, auton)
- *    temporary, runs continusly while true(aligned)
- *    status, flashes once(intake)
+/**
+ * Ultra-simplified LED system that focuses on reliability
  */
-
 public class LEDSystem extends SubsystemBase {
-  private ElevatorSubsystem m_elevator;
-
-  private final AddressableLED m_led;
-  private final AddressableLEDBuffer m_buffer;
-  private final AddressableLEDBufferView m_elevatorBuffer;
-  private final AddressableLEDBufferView m_funnelVertBuffer;
-  private final AddressableLEDBufferView m_funnelHoriBuffer;
-
-  private int scrollOffsetElevator = 0;
-  private int scrollOffsetVertFunnel = 0;
-
-  private SimDevice m_simDevice;
-  private SimDouble m_simR;
-  private SimDouble m_simG;
-  private SimDouble m_simB;
-  private SimDouble m_simBrightness;
-
-  public HashMap<String, String> stateCarrier;
-  private boolean isShowingStatus = false;
-  private double statusTimer = 0;
-
-  private HashMap<String, LEDTuple> states;
-
-  public LEDSystem(RobotContainer robotContainer) {
-    m_led = new AddressableLED(constLED.LED_PORT);
-    m_buffer = new AddressableLEDBuffer(constLED.LED_LENGTH);
-    m_elevatorBuffer = m_buffer.createView(constLED.Elevator_Ends.getFirst(), constLED.Elevator_Ends.getSecond());
-    m_funnelVertBuffer = m_buffer.createView(constLED.Funnel_Vert_Ends.getFirst(),
-        constLED.Funnel_Vert_Ends.getSecond());
-    m_funnelHoriBuffer = m_buffer.createView(constLED.Funnel_Hori_Ends.getFirst(),
-        constLED.Funnel_Hori_Ends.getSecond());
-
-    try {
-      m_led.setLength(constLED.LED_LENGTH);
-      m_led.start();
-    } catch (Exception e) {
-      System.err.println("Error with LED strip: " + e.getMessage());
-      e.printStackTrace();
+    
+    // Hardware components
+    public final Leds leds;
+    private AddressableLEDBufferView mainView;
+    
+    // State variables
+    private String state = "default";
+    double startTime;
+    private int counter = 0;
+    private LEDPattern currentPattern = null;
+    
+    public LEDSystem() {
+        leds = new Leds(constLED.LED_PORT, constLED.LED_LENGTH, constLED.debugMode);
+        leds.start();
+        mainView = leds.createRangeBufferView(0, constLED.LED_LENGTH);
+        startTime = Timer.getFPGATimestamp();
+        currentPattern = Patterns.teamFlagWithFade();
+        System.out.println("LED System initialized with " + constLED.LED_LENGTH + " LEDs on port " + constLED.LED_PORT);
     }
+    
+    @Override
+    public void periodic() {
+        counter++;
+        
+        try {
+            updatePatternState();
+            
+            if (currentPattern != null) {
+                currentPattern.applyTo(mainView);
+                leds.update();
+            }
+            
 
-    // Sim Setup
-    m_simDevice = SimDevice.create("LED_System");
-    if (m_simDevice != null) {
-      m_simR = m_simDevice.createDouble("R", SimDevice.Direction.kOutput, 0.0);
-      m_simG = m_simDevice.createDouble("G", SimDevice.Direction.kOutput, 0.0);
-      m_simB = m_simDevice.createDouble("B", SimDevice.Direction.kOutput, 0.0);
-      m_simBrightness = m_simDevice.createDouble("Brightness", SimDevice.Direction.kOutput, 0.0);
-    }
-
-    stateCarrier = new HashMap<String, String>();
-    stateCarrier.put("DefaultState", null);
-    stateCarrier.put("TemporaryState", null);
-    stateCarrier.put("StatusState", null);
-
-    states = new HashMap<String, LEDTuple>();
-    states.put("Coral", new LEDTuple(true, 2.0, "StatusState"));
-    states.put("Aligned", new LEDTuple(false, 0.0, "TemporaryState"));
-    states.put("Fault", new LEDTuple(true, 2.0, "StatusState"));
-    states.put("Idle", new LEDTuple(false, 0.0, "DefaultState"));
-    states.put("Auto", new LEDTuple(false, 0.0, "DefaultState"));
-    states.put("Teleop", new LEDTuple(false, 0.0, "DefaultState"));
-    states.put("Test", new LEDTuple(false, 0.0, "DefaultState"));
-  }
-
-  /**
-   * Sets the elevator var in LED's when its initialized
-   * 
-   * @param elevator
-   */
-  public void setElevator(ElevatorSubsystem elevator) {
-    this.m_elevator = elevator;
-  }
-
-  /**
-   * Returns the current state of the LED's
-   * 
-   * @return led_status
-   */
-  public String getLedState() {
-    String currentState = null;
-    for (String stateType : new ArrayList<String>() {
-      {
-        add("StatusState");
-        add("TemporaryState");
-        add("DefaultState");
-      }
-    }) {
-      currentState = stateCarrier.get(stateType);
-
-      if (currentState == null || currentState.trim().isEmpty()) {
-        continue;
-      }
-    }
-    return currentState;
-  }
-
-  /**
-   * Sets the state of the LED's
-   * 
-   * @param status
-   */
-  public void setLedState(String status) {
-    if (status == null || status.trim().isEmpty() || !states.containsKey(status)) {
-      return;
-    }
-
-    String stateType = states.get(status).stateType;
-
-    System.out.print("Changing state to: ");
-    System.out.println(status);
-    stateCarrier.replace(stateType, status);
-
-  }
-
-  @Override
-  public void periodic() {
-    // String defaultState = stateCarrier.get("DefaultState") == null ? "None" :
-    // stateCarrier.get("DefaultState");
-    // String tempState = stateCarrier.get("TemporaryState") == null ? "None" :
-    // stateCarrier.get("TemporaryState");
-    // String statState = stateCarrier.get("StatusState") == null ? "None" :
-    // stateCarrier.get("StatusState");
-    // SmartDashboard.putString("Default State:", defaultState);
-    // SmartDashboard.putString("Temporary State", tempState);
-    // SmartDashboard.putString("Status State", statState); // Debug output
-
-    String currentState = null;
-    // starts in order from status, temp, default
-    for (String stateType : new ArrayList<String>() {
-      {
-        add("StatusState");
-        add("TemporaryState");
-        add("DefaultState");
-      }
-    }) {
-      currentState = stateCarrier.get(stateType);
-      if (currentState != null) {
-        break;
-      }
-    }
-    if (currentState == null || currentState.trim().isEmpty()) {
-      return;
-    }
-
-    if (isShowingStatus) {
-      statusTimer -= 0.02;
-      if (statusTimer <= 0) {
-        stateCarrier.replace("StatusState", null);
-        isShowingStatus = false;
-      }
-    } else {
-      isShowingStatus = states.get(currentState).getState();
-      statusTimer = 0.0;
-      if (isShowingStatus)
-        statusTimer = states.get(currentState).getDuration();
-    }
-
-    applyState(currentState);
-    m_led.setData(m_buffer);
-    updateSimulation();
-
-    Logger.recordOutput("Subsystems/LED", m_buffer.toString());
-
-    if (m_simDevice != null) {
-      double totalR = 0, totalG = 0, totalB = 0;
-
-      for (int i = 0; i < m_buffer.getLength(); i++) {
-        Color color = m_buffer.getLED(i);
-        totalR += color.red;
-        totalG += color.green;
-        totalB += color.blue;
-      }
-
-      double length = m_buffer.getLength();
-      m_simR.set(totalR / length);
-      m_simG.set(totalG / length);
-      m_simB.set(totalB / length);
-      m_simBrightness.set(Math.max(Math.max(totalR, totalG), totalB) / length);
-    }
-  }
-
-  public void clearStatus() {
-    stateCarrier.replace("StatusState", null);
-  }
-
-  public void clearTemporary() {
-    stateCarrier.replace("TemporaryState", null);
-  }
-
-  /**
-   * Direcly applys and updated the buffer of the leds
-   * 
-   * @param state
-   */
-
-  private void applyState(String state) {
-    switch (state) {
-      case "Idle":
-        for (int i = 0; i < constLED.Elevator_Length; i++) {
-          int position = (i + scrollOffsetElevator) % (constLED.PATTERN_LENGTH * 3);
-          Optional<Alliance> alliance = DriverStation.getAlliance();
-          double r = 1.0, g = 0.0, b = 0.0; // Default to red
-          if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-            r = 0.0;
-            g = 0.0;
-            b = 1.0;
-          }
-          setIdlePattern(m_elevatorBuffer, i, position, r, g, b);
+                SmartDashboard.putString("LED/State", state);
+                SmartDashboard.putNumber("LED/Counter", counter);
+                Color c = mainView.getLED(0);
+                SmartDashboard.putNumber("LED/FirstPixel_R", c.red);
+                SmartDashboard.putNumber("LED/FirstPixel_G", c.green);
+                SmartDashboard.putNumber("LED/FirstPixel_B", c.blue);
+            
+        } catch (Exception e) {
+            System.err.println("LED update error: " + e.getMessage());
+            setEmergencyPattern();
         }
-        scrollOffsetElevator = (scrollOffsetElevator + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
+    }
+    
+    /**
+     * Updates the pattern based on current state
+     */
+    private void updatePatternState() {
+        // Get current pattern based on state
+        LEDPattern newPattern = null;
+        
+        switch (state) {
+            case "rainbow":
+                newPattern = Patterns.rainbowChase();
+                break;
+                
+            case "teamflag":
+                newPattern = Patterns.teamFlag();
+                break;
+                
+            case "altf4":
+                newPattern = Patterns.altF4();
+                break;
+                
+            case "solid_red":
+                newPattern = Utils.createSolidPattern(new Color(1, 0, 0));
+                break;
+                
+            case "solid_blue":
+                newPattern = Utils.createSolidPattern(new Color(0, 0, 1));
+                break;
+                
+            case "solid_green":
+                newPattern = Utils.createSolidPattern(new Color(0, 1, 0));
+                break;
+                
+            case "blink":
+                newPattern = Patterns.createBlinkingPattern(new Color(1, 0, 0), 0.5);
+                break;
+                
+            case "breathe":
+                newPattern = Utils.createBreathingPattern(new Color(1, 0, 0), 2.0);
+                break;
+                
+            case "test":
+                newPattern = createSimpleTestPattern();
+                break;
+                
+            case "idle":
+            case "default":
+            default:
+                newPattern = Patterns.teamFlag();
 
-        for (int i = 0; i < constLED.Funnel_Vert_Length; i++) {
-          int position = (i + scrollOffsetVertFunnel) % (constLED.PATTERN_LENGTH * 3);
-          Optional<Alliance> alliance = DriverStation.getAlliance();
-          double r = 1.0, g = 0.0, b = 0.0; // Default to red
-          if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-            r = 0.0;
-            b = 1.0;
-          }
-          setIdlePattern(m_funnelVertBuffer, i, position, r, g, b);
+                break;
         }
-        scrollOffsetVertFunnel = (scrollOffsetVertFunnel + constLED.SCROLL_SPEED) % (constLED.PATTERN_LENGTH * 3);
+        
+        if (currentPattern == null || !isSamePatternType(currentPattern, newPattern)) {
+            System.out.println("Changing LED pattern to " + state);
+            
+            if (newPattern instanceof TimeBasedLEDPattern) {
+                ((TimeBasedLEDPattern) newPattern).resetTimer();
+            }
 
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-        double r = 1.0, g = 0.0, b = 0.0; // Default to red
-        if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-          r = 0.0;
-          b = 1.0;
+            currentPattern = newPattern;
         }
-
-        LEDPattern base = LEDPattern.solid(new Color(r, g, b));
-        LEDPattern pattern = base.breathe(Units.Seconds.of(2));
-
-        // Apply the LED pattern to the data buffer
-        pattern.applyTo(m_funnelHoriBuffer);
-
-        break;
-
-      case "Auto":
-        LEDPattern basePattern = LEDPattern.rainbow(180, 240)
-            .scrollAtAbsoluteSpeed(Units.MetersPerSecond.of(0.5), Units.Meters.of(1.0 / constLED.LED_LENGTH));
-        LEDPattern maskPattern = LEDPattern.rainbow(180, 240)
-            .scrollAtAbsoluteSpeed(Units.MetersPerSecond.of(0.3), Units.Meters.of(1.0 / constLED.LED_LENGTH));
-        basePattern.mask(maskPattern).blink(Units.Seconds.of(0.5)).applyTo(m_buffer);
-        break;
-
-      case "Teleop":
-        LEDPattern teleopBase = LEDPattern.rainbow(255, 128)
-            .scrollAtAbsoluteSpeed(MetersPerSecond.of(0.7), Meters.of(1.0 / constLED.LED_LENGTH));
-        LEDPattern heightMask = LEDPattern
-            .progressMaskLayer(() -> m_elevator.getPositionInMeters() - 0.1 / constElevator.MAX_HEIGHT);
-        teleopBase.mask(heightMask).applyTo(m_elevatorBuffer);
-
-        Optional<Alliance> alliance2 = DriverStation.getAlliance();
-        double r2 = 1.0, g2 = 0.0, b2 = 0.0; // Default to red
-        if (alliance2.isPresent() && alliance2.get() == Alliance.Blue) {
-          r2 = 0.0;
-          b2 = 1.0;
+    }
+    
+    /**
+     * Checks if two patterns are of the same type
+     */
+    private boolean isSamePatternType(LEDPattern a, LEDPattern b) {
+        if (a == null || b == null) return false;
+        return a.getClass() == b.getClass();
+    }
+    
+    /**
+     * Sets the LED state
+     */
+    public void setLedState(String newState) {
+        if (!newState.equals(state)) {
+            System.out.println("LED state changing from " + state + " to " + newState);
+            state = newState;
+            startTime = Timer.getFPGATimestamp(); // Reset animation timing
+            
+            // Immediately update the pattern
+            updatePatternState();
         }
-        LEDPattern base2 = LEDPattern.solid(new Color(r2, g2, b2));
-        LEDPattern pattern2 = base2.breathe(Units.Seconds.of(2));
-
-        // Apply the LED pattern to the data buffer
-        pattern2.applyTo(m_funnelVertBuffer);
-
-        base2 = LEDPattern.solid(new Color(r2, g2, b2));
-        pattern2 = base2.breathe(Units.Seconds.of(2));
-
-        // Apply the LED pattern to the data buffer
-        pattern2.applyTo(m_funnelHoriBuffer);
-
-        break;
-
-      case "Aligned":
-        LEDPattern.solid(Color.kGreen)
-            .blink(Units.Seconds.of(0.2))
-            .applyTo(m_buffer);
-        break;
-
-      case "Coral":
-        LEDPattern.solid(Color.kYellow)
-            .blink(Units.Seconds.of(0.2))
-            .applyTo(m_buffer);
-
-        return;
-
-      case "Test":
-        LEDPattern.solid(Color.kPurple)
-            .blink(Units.Seconds.of(0.2))
-            .applyTo(m_buffer);
-        break;
-
-      // only called on fault from roborio this is if somthing really bad happens
-      case "Fault":
-        LEDPattern.solid(Color.kRed)
-            .blink(Units.Seconds.of(0.2))
-            .applyTo(m_buffer);
-        return;
-
-      default:
-        LEDPattern.solid(Color.kBlue)
-            .mask(LEDPattern.progressMaskLayer(() -> m_elevator.getPositionInMeters() / constElevator.MAX_HEIGHT))
-            .applyTo(m_buffer);
-        break;
     }
-  }
-
-  /**
-   * Sets the LEDS to be a fading value from given (R,G,B) to White
-   * 
-   * @param buffer   Led Buffer
-   * @param i        Led index
-   * @param position Current Pos
-   * @param baseR    Red
-   * @param baseG    Green
-   * @param baseB    Blue
-   */
-  private void setIdlePattern(AddressableLEDBufferView buffer, int i, int position, double baseR, double baseG,
-      double baseB) {
-    if (position < constLED.PATTERN_LENGTH) {
-      double fade = getFadeValue(position, constLED.PATTERN_LENGTH);
-      double blendFactor = fade * 0.3;
-      buffer.setLED(i, new Color(
-          baseR + (blendFactor * (1.0 - baseR)),
-          baseG + (blendFactor * (1.0 - baseG)),
-          baseB + (blendFactor * (1.0 - baseB))));
-    } else if (position < constLED.PATTERN_LENGTH * 2) {
-      double fade = getFadeValue(position - constLED.PATTERN_LENGTH, constLED.PATTERN_LENGTH);
-      double blendFactor = 0.3 + (fade * 0.4);
-      buffer.setLED(i, new Color(
-          baseR + (blendFactor * (1.0 - baseR)),
-          baseG + (blendFactor * (1.0 - baseG)),
-          baseB + (blendFactor * (1.0 - baseB))));
-    } else {
-      double fade = getFadeValue(position - (constLED.PATTERN_LENGTH * 2), constLED.PATTERN_LENGTH);
-      double blendFactor = 0.7 + (fade * 0.3);
-      buffer.setLED(i, new Color(
-          baseR + (blendFactor * (1.0 - baseR)),
-          baseG + (blendFactor * (1.0 - baseG)),
-          baseB + (blendFactor * (1.0 - baseB))));
+    
+    /**
+     * Gets current LED state
+     */
+    public String getLedState() {
+        return state;
     }
-  }
-
-  /**
-   * Update Simulation
-   * 
-   * @brief Updates the simulation values for the LED strip
-   */
-  private void updateSimulation() {
-    if (m_simDevice != null) {
-      double totalR = 0, totalG = 0, totalB = 0;
-
-      for (int i = 0; i < m_buffer.getLength(); i++) {
-        Color color = m_buffer.getLED(i);
-        totalR += color.red;
-        totalG += color.green;
-        totalB += color.blue;
-      }
-
-      double length = m_buffer.getLength();
-      m_simR.set(totalR / length);
-      m_simG.set(totalG / length);
-      m_simB.set(totalB / length);
-      m_simBrightness.set(Math.max(Math.max(totalR, totalG), totalB) / length);
+    
+    /**
+     * Sets a simple emergency pattern in case of errors
+     */
+    private void setEmergencyPattern() {
+        try {
+            // Apply a simple red pattern
+            for (int i = 0; i < constLED.LED_LENGTH; i++) {
+                if (i % 2 == 0) {
+                    mainView.setRGB(i, 255, 0, 0);
+                } else {
+                    mainView.setRGB(i, 0, 0, 0);
+                }
+            }
+            leds.update();
+        } catch (Exception ex) {
+            // If even the emergency pattern fails, just log it
+            System.err.println("Critical LED error: " + ex.getMessage());
+        }
     }
-  }
-
-  /**
-   * getFadeValue
-   * 
-   * @brief Returns the fade value for the LED strip
-   * @param position
-   * @param patternLength
-   * @return Double
-   */
-  private double getFadeValue(int position, int patternLength) {
-    if (position < constLED.TRAIL_LENGTH) {
-      return (double) position / constLED.TRAIL_LENGTH;
-    } else if (position >= patternLength - constLED.TRAIL_LENGTH) {
-      return (double) (patternLength - position) / constLED.TRAIL_LENGTH;
+    
+    /**
+     * Creates a simple test pattern with fixed colors
+     */
+    private LEDPattern createSimpleTestPattern() {
+        return new LEDPattern() {
+            @Override
+            public void applyTo(AddressableLEDBufferView view) {
+                // Use very bright colors for maximum visibility
+                int length = view.getLength();
+                for (int i = 0; i < length; i++) {
+                    int section = (i * 4) / length;
+                    
+                    switch (section) {
+                        case 0:
+                            view.setRGB(i, 255, 0, 0);  // Red
+                            break;
+                        case 1:
+                            view.setRGB(i, 0, 255, 0);  // Green
+                            break;
+                        case 2:
+                            view.setRGB(i, 0, 0, 255);  // Blue
+                            break;
+                        case 3:
+                        default:
+                            view.setRGB(i, 255, 255, 0); 
+                            break;
+                    }
+                }
+                
+                // Log update for debugging
+                if (RobotBase.isSimulation()) {
+                    System.out.println("Test pattern applied at " + Timer.getFPGATimestamp());
+                }
+            }
+        };
     }
-    return 1.0;
-  }
-
-  public class LEDTuple {
-    public final Boolean isTemporary;
-    public final Double statusDuration;
-    public final String stateType;
-
-    public LEDTuple(Boolean isTemporary, Double statusDuration, String stateType) {
-      this.isTemporary = isTemporary;
-      this.statusDuration = statusDuration;
-      this.stateType = stateType;
-    }
-
-    public Boolean getState() {
-      return this.isTemporary;
-    }
-
-    public Double getDuration() {
-      return this.statusDuration;
-    }
-
-    public String getType() {
-      return this.stateType;
-    }
-  }
 }

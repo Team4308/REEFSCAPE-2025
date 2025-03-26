@@ -121,9 +121,8 @@ public class RobotContainer {
         SwerveInputStream driveToClosestRightReef = driveDirectAngle.copy();
 
         public RobotContainer() {
-                m_ledSubsystem = new LEDSystem(RobotContainer.this);
+                m_ledSubsystem = new LEDSystem();
                 m_ElevatorSubsystem = new ElevatorSubsystem();
-                m_ledSubsystem.setElevator(m_ElevatorSubsystem);
                 m_AlgaeArmSubsystem = new AlgaeArmSubsystem();
                 m_CoralRollerSubsystem = new CoralRollerSubsystem();
                 m_simulation = new Simulation();
@@ -243,19 +242,22 @@ public class RobotContainer {
         }
 
         private void configureOtherTriggers() {
-                coralIntakeTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Coral")));
+                // LED state triggers
+                coralIntakeTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("teamflag")));
                 coralIntakeTrigger.onFalse(new InstantCommand(() -> {
-                        if (m_ledSubsystem.getLedState().equals("Coral")) {
-                                m_ledSubsystem.clearStatus();
+                        if (m_ledSubsystem.getLedState().equals("teamflag")) {
+                                m_ledSubsystem.setLedState("rainbow");
                         }
                 }));
-                drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("Aligned")));
+                
+                drivebaseAlignedTrigger.onTrue(new InstantCommand(() -> m_ledSubsystem.setLedState("altf4")));
                 drivebaseAlignedTrigger.onFalse(new InstantCommand(() -> {
-                        m_ledSubsystem.clearTemporary();
-                        ;
-
+                        if (m_ledSubsystem.getLedState().equals("altf4")) {
+                                m_ledSubsystem.setLedState("rainbow");
+                        }
                 }));
 
+                // ...existing rumble code...
                 coralIntakeTrigger.onTrue(new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
                                 .withTimeout(1.0).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
                 // coralIntakeTrigger.onTrue(new RunCommand(() ->
@@ -339,13 +341,21 @@ public class RobotContainer {
         }
 
         public void simulationPerodic() {
-                m_simulation.run();
+                try {
+                        m_simulation.run();
+                        
+                        // Ensure LEDs get updated in simulation
+                        if (m_ledSubsystem != null) {
+                            m_ledSubsystem.periodic();
+                        }
+                    } catch (Exception e) {
+                        System.err.println("Error in simulation periodic: " + e.getMessage());
+                    }
         }
 
         public void disabledInit() {
                 driver.setRumble(RumbleType.kBothRumble, 0);
                 operator.setRumble(RumbleType.kBothRumble, 0);
-                m_ledSubsystem.setLedState("Idle");
         }
 
         private double joystickAlgaeArm() {

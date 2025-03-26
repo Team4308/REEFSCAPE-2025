@@ -65,13 +65,13 @@ public final class Constants {
     }
 
     public static class constLED {
-        public static final int LED_PORT = 0;
-
+        public static final int LED_PORT = 9;
         public static final int Elevator_Length = 48;
         public static final int Funnel_Vert_Length = 46;
         public static final int Funnel_Hori_Length = 22;
-
+        public static final boolean debugMode = true; // Allows AbosoluteLib to print debug messages, And uses smart dash 
         public static final int LED_LENGTH = Elevator_Length + Funnel_Vert_Length + Funnel_Hori_Length;
+
         public static final Pair<Integer, Integer> Elevator_Ends = new Pair<Integer, Integer>(0, Elevator_Length - 1);
         public static final Pair<Integer, Integer> Funnel_Vert_Ends = new Pair<Integer, Integer>(Elevator_Length,
                 Elevator_Length + Funnel_Vert_Length - 1);
@@ -84,7 +84,6 @@ public final class Constants {
         public static final int TRAIL_LENGTH = 2;
         // Sim
         public static final double SIM_UPDATE_RATE = 0.02;
-
         public static final double STATUS_LIGHT_DURATION = 2.0;
     }
 

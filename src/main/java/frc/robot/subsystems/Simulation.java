@@ -10,22 +10,18 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
-import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.Constants.constElevator;
 import frc.robot.Constants.constEndEffector;
 
 public class Simulation {
+
     private ElevatorSubsystem m_elevatorSubsystem;
     private AlgaeArmSubsystem m_algaeArmSubsystem;
+    @SuppressWarnings("unused")
     private CoralRollerSubsystem m_coralRollerSubsystem;
+    private LEDSystem m_ledSystem;
 
     private LoggedMechanism2d mech;
 
@@ -59,10 +55,32 @@ public class Simulation {
         this.m_algaeArmSubsystem = algaeArmSubsystem;
         this.m_coralRollerSubsystem = rollerSubsystem;
     }
+    
+    public void setLEDSystem(LEDSystem ledSystem) {
+        this.m_ledSystem = ledSystem;
+    }
 
     public void run() {
         elevator();
         algaeArm();
+
+        // Update LED visualization in simulation
+        if (m_ledSystem != null) {
+            // LED status can be logged based on subsystem states
+            if (elevatorAtPositionSimulation) {
+                Logger.recordOutput("LEDStatus/Elevator", "AtPosition");
+            } else {
+                Logger.recordOutput("LEDStatus/Elevator", "Moving");
+            }
+            
+            if (algaeAtAngleSimulation) {
+                Logger.recordOutput("LEDStatus/AlgaeArm", "AtPosition");
+            } else {
+                Logger.recordOutput("LEDStatus/AlgaeArm", "Moving");
+            }
+            
+            Logger.recordOutput("LEDStatus/Current", m_ledSystem.getLedState());
+        }
 
         Logger.recordOutput("Mechanism", mech);
         Logger.recordOutput("Zeroed Pose", zeroPos);
