@@ -2,16 +2,14 @@ package frc.robot.commands.ButtonBindings;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Reset;
 import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
@@ -57,12 +55,14 @@ public class L3Algae1 extends Command {
 
     private Command stage2() {
         return new SequentialCommandGroup(
+                new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 3)),
                 new ParallelDeadlineGroup(
                         new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE + Units.inchesToMeters(8),
                                 m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
+                new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));

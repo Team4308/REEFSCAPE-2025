@@ -13,6 +13,7 @@ import frc.robot.commands.Reset;
 import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
+import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
@@ -55,6 +56,7 @@ public class Algae1PreMove extends Command {
 
     private Command stage2() {
         return new SequentialCommandGroup(
+                new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
                         new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE + Units.inchesToMeters(7),
                                 m_elevatorSubsystem),

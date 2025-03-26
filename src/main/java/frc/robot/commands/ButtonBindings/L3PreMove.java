@@ -1,15 +1,12 @@
 package frc.robot.commands.ButtonBindings;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
 import frc.robot.commands.Reset;
-import frc.robot.commands.SimpleControl.SimpleAlgae;
 import frc.robot.commands.SimpleControl.SimpleElevator;
 import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
