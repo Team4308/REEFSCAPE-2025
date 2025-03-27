@@ -4,9 +4,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.Constants.constLED;
+
+import java.util.Optional;
+
 import ca.team4308.absolutelib.leds.AddressableLEDBufferView;
+import ca.team4308.absolutelib.leds.LEDConstants;
 import ca.team4308.absolutelib.leds.LEDPattern;
 import ca.team4308.absolutelib.leds.Leds;
 import ca.team4308.absolutelib.leds.Patterns;
@@ -48,8 +54,6 @@ public class LEDSystem extends SubsystemBase {
                 currentPattern.applyTo(mainView);
                 leds.update();
             }
-            
-
                 SmartDashboard.putString("LED/State", state);
                 SmartDashboard.putNumber("LED/Counter", counter);
                 Color c = mainView.getLED(0);
@@ -110,7 +114,9 @@ public class LEDSystem extends SubsystemBase {
             case "idle":
             case "default":
             default:
-                newPattern = Patterns.teamFlag();
+                LEDConstants.setPatternLength(10);
+                SmartDashboard.putString("LED RGB", Utils.getAllianceColor().toString());
+                newPattern = Patterns.scrollingIdle(Utils.getAllianceColor(),Color.kWhite, 1);
 
                 break;
         }

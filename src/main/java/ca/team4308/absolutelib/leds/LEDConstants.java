@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj.util.Color;
 public final class LEDConstants {
     private static int PATTERN_LENGTH = 30;
     private static int SCROLL_SPEED = 1;
+    /** How long changes the posion of were the base color is also modify some others thingss*/
+    public static int SCROLL_Multipiler = 1;
+
     private static double BREATHE_PERIOD = 2000.0;
     private static double BLINK_PERIOD = 0.2;
     

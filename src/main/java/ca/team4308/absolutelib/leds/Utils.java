@@ -1,10 +1,10 @@
 package ca.team4308.absolutelib.leds;
 
-import java.util.Optional;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.Constants.Driver;
 
 /**
  * Utility methods for LED patterns
@@ -163,25 +163,16 @@ public class Utils {
     }
 
         // Helper methods
-    public static Color getAllianceColor() {
+        public static Color getAllianceColor() {
+        Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Red);
+        SmartDashboard.putString("Alliance", alliance.toString());
         try {
-            Optional<Alliance> alliance = DriverStation.getAlliance();
-            // Fix: Properly handle the Optional to prevent null reference exceptions
-            if (alliance.isPresent()) {
-                return alliance.get() == Alliance.Blue ? 
-                    new Color(0, 0, 1) : // Blue
-                    new Color(1, 0, 0);  // Red
-            }
-
-            // Default to red if alliance can't be determined
-            return new Color(1, 0, 0);
+            return alliance.toString().contains("Red") ? new Color(1, 0, 0) : new Color(0, 0, 1);
         } catch (Exception e) {
-            // Fallback in case of any exception
             System.err.println("Error getting alliance color: " + e.getMessage());
-            return new Color(1, 0, 0); // Default to red
+            return new Color(0, 1, 0); // Default to an odd color so it stands out
         }
-    }
-
+        }
 
         /**
      * Creates a breathing pattern that fades between colors

@@ -167,20 +167,22 @@ public class Patterns {
      * @param scrollSpeed The speed of scrolling
      * @return LEDPattern for scrolling idle state
      */
-    public static LEDPattern scrollingIdle(Color baseColor, int scrollSpeed) {
+    public static LEDPattern scrollingIdle(Color baseColor, Color endColor, int scrollSpeed) {
         return new LEDPattern() {
             private int offset = 0;
 
             @Override
             public void applyTo(AddressableLEDBufferView view) {
-                int patternLength = LEDConstants.getPatternLength();
-                int trailLength = patternLength / 4; // Use 1/4 of pattern length for fade
+            int patternLength = LEDConstants.getPatternLength();
+            int trailLength = patternLength; 
 
-                for (int i = 0; i < view.getLength(); i++) {
-                    int position = (i + offset) % (patternLength * 3);
-                    Utils.setIdlePatternColor(view, i, position, baseColor, patternLength, trailLength);
-                }
-                offset = (offset + scrollSpeed) % (patternLength * 3);
+            for (int i = 0; i < view.getLength(); i++) {
+                int position = (i + offset) % (patternLength * LEDConstants.SCROLL_Multipiler);
+                double fadeValue = Utils.getFadeValue(position, patternLength, trailLength);
+                Color blendedColor = Utils.blendColors(baseColor, endColor, fadeValue);
+                view.setColor(i, blendedColor);
+            }
+            offset = (offset + scrollSpeed) % (patternLength * 3);
             }
         };
     }
@@ -190,7 +192,7 @@ public class Patterns {
      * @return LEDPattern for alliance-colored scrolling idle state
      */
     public static LEDPattern defaultScrollingIdle() {
-        return scrollingIdle(Utils.getAllianceColor(), LEDConstants.getScrollSpeed());
+        return scrollingIdle(Utils.getAllianceColor(),Color.kWhite, LEDConstants.getScrollSpeed());
     }
 
     /**
