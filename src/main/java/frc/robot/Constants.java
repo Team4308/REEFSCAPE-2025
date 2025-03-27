@@ -49,7 +49,7 @@ public final class Constants {
             }
 
             public static class Translation {
-                public static final double kP = 5.0;
+                public static final double kP = 2.5;
                 public static final double kI = 0.0;
                 public static final double kD = 0.0;
             }
