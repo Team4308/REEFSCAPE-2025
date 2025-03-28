@@ -388,7 +388,7 @@ public class Vision {
       }
       resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
 
-      // filter(); // Filter results
+      filter(); // Filter results
 
       lastReadTimestamp = currentTimestamp;
       resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
@@ -481,15 +481,17 @@ public class Vision {
 
     /*Filter maybe?*/
     private void filter() {
+      List<PhotonPipelineResult> toBeRemoved = new ArrayList<>();
       for (PhotonPipelineResult result : resultsList) {
         List<PhotonTrackedTarget> targets = result.getTargets();
         for (PhotonTrackedTarget target : targets) {
           if (target.getPoseAmbiguity() > 0.2) {
-            resultsList.remove(result);
+            toBeRemoved.add(result);
             break;
           }
         }
       }
+      resultsList.removeAll(toBeRemoved);
     }
 
   }
