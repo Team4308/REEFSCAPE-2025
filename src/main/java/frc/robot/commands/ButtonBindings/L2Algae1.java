@@ -61,6 +61,7 @@ public class L2Algae1 extends Command {
                                 m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
+                new SimpleElevator(() -> constElevator.MIN_HEIGHT, m_elevatorSubsystem),
                 new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
                 new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),

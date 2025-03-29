@@ -23,7 +23,7 @@ import frc.robot.subsystems.CoralRollerSubsystem;
 public class Reset extends ParallelDeadlineGroup {
         public Reset(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
                         AlgaeArmSubsystem algaeArmSubsystem) {
-                super(new WaitCommand(0.01));
+                super(new WaitCommand(0.02));
                 addCommands(
                                 new InstantCommand(() -> elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
                                                 constElevator.MAX_ACCELERATION)),

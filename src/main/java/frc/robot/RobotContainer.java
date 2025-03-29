@@ -286,7 +286,8 @@ public class RobotContainer {
 
         public void configureNamedCommands() {
                 NamedCommands.registerCommand("Intake Coral",
-                                new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_CoralRollerSubsystem));
+                                new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL,
+                                                m_CoralRollerSubsystem));
                 NamedCommands.registerCommand("L2 Preset",
                                 new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("L3 Preset",
@@ -307,7 +308,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Align To Near Station",
                                 drivebase.driveToPose(() -> drivebase.getClosestNearCoralStationPose())
                                                 .until(drivebaseAlignedTrigger));
-                NamedCommands.registerCommand("L2 Premove", 
+                NamedCommands.registerCommand("L2 Premove",
                                 new L2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove Low Algae and Shoot L3",
                                 new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
@@ -333,7 +334,6 @@ public class RobotContainer {
         }
 
         public void teleopInit() {
-                m_AlgaeArmSubsystem.resetSensors();
         }
 
         public void teleopPeriodic() {

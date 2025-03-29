@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "L2 Premove"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Left-I"
@@ -25,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L2 Premove"
+            "name": "L2 Preset"
           }
         },
         {
@@ -47,12 +41,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "L2 Premove"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Coral-J"
@@ -67,7 +55,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L2 Premove"
+            "name": "L2 Preset"
           }
         },
         {
@@ -89,12 +77,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "L2 Premove"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Coral-A"
@@ -109,7 +91,7 @@
         {
           "type": "named",
           "data": {
-            "name": "L2 Premove"
+            "name": "L2 Preset"
           }
         }
       ]

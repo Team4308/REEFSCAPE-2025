@@ -43,6 +43,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -95,6 +97,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d nearestPoseToFarCoralStation = new Pose2d();
   public Pose2d nearestPoseToNearCoralStation = new Pose2d();
 
+  private Field2d driverStationField = new Field2d();
+
   private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
       .getStructTopic("Robot Pose", Pose2d.struct).publish();
 
@@ -130,7 +134,7 @@ public class SwerveSubsystem extends SubsystemBase {
         // Translation PID constants
         new PIDConstants(4.0, 0.0, 0.0),
         // Rotation PID constants
-        new PIDConstants(2.0, 0.0, 0.0));
+        new PIDConstants(2.5, 0.0, 0.0));
 
     setupPathPlanner();
     // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyro));
@@ -159,6 +163,9 @@ public class SwerveSubsystem extends SubsystemBase {
     checkTunableValues();
 
     publisher.set(getPose());
+
+    driverStationField.setRobotPose(getPose());
+    SmartDashboard.putData("driverStationField", driverStationField);
 
     // SmartDashboard.putBoolean("Aligned?", isAligned());
     Logger.recordOutput("Swerve/Is Aligned?", isAligned());
@@ -213,11 +220,11 @@ public class SwerveSubsystem extends SubsystemBase {
           // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also
           // optionally outputs individual module feedforwards
           new PPHolonomicDriveController( // PPHolonomicController is the built in path following
-                                                       // controller for holonomic drive trains
-            // Translation PID constants
-            TRANSLATION_CONTROLLER,
-            // Rotation PID constants
-            ANGLE_CONTROLLER),
+                                          // controller for holonomic drive trains
+              // Translation PID constants
+              TRANSLATION_CONTROLLER,
+              // Rotation PID constants
+              ANGLE_CONTROLLER),
           config,
           () -> {
             // Boolean supplier that controls when the path will be mirrored for the red
@@ -368,13 +375,17 @@ public class SwerveSubsystem extends SubsystemBase {
     // // // Since AutoBuilder is configured, we can use it to build pathfinding
     // // commands
     // Pose2d tValues = targetPose.relativeTo(getPose());
-    // double pythagoreanDistance = Math.sqrt(Math.pow(tValues.getX(), 2) + Math.pow(tValues.getY(), 2));
+    // double pythagoreanDistance = Math.sqrt(Math.pow(tValues.getX(), 2) +
+    // Math.pow(tValues.getY(), 2));
     // if (Math.abs(pythagoreanDistance) > 1) {
-    //   return AutoBuilder.pathfindToPose(
-    //       pose,
-    //       constraints,
-    //       edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-    //   ).andThen(run(() -> swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
+    // return AutoBuilder.pathfindToPose(
+    // pose,
+    // constraints,
+    // edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in
+    // meters/sec
+    // ).andThen(run(() ->
+    // swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
+    // goalState))));
 
     // }
 
