@@ -121,6 +121,8 @@ public final class Constants {
         public static final double ALGAE1_PREMOVE = Units.inchesToMeters(6);
         public static final double ALGAE2_PREMOVE = Units.inchesToMeters(22);
 
+        public static final double ALGAE_DISTANCE = Units.inchesToMeters(8);
+
         // Speed constants (in meters per second)
         public static final double ALGAE_REMOVAL_SPEED = 3;
 
