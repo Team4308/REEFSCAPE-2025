@@ -56,14 +56,13 @@ public class L3Algae2 extends Command {
     private Command stage2() {
         return new SequentialCommandGroup(
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
-
-                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 3)),
                 new ParallelDeadlineGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + Units.inchesToMeters(8),
+                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + Units.inchesToMeters(10),
                                 m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
                 new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
+                new SimpleElevator(() -> constElevator.L1, m_elevatorSubsystem),
                 new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));

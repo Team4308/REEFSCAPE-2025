@@ -479,7 +479,7 @@ public class Vision {
       }
     }
 
-    /*Filter maybe?*/
+    /* Filter maybe? */
     private void filter() {
       List<PhotonPipelineResult> toBeRemoved = new ArrayList<>();
       for (PhotonPipelineResult result : resultsList) {

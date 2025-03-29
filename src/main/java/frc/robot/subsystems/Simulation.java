@@ -151,13 +151,14 @@ public class Simulation {
         } else {
             algaeAtAngleSimulation = false;
         }
+        algaeAtAngleSimulation = true;
 
         m_algaeArmSim.setState(
                 Units.degreesToRadians((Units.radiansToDegrees(m_algaeArmSim.getAngleRads()) + 36000) % 360), 0);
 
         algaeArm = new Pose3d(
                 new Translation3d(0.292, -0.2, m_elevatorSim.getPositionMeters() + 0.3055),
-                new Rotation3d(0, m_algaeArmSim.getAngleRads() - Units.degreesToRadians(270), 0));
+                new Rotation3d(0, Units.degreesToRadians(90) - Units.degreesToRadians(targetAngle), 0));
         m_algaeArmMech2d.setAngle(Units.radiansToDegrees(m_algaeArmSim.getAngleRads()));
 
     }

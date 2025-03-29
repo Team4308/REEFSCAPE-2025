@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
@@ -56,12 +57,12 @@ public class L3Algae1 extends Command {
     private Command stage2() {
         return new SequentialCommandGroup(
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
-                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 3)),
                 new ParallelDeadlineGroup(
                         new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE + Units.inchesToMeters(8),
                                 m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
+                new SimpleElevator(() -> constElevator.MIN_HEIGHT, m_elevatorSubsystem),
                 new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
