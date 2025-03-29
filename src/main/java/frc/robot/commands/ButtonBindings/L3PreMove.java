@@ -28,7 +28,7 @@ public class L3PreMove extends Command {
 
     @Override
     public void initialize() {
-        if (m_elevatorSubsystem.isAtPosition2("L3")) {
+        if (m_elevatorSubsystem.isAtPosition2("L2")) {
             stage2().schedule();
         } else {
             stage1().schedule();
@@ -41,12 +41,13 @@ public class L3PreMove extends Command {
 
     private Command stage1() {
         return new SequentialCommandGroup(
-                new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
+                new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
                 new InstantCommand(() -> stateFinished = true));
     }
 
     private Command stage2() {
         return new SequentialCommandGroup(
+                new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new InstantCommand(() -> stateFinished = true));

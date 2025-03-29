@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "L2 Premove"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Left-I"
@@ -41,6 +47,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "L2 Premove"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Coral-J"
@@ -74,6 +86,12 @@
           "type": "named",
           "data": {
             "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Premove"
           }
         },
         {

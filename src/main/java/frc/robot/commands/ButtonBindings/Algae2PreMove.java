@@ -58,7 +58,7 @@ public class Algae2PreMove extends Command {
         return new SequentialCommandGroup(
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + Units.inchesToMeters(7),
+                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + Units.inchesToMeters(15),
                                 m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),

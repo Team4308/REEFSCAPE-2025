@@ -308,8 +308,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Align To Near Station",
                                 drivebase.driveToPose(() -> drivebase.getClosestNearCoralStationPose())
                                                 .until(drivebaseAlignedTrigger));
-                NamedCommands.registerCommand("L2 Premove",
-                                new L2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("L2 Premove", m_ElevatorSubsystem.goToLevel(2));
                 NamedCommands.registerCommand("Remove Low Algae and Shoot L3",
                                 new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove Low Algae and Shoot L2",
