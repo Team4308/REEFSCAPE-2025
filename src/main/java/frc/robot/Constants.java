@@ -141,7 +141,7 @@ public final class Constants {
             public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.13, 0.153, 0.0052, 0.0);
 
             // Angles (degrees)
-            public static final double REST_ANGLE = 90.0; // Straight Up
+            public static final double REST_ANGLE = 131.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
             public static final double REMOVAL_ANGLE_BOTTOM = 15;
 

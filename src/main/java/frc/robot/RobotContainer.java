@@ -261,7 +261,9 @@ public class RobotContainer {
                         ;
 
                 }));
+        }
 
+        public void configureTeleopBindings() {
                 coralIntakeTrigger.onTrue(new RunCommand(() -> driver.setRumble(RumbleType.kBothRumble, 1))
                                 .withTimeout(1.0).finallyDo(() -> driver.setRumble(RumbleType.kBothRumble, 0)));
                 // coralIntakeTrigger.onTrue(new RunCommand(() ->
