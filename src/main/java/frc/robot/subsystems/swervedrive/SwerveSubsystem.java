@@ -334,7 +334,7 @@ public class SwerveSubsystem extends SubsystemBase {
     double currentHeading = getPose().getRotation().getDegrees();
     double targetHeading = targetPose.getRotation().getDegrees();
     if ((Math.abs(currentHeading - targetHeading) < Swerve.Align.Heading.TOLERANCE)
-        || (Math.abs(currentHeading + targetHeading) < Swerve.Align.Heading.TOLERANCE)) {
+        || (Math.abs(currentHeading + targetHeading) % 360 < Swerve.Align.Heading.TOLERANCE)) {
       return true;
     } else {
       return false;

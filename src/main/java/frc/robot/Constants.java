@@ -118,7 +118,7 @@ public final class Constants {
         public static final double ALGAE1 = Units.inchesToMeters(30.0);
         public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
-        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(5.5);
+        public static final double ALGAE1_PREMOVE = Units.inchesToMeters(6);
         public static final double ALGAE2_PREMOVE = Units.inchesToMeters(21.5);
 
         public static final double ALGAE_DISTANCE = Units.inchesToMeters(8);
@@ -138,12 +138,12 @@ public final class Constants {
             // Controllers
             public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.01, 0.0, 0.0,
                     new TrapezoidProfile.Constraints(720, 1440)); // degrees
-            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.13, 0.153, 0.0052, 0.0);
+            public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.135, 0.153, 0.0052, 0.0);
 
             // Angles (degrees)
             public static final double REST_ANGLE = 131.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
-            public static final double REMOVAL_ANGLE_BOTTOM = 25;
+            public static final double REMOVAL_ANGLE_BOTTOM = 35;
 
             public static final double TIMEOUT_SECONDS = 3;
         }
@@ -153,7 +153,7 @@ public final class Constants {
             public static final double L23 = 25;
 
             public static final double DEFAULT_CORAL = 10;
-            public static final double ALGAE_REMOVAL_BOTTOM = -150;
+            public static final double ALGAE_REMOVAL_BOTTOM = -200;
             public static final double ALGAE_REMOVAL_TOP = 30;
         }
     }

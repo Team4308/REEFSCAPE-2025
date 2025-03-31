@@ -1,6 +1,7 @@
 package frc.robot.commands.ButtonBindings;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -53,12 +54,15 @@ public class L2Algae1 extends Command {
 
     private Command stage2() {
         return new SequentialCommandGroup(
+                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 5)),
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
                         new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE + constElevator.ALGAE_DISTANCE,
                                 m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
+                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
+                        constElevator.MAX_ACCELERATION)),
                 new SimpleElevator(() -> constElevator.MIN_HEIGHT, m_elevatorSubsystem),
                 new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
                 new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
