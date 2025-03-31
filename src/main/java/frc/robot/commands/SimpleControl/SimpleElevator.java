@@ -10,24 +10,23 @@ public class SimpleElevator extends Command {
     private final Supplier<Double> control;
     private final ElevatorSubsystem subsystem;
 
-    private final double startTime;
+    private double startTime;
 
     public SimpleElevator(Supplier<Double> control, ElevatorSubsystem elevatorSubsystem) {
         this.control = control;
         this.subsystem = elevatorSubsystem;
         addRequirements(elevatorSubsystem);
-
-        startTime = Timer.getTimestamp();
     }
 
     @Override
-    public void execute() {
+    public void initialize() {
+        startTime = Timer.getTimestamp();
         subsystem.setPosition(control.get());
     }
 
     @Override
     public boolean isFinished() {
-        return (subsystem.isAtPosition3(control.get()));
+        return (subsystem.isAtPosition3(control.get())) || Timer.getTimestamp() - startTime > 1;
     }
 
 }

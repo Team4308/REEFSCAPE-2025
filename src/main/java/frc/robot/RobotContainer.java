@@ -6,10 +6,16 @@ package frc.robot;
 
 import java.io.File;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import ca.team4308.absolutelib.control.XBoxWrapper;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -332,6 +338,13 @@ public class RobotContainer {
          */
         public Command getAutonomousCommand() {
                 return autoChooser.getSelected();
+        }
+
+        public void robotPeriodic() {
+                Logger.recordOutput("/Subsystems/Algae/LoggedPose", new Pose3d(
+                                new Translation3d(0.292, -0.2, m_ElevatorSubsystem.getPositionInMeters() + 0.3055),
+                                new Rotation3d(0, Units.degreesToRadians(90)
+                                                - Units.degreesToRadians(m_AlgaeArmSubsystem.getAlgaePosition()), 0)));
         }
 
         public void teleopInit() {

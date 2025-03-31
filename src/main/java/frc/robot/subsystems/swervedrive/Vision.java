@@ -64,7 +64,6 @@ public class Vision {
   public Vision(Supplier<Pose2d> currentPose, Field2d field) {
     this.currentPose = currentPose;
     this.field2d = field;
-    SmartDashboard.putData("Playing Field", field);
 
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");

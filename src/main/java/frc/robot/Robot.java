@@ -7,12 +7,14 @@ package frc.robot;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.Driver;
 
 // import java.io.File;
 // import java.io.IOException;
@@ -35,10 +37,10 @@ public class Robot extends LoggedRobot {
   private Timer disabledTimer;
 
   public Robot() {
-    Logger.recordMetadata("4308Reefscape", "Competition"); // Set a metadata value
+    Logger.recordMetadata("4308Reefscape", Integer.toString(DriverStation.getMatchNumber())); // Set a metadata value
 
     if (isReal()) {
-      // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     } else {
       Logger.addDataReceiver(new NT4Publisher());
@@ -92,6 +94,8 @@ public class Robot extends LoggedRobot {
     SmartDashboard.putData("CommandScheduler", CommandScheduler.getInstance());
 
     SmartDashboard.putNumber("Match timer", DriverStation.getMatchTime());
+
+    m_robotContainer.robotPeriodic();
   }
 
   @Override

@@ -32,7 +32,7 @@ public class L3Algae1 extends Command {
 
     @Override
     public void initialize() {
-        if (m_elevatorSubsystem.isAtPosition2("A1P")) {
+        if (m_elevatorSubsystem.isAtPosition2("L2")) {
             stage2().schedule();
         } else {
             stage1().schedule();
@@ -47,23 +47,19 @@ public class L3Algae1 extends Command {
         return new SequentialCommandGroup(
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new ParallelCommandGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)));
+                        new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
+                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_TOP, m_algaeArmSubsystem)));
     }
 
     private Command stage2() {
         return new SequentialCommandGroup(
-                new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
-                new ParallelDeadlineGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE + constElevator.ALGAE_DISTANCE,
-                                m_elevatorSubsystem),
-                        new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
-                                m_coralRollerSubsystem)),
-                new SimpleElevator(() -> constElevator.MIN_HEIGHT, m_elevatorSubsystem),
-                new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
-                new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
-                new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
+                new SimpleRoller(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
+                new ParallelDeadlineGroup(
+                        new SimpleElevator(() -> constElevator.ALGAE1, m_elevatorSubsystem),
+                        new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_TOP,
+                                m_coralRollerSubsystem)),
+                new SimpleElevator(() -> constElevator.MIN_HEIGHT, m_elevatorSubsystem));
 
     }
 

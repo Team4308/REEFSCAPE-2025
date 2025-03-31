@@ -113,8 +113,8 @@ public final class Constants {
 
         // Preset heights in inches
         public static final double L1 = Units.inchesToMeters(6.5);
-        public static final double L2 = Units.inchesToMeters(23.5);
-        public static final double L3 = Units.inchesToMeters(39.5);
+        public static final double L2 = Units.inchesToMeters(24);
+        public static final double L3 = Units.inchesToMeters(40);
         public static final double ALGAE1 = Units.inchesToMeters(30.0);
         public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
@@ -131,7 +131,7 @@ public final class Constants {
 
     public static class constEndEffector {
         public static class algaePivot {
-            public static final double TOLERANCE = 5.0;
+            public static final double TOLERANCE = 10.0;
 
             public static final double ROTATION_TO_ANGLE_RATIO = 360 / 18.3333333;
 
@@ -143,14 +143,14 @@ public final class Constants {
             // Angles (degrees)
             public static final double REST_ANGLE = 131.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
-            public static final double REMOVAL_ANGLE_BOTTOM = 15;
+            public static final double REMOVAL_ANGLE_BOTTOM = 10;
 
             public static final double TIMEOUT_SECONDS = 3;
         }
 
         public static class rollerSpeeds { // m/s
             public static final double L1 = 3;
-            public static final double L23 = 20;
+            public static final double L23 = 25;
 
             public static final double DEFAULT_CORAL = 10;
             public static final double ALGAE_REMOVAL_BOTTOM = -100;

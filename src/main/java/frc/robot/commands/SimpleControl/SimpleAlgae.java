@@ -16,18 +16,17 @@ public class SimpleAlgae extends Command {
         this.angle = angle;
         this.subsystem = algaePivotSubsystem;
         addRequirements(algaePivotSubsystem);
-
-        startTime = Timer.getTimestamp();
     }
 
     @Override
     public void initialize() {
+        startTime = Timer.getTimestamp();
         subsystem.setAlgaePosition(angle.get());
     }
 
     @Override
     public boolean isFinished() {
-        return (subsystem.isAtPosition2(angle.get())) || Math.abs(Timer.getTimestamp() - startTime) > 3;
+        return (subsystem.isAtPosition2(angle.get())) || Timer.getTimestamp() - startTime > 1;
     }
 
 }

@@ -11,7 +11,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import frc.robot.Constants.constElevator;
 import frc.robot.Ports.Elevator;
 import frc.robot.Robot;
@@ -224,5 +228,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     Logger.recordOutput("Subsystems/Elevator/Current Position", getPositionInMeters());
     Logger.recordOutput("Subsystems/Elevator/Is At Position", isAtPosition());
     Logger.recordOutput("Subsystems/Elevator/Elevator Voltage", voltage);
+
+    Logger.recordOutput("Subsystems/Elevator/LoggedS1", new Pose3d(
+        new Translation3d(0.0, 0.1, getPositionInMeters() / 2 + Units.inchesToMeters(1)),
+        new Rotation3d()));
+    Logger.recordOutput("Subsystems/Elevator/LoggedS2", new Pose3d(
+        new Translation3d(0.0, 0.1, getPositionInMeters() - Units.inchesToMeters(1)),
+        new Rotation3d()));
   }
 }
