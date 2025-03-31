@@ -300,10 +300,6 @@ public class RobotContainer {
                                 new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("L3 Preset",
                                 new FastL3(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                NamedCommands.registerCommand("Remove Algae L1",
-                                new RemoveA1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                NamedCommands.registerCommand("Remove Algae L2",
-                                new RemoveA2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Align To Left Reef",
                                 drivebase.driveToPose(() -> drivebase.getClosestLeftReefPose())
                                                 .until(drivebaseAlignedTrigger));
@@ -312,9 +308,6 @@ public class RobotContainer {
                                                 .until(drivebaseAlignedTrigger));
                 NamedCommands.registerCommand("Align To Far Station",
                                 drivebase.driveToPose(() -> drivebase.getClosestFarCoralStationPose())
-                                                .until(drivebaseAlignedTrigger));
-                NamedCommands.registerCommand("Align To Near Station",
-                                drivebase.driveToPose(() -> drivebase.getClosestNearCoralStationPose())
                                                 .until(drivebaseAlignedTrigger));
                 NamedCommands.registerCommand("L2 Premove", m_ElevatorSubsystem.goToLevel(2));
                 NamedCommands.registerCommand("Remove Low Algae and Shoot L3",
