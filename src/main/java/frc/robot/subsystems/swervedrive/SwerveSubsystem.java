@@ -5,10 +5,12 @@
 package frc.robot.subsystems.swervedrive;
 
 import static edu.wpi.first.units.Units.Meter;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.DoubleSupplier;
@@ -24,7 +26,11 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
@@ -132,9 +138,9 @@ public class SwerveSubsystem extends SubsystemBase {
                                                        // controller for
                                                        // holonomic drive trains
         // Translation PID constants
-        new PIDConstants(4.0, 0.0, 0.0),
+        new PIDConstants(2.5, 0.0, 0.0),
         // Rotation PID constants
-        new PIDConstants(2.5, 0.0, 0.0));
+        new PIDConstants(5.0, 0.0, 0.0));
 
     setupPathPlanner();
     // RobotModeTriggers.autonomous().onTrue(Commands.runOnce(this::zeroGyro));
@@ -386,12 +392,24 @@ public class SwerveSubsystem extends SubsystemBase {
     // ).andThen(run(() ->
     // swerveDrive.drive(DRIVE_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
     // goalState))));
-
     // }
 
-    // PID only test
-    return run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
-        goalState)));
+    List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+      new Pose2d(swerveDrive.getPose().getTranslation(), 
+      new Rotation2d(getFieldVelocity().vxMetersPerSecond, getFieldVelocity().vyMetersPerSecond)), 
+      pose
+    );
+    PathPlannerPath path = new PathPlannerPath(
+      waypoints, 
+      constraints, 
+      new IdealStartingState(MetersPerSecond.of(new Translation2d(getFieldVelocity().vxMetersPerSecond, getFieldVelocity().vyMetersPerSecond).getNorm()), getHeading()), 
+      new GoalEndState(0.0, pose.getRotation()));
+    path.preventFlipping = true;
+    return AutoBuilder.followPath(path).andThen(run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
+
+    // // PID only test
+    // return run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
+    //     goalState)));
   }
 
   public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond) {
