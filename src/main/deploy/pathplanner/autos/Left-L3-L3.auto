@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "L3A1 Stage1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Left-K"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Left Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3A1 Stage2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "K-Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Far Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Premove"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral-L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Right Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3 Preset"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "L-Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Far Station"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Left",
+  "choreoAuto": false
+}

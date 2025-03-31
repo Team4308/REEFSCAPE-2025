@@ -33,8 +33,6 @@ import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Reset;
 import frc.robot.commands.SystemsCheck;
-import frc.robot.commands.AlgaeRemoval.RemoveA1;
-import frc.robot.commands.AlgaeRemoval.RemoveA2;
 import frc.robot.commands.ButtonBindings.Algae1PreMove;
 import frc.robot.commands.ButtonBindings.Algae2PreMove;
 import frc.robot.commands.ButtonBindings.L2Algae1;
@@ -75,6 +73,8 @@ public class RobotContainer {
         private final DefaultRoller DefaultRollerCommand;
         private final DefaultAlgae DefaultAlgaeCommand;
         private final DefaultElevator DefaultElevatorCommand;
+
+        private final L3Algae1 L3A1Command;
 
         private final SendableChooser<Command> autoChooser;
 
@@ -135,6 +135,8 @@ public class RobotContainer {
                 DefaultRollerCommand = new DefaultRoller(() -> triggerRollerControl(), m_CoralRollerSubsystem);
                 DefaultAlgaeCommand = new DefaultAlgae(() -> joystickAlgaeArm(), m_AlgaeArmSubsystem);
                 DefaultElevatorCommand = new DefaultElevator(() -> joystickElevatorControl(), m_ElevatorSubsystem);
+
+                L3A1Command = new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem);
 
                 m_AlgaeArmSubsystem.setDefaultCommand(DefaultAlgaeCommand);
                 m_CoralRollerSubsystem.setDefaultCommand(DefaultRollerCommand);
@@ -310,8 +312,8 @@ public class RobotContainer {
                                 drivebase.driveToPose(() -> drivebase.getClosestFarCoralStationPose())
                                                 .until(drivebaseAlignedTrigger));
                 NamedCommands.registerCommand("L2 Premove", m_ElevatorSubsystem.goToLevel(2));
-                NamedCommands.registerCommand("Remove Low Algae and Shoot L3",
-                                new L3Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("L3A1 Stage1", L3A1Command.stage1());
+                NamedCommands.registerCommand("L3A1 Stage2", L3A1Command.stage2());
                 NamedCommands.registerCommand("Remove Low Algae and Shoot L2",
                                 new L2Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove High Algae and Shoot L3",

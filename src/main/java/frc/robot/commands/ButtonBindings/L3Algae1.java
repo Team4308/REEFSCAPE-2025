@@ -45,7 +45,7 @@ public class L3Algae1 extends Command {
         stateFinished = true;
     }
 
-    private Command stage1() {
+    public Command stage1() {
         return new SequentialCommandGroup(
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new ParallelCommandGroup(
@@ -53,7 +53,7 @@ public class L3Algae1 extends Command {
                         new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)));
     }
 
-    private Command stage2() {
+    public Command stage2() {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 5)),
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
