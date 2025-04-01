@@ -58,7 +58,7 @@ public final class Constants {
 
     public static class Driver {
         // Joystick Deadband
-        public static final double DEADBAND = 0.0; // for simulation because bad controller
+        public static final double DEADBAND = 0.0;
         public static final double LEFT_Y_DEADBAND = 0.1;
         public static final double RIGHT_X_DEADBAND = 0.1;
         public static final double TURN_CONSTANT = 6;
@@ -141,7 +141,7 @@ public final class Constants {
             public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.135, 0.153, 0.0052, 0.0);
 
             // Angles (degrees)
-            public static final double REST_ANGLE = 131.0; // Straight Up
+            public static final double REST_ANGLE = 131.0;
             public static final double REMOVAL_ANGLE_TOP = 330;
             public static final double REMOVAL_ANGLE_BOTTOM = 20;
 
