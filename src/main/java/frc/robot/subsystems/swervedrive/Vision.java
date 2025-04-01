@@ -292,6 +292,7 @@ public class Vision {
       poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,
           PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
           robotToCamTransform);
+
       poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
       this.singleTagStdDevs = singleTagStdDevs;
@@ -392,12 +393,6 @@ public class Vision {
         Logger.recordOutput("Latest Result", getLatestResult().get());
       }
 
-      filter(); // Filter results
-
-      if (getLatestResult().isPresent()) {
-        Logger.recordOutput("Result without Ambiguity", getLatestResult().get());
-      }
-
       lastReadTimestamp = currentTimestamp;
       resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
         return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
@@ -406,6 +401,9 @@ public class Vision {
         updateEstimatedGlobalPose();
       }
 
+      if (getLatestResult().isPresent()) {
+        Logger.recordOutput("Result without Ambiguity", getLatestResult().get());
+      }
     }
 
     /**
@@ -424,9 +422,22 @@ public class Vision {
      */
     private void updateEstimatedGlobalPose() {
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
-      for (var change : resultsList) {
-        visionEst = poseEstimator.update(change);
-        updateEstimationStdDevs(visionEst, change.getTargets());
+
+      // Only uses latest result
+      if (getLatestResult().isPresent()) {
+        PhotonPipelineResult latestResult = getLatestResult().get();
+
+        // Filter
+        List<PhotonTrackedTarget> targets = latestResult.getTargets();
+
+        for (int i = targets.size() - 1; i >= 0; i--) {
+          if (targets.get(i).getPoseAmbiguity() > maximumAmbiguity) {
+            latestResult.getTargets().remove(i);
+          }
+        }
+
+        visionEst = poseEstimator.update(latestResult);
+        updateEstimationStdDevs(visionEst, latestResult.targets);
       }
       estimatedRobotPose = visionEst;
     }
@@ -486,22 +497,5 @@ public class Vision {
         }
       }
     }
-
-    /* Filter maybe? */
-    private void filter() {
-      List<PhotonPipelineResult> toBeRemoved = new ArrayList<>();
-      for (PhotonPipelineResult result : resultsList) {
-        List<PhotonTrackedTarget> targets = result.getTargets();
-        for (PhotonTrackedTarget target : targets) {
-          if (target.getPoseAmbiguity() > maximumAmbiguity) {
-            toBeRemoved.add(result);
-            break;
-          }
-        }
-      }
-      resultsList.removeAll(toBeRemoved);
-    }
-
   }
-
 }
