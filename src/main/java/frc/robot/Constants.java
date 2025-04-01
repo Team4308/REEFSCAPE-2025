@@ -33,7 +33,7 @@ public final class Constants {
 
         public static final class Align {
             public static final class Heading {
-                public static final double TOLERANCE = 2.5; // in degrees
+                public static final double TOLERANCE = 1; // in degrees
             }
 
             public static final class Translation {
@@ -119,7 +119,7 @@ public final class Constants {
         public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
         public static final double ALGAE1_PREMOVE = Units.inchesToMeters(6);
-        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(18);
+        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(20.3);
 
         public static final double ALGAE_DISTANCE = Units.inchesToMeters(8);
 
