@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import org.littletonrobotics.junction.Logger;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -37,6 +38,7 @@ import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
@@ -45,7 +47,7 @@ public class Vision {
 
   public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
   // Ambiguity defined as a value between (0,1). Could be used in filtering poses
-  private final double maximumAmbiguity = 0.25;
+  private static final double maximumAmbiguity = 0.20;
   // Vision simulation instance.
   public VisionSystemSim visionSim;
   // Current pose from the pose estimator using wheel odometry.
@@ -216,6 +218,7 @@ public class Vision {
     }
 
     field2d.getObject("tracked targets").setPoses(poses);
+    SmartDashboard.putData("Tracked Targets", field2d);
   }
 
   /**
@@ -385,7 +388,15 @@ public class Vision {
       }
       resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
 
+      if (getLatestResult().isPresent()) {
+        Logger.recordOutput("Latest Result", getLatestResult().get());
+      }
+
       filter(); // Filter results
+
+      if (getLatestResult().isPresent()) {
+        Logger.recordOutput("Result without Ambiguity", getLatestResult().get());
+      }
 
       lastReadTimestamp = currentTimestamp;
       resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
@@ -482,7 +493,7 @@ public class Vision {
       for (PhotonPipelineResult result : resultsList) {
         List<PhotonTrackedTarget> targets = result.getTargets();
         for (PhotonTrackedTarget target : targets) {
-          if (target.getPoseAmbiguity() > 0.2) {
+          if (target.getPoseAmbiguity() > maximumAmbiguity) {
             toBeRemoved.add(result);
             break;
           }

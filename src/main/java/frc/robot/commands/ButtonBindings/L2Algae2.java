@@ -58,7 +58,7 @@ public class L2Algae2 extends Command {
     private Command stage2() {
 
         return new SequentialCommandGroup(
-                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 5)),
+                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 3)),
                 new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(

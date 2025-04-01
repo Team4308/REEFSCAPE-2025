@@ -119,7 +119,7 @@ public final class Constants {
         public static final double ALGAE2 = Units.inchesToMeters(43.0);
 
         public static final double ALGAE1_PREMOVE = Units.inchesToMeters(6);
-        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(21.5);
+        public static final double ALGAE2_PREMOVE = Units.inchesToMeters(18);
 
         public static final double ALGAE_DISTANCE = Units.inchesToMeters(8);
 
@@ -143,7 +143,7 @@ public final class Constants {
             // Angles (degrees)
             public static final double REST_ANGLE = 131.0; // Straight Up
             public static final double REMOVAL_ANGLE_TOP = 330;
-            public static final double REMOVAL_ANGLE_BOTTOM = 35;
+            public static final double REMOVAL_ANGLE_BOTTOM = 20;
 
             public static final double TIMEOUT_SECONDS = 3;
         }
@@ -152,8 +152,8 @@ public final class Constants {
             public static final double L1 = 3;
             public static final double L23 = 25;
 
-            public static final double DEFAULT_CORAL = 10;
-            public static final double ALGAE_REMOVAL_BOTTOM = -200;
+            public static final double DEFAULT_CORAL = 15;
+            public static final double ALGAE_REMOVAL_BOTTOM = -90;
             public static final double ALGAE_REMOVAL_TOP = 30;
         }
     }
