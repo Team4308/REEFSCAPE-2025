@@ -37,12 +37,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Align To Far Station"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Intake Coral"
           }
         },
@@ -74,12 +68,6 @@
           "type": "path",
           "data": {
             "pathName": "J-Coral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Align To Far Station"
           }
         },
         {

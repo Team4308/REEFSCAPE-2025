@@ -45,8 +45,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
+// import edu.wpi.first.networktables.NetworkTableInstance;
+// import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -105,8 +105,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private Field2d driverStationField = new Field2d();
 
-  private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
-      .getStructTopic("Robot Pose", Pose2d.struct).publish();
+  // private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+  //     .getStructTopic("Robot Pose", Pose2d.struct).publish();
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary
@@ -166,9 +166,9 @@ public class SwerveSubsystem extends SubsystemBase {
       swerveDrive.updateOdometry();
       vision.updatePoseEstimation(swerveDrive);
     }
-    checkTunableValues();
+    // checkTunableValues();
 
-    publisher.set(getPose());
+    // publisher.set(getPose());
 
     driverStationField.setRobotPose(getPose());
     SmartDashboard.putData("driverStationField", driverStationField);

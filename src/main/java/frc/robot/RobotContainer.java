@@ -58,7 +58,7 @@ import swervelib.SwerveInputStream;
 
 public class RobotContainer {
         // Controllers
-        private XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
+        private final XBoxWrapper driver = new XBoxWrapper(Ports.Joysticks.DRIVER);
         private final XBoxWrapper operator = new XBoxWrapper(Ports.Joysticks.OPERATOR);
 
         // The robot's subsystems and commands are defined here...
