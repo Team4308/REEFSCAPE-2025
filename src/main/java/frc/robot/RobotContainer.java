@@ -336,7 +336,7 @@ public class RobotContainer {
         }
 
         public void robotPeriodic() {
-                Logger.recordOutput("/Subsystems/Algae/LoggedPose", new Pose3d(
+                Logger.recordOutput("Subsystems/Algae/LoggedPose", new Pose3d(
                                 new Translation3d(0.292, -0.2, m_ElevatorSubsystem.getPositionInMeters() + 0.3055),
                                 new Rotation3d(0, Units.degreesToRadians(90)
                                                 - Units.degreesToRadians(m_AlgaeArmSubsystem.getAlgaePosition()), 0)));
