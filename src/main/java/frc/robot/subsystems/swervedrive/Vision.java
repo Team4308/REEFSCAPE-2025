@@ -36,7 +36,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTablesJNI;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -218,9 +220,10 @@ public class Vision {
         poses.add(targetPose);
       }
     }
+    Logger.recordOutput("Vision Targets", poses.toArray(new Pose2d[0]));
 
-    field2d.getObject("tracked targets").setPoses(poses);
-    SmartDashboard.putData("Tracked Targets", field2d);
+    field2d.getObject("Vision Targets").setPoses(poses);
+    SmartDashboard.putData("Tracked Field", field2d);
   }
 
   /**
