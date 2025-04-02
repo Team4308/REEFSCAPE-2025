@@ -15,7 +15,7 @@ import swervelib.math.Matter;
 
 public final class Constants {
 
-    public static final double ROBOT_MASS = 123 * 0.453592;
+    public static final double ROBOT_MASS = 48.0;
     public static final Matter CHASSIS = new Matter(
             new Translation3d(Units.inchesToMeters(27), Units.inchesToMeters(27), Units.inchesToMeters(40)),
             ROBOT_MASS);

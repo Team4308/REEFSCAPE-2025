@@ -32,7 +32,7 @@ public class IntakeCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return (subsystem.getBeamBreak());
+        return (true);
     }
 
 }
