@@ -37,12 +37,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Align To Far Station"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Intake Coral"
           }
         },
@@ -79,13 +73,31 @@
         {
           "type": "named",
           "data": {
-            "name": "Align To Far Station"
+            "name": "Intake Coral"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake Coral"
+            "name": "L2 Premove"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Coral-L"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Right Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Preset"
           }
         }
       ]

@@ -67,7 +67,7 @@ public class L3Algae1 extends Command {
                 new InstantCommand(() -> m_elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
                         constElevator.MAX_ACCELERATION)),
                 new SimpleElevator(() -> constElevator.MIN_HEIGHT, m_elevatorSubsystem),
-                new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
+                // new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
