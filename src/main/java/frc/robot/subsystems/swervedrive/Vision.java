@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -24,6 +25,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -300,7 +302,7 @@ public class Vision {
       if (Robot.isSimulation()) {
         SimCameraProperties cameraProp = new SimCameraProperties();
         // A 640 x 480 camera with a 100 degree diagonal FOV.
-        cameraProp.setCalibration(960, 720, Rotation2d.fromDegrees(100));
+        cameraProp.setCalibration(960, 800, Rotation2d.fromDegrees(100));
         // Approximate detection noise with average and standard deviation error in
         // pixels.
         cameraProp.setCalibError(0.25, 0.08);
@@ -388,15 +390,7 @@ public class Vision {
       }
       resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
 
-      if (getLatestResult().isPresent()) {
-        Logger.recordOutput("Latest Result", getLatestResult().get());
-      }
-
       filter(); // Filter results
-
-      if (getLatestResult().isPresent()) {
-        Logger.recordOutput("Result without Ambiguity", getLatestResult().get());
-      }
 
       lastReadTimestamp = currentTimestamp;
       resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {

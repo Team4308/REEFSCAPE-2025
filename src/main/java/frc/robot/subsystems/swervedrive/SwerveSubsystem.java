@@ -173,6 +173,8 @@ public class SwerveSubsystem extends SubsystemBase {
     driverStationField.setRobotPose(getPose());
     SmartDashboard.putData("driverStationField", driverStationField);
 
+    vision.updateVisionField();
+
     // SmartDashboard.putBoolean("Aligned?", isAligned());
     Logger.recordOutput("Swerve/Is Aligned?", isAligned());
     Logger.recordOutput("Swerve/Pose", getPose());
@@ -395,21 +397,24 @@ public class SwerveSubsystem extends SubsystemBase {
     // }
 
     List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-      new Pose2d(swerveDrive.getPose().getTranslation(), 
-      new Rotation2d(getFieldVelocity().vxMetersPerSecond, getFieldVelocity().vyMetersPerSecond)), 
-      pose
-    );
+        new Pose2d(swerveDrive.getPose().getTranslation(),
+            new Rotation2d(getFieldVelocity().vxMetersPerSecond, getFieldVelocity().vyMetersPerSecond)),
+        pose);
     PathPlannerPath path = new PathPlannerPath(
-      waypoints, 
-      constraints, 
-      new IdealStartingState(MetersPerSecond.of(new Translation2d(getFieldVelocity().vxMetersPerSecond, getFieldVelocity().vyMetersPerSecond).getNorm()), getHeading()), 
-      new GoalEndState(0.0, pose.getRotation()));
+        waypoints,
+        constraints,
+        new IdealStartingState(MetersPerSecond.of(
+            new Translation2d(getFieldVelocity().vxMetersPerSecond, getFieldVelocity().vyMetersPerSecond).getNorm()),
+            getHeading()),
+        new GoalEndState(0.0, pose.getRotation()));
     path.preventFlipping = true;
-    return AutoBuilder.followPath(path).andThen(run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
+    return AutoBuilder.followPath(path)
+        .andThen(run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
 
     // // PID only test
-    // return run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
-    //     goalState)));
+    // return run(() ->
+    // swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(),
+    // goalState)));
   }
 
   public Command driveToDistanceCommand(double distanceInMeters, double speedInMetersPerSecond) {
