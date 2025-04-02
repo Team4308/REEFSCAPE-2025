@@ -343,6 +343,7 @@ public class RobotContainer {
         }
 
         public void teleopInit() {
+                configureTeleopBindings();
         }
 
         public void teleopPeriodic() {
