@@ -16,10 +16,7 @@ public class FastL1 extends SequentialCommandGroup {
             AlgaeArmSubsystem algaeArmSubsystem) {
         addCommands(
                 new Reset(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
-                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, algaeArmSubsystem),
                 new SimpleElevator(() -> constElevator.L1, elevatorSubsystem),
-                new SimpleRoller(() -> constEndEffector.rollerSpeeds.L1, rollerSubsystem),
-                new SimpleElevator(() -> constElevator.L3, elevatorSubsystem),
-                new SimpleElevator(() -> constElevator.MIN_HEIGHT, elevatorSubsystem));
+                new SimpleRoller(() -> constEndEffector.rollerSpeeds.L1, rollerSubsystem));
     }
 }

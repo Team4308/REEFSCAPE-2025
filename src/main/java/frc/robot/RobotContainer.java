@@ -43,6 +43,7 @@ import frc.robot.commands.ButtonBindings.L2PreMove;
 import frc.robot.commands.ButtonBindings.L3Algae1;
 import frc.robot.commands.ButtonBindings.L3Algae2;
 import frc.robot.commands.ButtonBindings.L3PreMove;
+import frc.robot.commands.CoralScoring.FastL1;
 import frc.robot.commands.CoralScoring.FastL2;
 import frc.robot.commands.CoralScoring.FastL3;
 import frc.robot.commands.DefaultControl.DefaultAlgae;
@@ -209,7 +210,7 @@ public class RobotContainer {
 
                 // Automatic Scoring
                 operator.B.onTrue(new Reset(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
-                operator.A.onTrue(new FastL2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                operator.A.onTrue(new FastL1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.X.onTrue(new L2PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 operator.Y.onTrue(new L3PreMove(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
 
