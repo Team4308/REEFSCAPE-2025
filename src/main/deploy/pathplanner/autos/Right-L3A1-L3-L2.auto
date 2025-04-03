@@ -5,9 +5,120 @@
     "data": {
       "commands": [
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3A1 Stage1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Right-C"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Left Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3A1 Stage2"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Right-C"
+            "pathName": "C-Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Premove"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral-D"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Right Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L3 Preset"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "D-Coral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Premove"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral-C"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Align To Left Reef"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "L2 Preset"
           }
         }
       ]
