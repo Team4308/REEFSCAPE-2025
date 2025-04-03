@@ -106,7 +106,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private Field2d driverStationField = new Field2d();
 
   // private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
-  //     .getStructTopic("Robot Pose", Pose2d.struct).publish();
+  // .getStructTopic("Robot Pose", Pose2d.struct).publish();
 
   public SwerveSubsystem(File directory) {
     // Configure the Telemetry before creating the SwerveDrive to avoid unnecessary

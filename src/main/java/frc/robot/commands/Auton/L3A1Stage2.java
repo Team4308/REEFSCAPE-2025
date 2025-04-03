@@ -1,8 +1,6 @@
-package frc.robot.commands.ButtonBindings;
+package frc.robot.commands.Auton;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -18,51 +16,18 @@ import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
-public class L3Algae1 extends Command {
-    private ElevatorSubsystem m_elevatorSubsystem;
-    private CoralRollerSubsystem m_coralRollerSubsystem;
-    private AlgaeArmSubsystem m_algaeArmSubsystem;
-
-    private static boolean stateFinished = false;
-
-    public L3Algae1(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
-            AlgaeArmSubsystem algaeArmSubsystem) {
-        this.m_elevatorSubsystem = elevatorSubsystem;
-        this.m_algaeArmSubsystem = algaeArmSubsystem;
-        this.m_coralRollerSubsystem = rollerSubsystem;
-    }
-
-    @Override
-    public void initialize() {
-        if (m_elevatorSubsystem.isAtPosition2("A1P")) {
-            stage2().schedule();
-        } else {
-            stage1().schedule();
-        }
-    }
-
-    public static void resetCommand() {
-        stateFinished = true;
-    }
-
-    public Command stage1() {
-        return new SequentialCommandGroup(
-                new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
-                new ParallelCommandGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)));
-    }
-
-    public Command stage2() {
-        return new SequentialCommandGroup(
+public class L3A1Stage2 extends SequentialCommandGroup {
+    public L3A1Stage2(ElevatorSubsystem m_elevatorSubsystem, CoralRollerSubsystem m_coralRollerSubsystem,
+            AlgaeArmSubsystem m_algaeArmSubsystem) {
+        addCommands(
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
-                        new SimpleAlgae(() -> 60.0, m_algaeArmSubsystem),
+                        new SimpleAlgae(() -> 90.0, m_algaeArmSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
                 new SimpleAlgae(() -> 0.0,
-                        m_algaeArmSubsystem).withDeadline(new WaitCommand(0.02)),
+                        m_algaeArmSubsystem),
                 new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new InstantCommand(() -> m_elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
                         constElevator.MAX_ACCELERATION)),
@@ -71,11 +36,5 @@ public class L3Algae1 extends Command {
                 new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
-
-    }
-
-    @Override
-    public boolean isFinished() {
-        return stateFinished;
     }
 }

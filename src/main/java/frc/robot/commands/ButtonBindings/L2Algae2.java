@@ -5,9 +5,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Reset;
 import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
@@ -58,17 +60,22 @@ public class L2Algae2 extends Command {
     private Command stage2() {
 
         return new SequentialCommandGroup(
-                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(5, 3)),
                 new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + 1.5 * constElevator.ALGAE_DISTANCE,
-                                m_elevatorSubsystem),
+                        new SimpleAlgae(() -> 90.0, m_algaeArmSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
-
-                new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
-                new InstantCommand(() -> stateFinished = true));
+                new SimpleAlgae(() -> 0.0,
+                        m_algaeArmSubsystem),
+                new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
+                new InstantCommand(() -> m_elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
+                        constElevator.MAX_ACCELERATION)),
+                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, m_algaeArmSubsystem)
+                        .withDeadline(new WaitCommand(0.02)),
+                new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
+                new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
+                new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
     }
 
     @Override
