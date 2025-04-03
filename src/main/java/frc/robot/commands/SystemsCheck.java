@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.LEDSystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.Constants.constEndEffector;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -33,7 +34,7 @@ intake command
 
 public class SystemsCheck extends SequentialCommandGroup {
         public SystemsCheck(ElevatorSubsystem elevatorSubsystem, CoralRollerSubsystem rollerSubsystem,
-                        AlgaeArmSubsystem algaeArmSubsystem, SwerveSubsystem swerveSubsystem) {
+                        AlgaeArmSubsystem algaeArmSubsystem, SwerveSubsystem swerveSubsystem, LEDSystem ledSubsystem) {
                 addCommands(
                                 new ParallelDeadlineGroup(new WaitCommand(1),
                                                 swerveSubsystem.driveCommand(() -> 5, () -> 0, () -> 0)),
@@ -50,7 +51,7 @@ public class SystemsCheck extends SequentialCommandGroup {
                                 elevatorSubsystem.goToLevel(0),
                                 new FastL3(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
                                 new FastL2(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
-                                new FastL1(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
+                                new FastL1(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem, ledSubsystem),
 
                                 new RemoveA1(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),
                                 new RemoveA2(elevatorSubsystem, rollerSubsystem, algaeArmSubsystem),

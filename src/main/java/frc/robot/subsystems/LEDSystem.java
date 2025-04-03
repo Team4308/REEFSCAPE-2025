@@ -95,6 +95,7 @@ public class LEDSystem extends SubsystemBase {
     states.put("Auto", new LEDTuple(false, 0.0, "DefaultState"));
     states.put("Teleop", new LEDTuple(false, 0.0, "DefaultState"));
     states.put("Test", new LEDTuple(false, 0.0, "DefaultState"));
+    states.put("CoralShot", new LEDTuple(true, 0.0, "StatusState"));
   }
 
   /**
@@ -328,6 +329,12 @@ public class LEDSystem extends SubsystemBase {
       // only called on fault from roborio this is if somthing really bad happens
       case "Fault":
         LEDPattern.solid(Color.kRed)
+            .blink(Units.Seconds.of(0.2))
+            .applyTo(m_buffer);
+        return;
+
+      case "CoralShot":
+        LEDPattern.solid(Color.kOrange)
             .blink(Units.Seconds.of(0.2))
             .applyTo(m_buffer);
         return;

@@ -112,7 +112,7 @@ public final class Constants {
         public static double MIN_HEIGHT = Units.inchesToMeters(4.875);
 
         // Preset heights in inches
-        public static final double L1 = Units.inchesToMeters(6.5);
+        public static final double L1 = 0.32616875;
         public static final double L2 = Units.inchesToMeters(24);
         public static final double L3 = Units.inchesToMeters(40);
         public static final double ALGAE1 = Units.inchesToMeters(30.0);
