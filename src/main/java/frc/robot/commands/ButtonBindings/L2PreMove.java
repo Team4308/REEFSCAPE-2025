@@ -8,6 +8,7 @@ import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
 import frc.robot.commands.Reset;
 import frc.robot.commands.SimpleControl.SimpleElevator;
+import frc.robot.commands.SimpleControl.SimpleElevatorTimeout;
 import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
@@ -41,7 +42,7 @@ public class L2PreMove extends Command {
 
     private Command stage1() {
         return new SequentialCommandGroup(
-                new SimpleElevator(() -> constElevator.L2, m_elevatorSubsystem),
+                new SimpleElevatorTimeout(() -> constElevator.L2, m_elevatorSubsystem),
                 new InstantCommand(() -> stateFinished = true));
     }
 

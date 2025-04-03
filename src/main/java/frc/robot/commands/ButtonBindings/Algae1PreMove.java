@@ -11,7 +11,9 @@ import frc.robot.Constants.constElevator;
 import frc.robot.commands.Reset;
 import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
+import frc.robot.commands.SimpleControl.SimpleAlgaeTimeout;
 import frc.robot.commands.SimpleControl.SimpleElevator;
+import frc.robot.commands.SimpleControl.SimpleElevatorTimeout;
 import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
@@ -48,8 +50,9 @@ public class Algae1PreMove extends Command {
     private Command stage1() {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)),
+                        new SimpleElevatorTimeout(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
+                        new SimpleAlgaeTimeout(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM,
+                                m_algaeArmSubsystem)),
                 new InstantCommand(() -> stateFinished = true));
     }
 
@@ -57,11 +60,10 @@ public class Algae1PreMove extends Command {
         return new SequentialCommandGroup(
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
-                        new SimpleAlgae(() -> 90.0, m_algaeArmSubsystem),
+                        new SimpleAlgaeTimeout(() -> 90.0, m_algaeArmSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
-                new SimpleAlgae(() -> 0.0,
-                        m_algaeArmSubsystem),
+                new SimpleAlgaeTimeout(() -> 0.0, 0.02, m_algaeArmSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new InstantCommand(() -> stateFinished = true));
     }
