@@ -33,6 +33,8 @@ import frc.robot.Constants.constEndEffector;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Reset;
 import frc.robot.commands.SystemsCheck;
+import frc.robot.commands.Auton.L3A1Stage1;
+import frc.robot.commands.Auton.L3A1Stage2;
 import frc.robot.commands.ButtonBindings.Algae1PreMove;
 import frc.robot.commands.ButtonBindings.Algae2PreMove;
 import frc.robot.commands.ButtonBindings.L2Algae1;
@@ -312,8 +314,10 @@ public class RobotContainer {
                                 drivebase.driveToPose(() -> drivebase.getClosestFarCoralStationPose())
                                                 .until(drivebaseAlignedTrigger));
                 NamedCommands.registerCommand("L2 Premove", m_ElevatorSubsystem.goToLevel(2));
-                NamedCommands.registerCommand("L3A1 Stage1", L3A1Command.stage1());
-                NamedCommands.registerCommand("L3A1 Stage2", L3A1Command.stage2());
+                NamedCommands.registerCommand("L3A1 Stage1",
+                                new L3A1Stage1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
+                NamedCommands.registerCommand("L3A1 Stage2",
+                                new L3A1Stage2(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove Low Algae and Shoot L2",
                                 new L2Algae1(m_ElevatorSubsystem, m_CoralRollerSubsystem, m_AlgaeArmSubsystem));
                 NamedCommands.registerCommand("Remove High Algae and Shoot L3",
