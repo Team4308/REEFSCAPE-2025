@@ -5,15 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L3A1 Stage1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Left-K"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L3A1 Stage1"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Left-K"
+                }
+              }
+            ]
           }
         },
         {
@@ -41,15 +48,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L2 Premove"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Coral-L"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Premove"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral-L"
+                }
+              }
+            ]
           }
         },
         {
@@ -77,15 +91,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "L2 Premove"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Coral-L"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "L2 Premove"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Coral-L"
+                }
+              }
+            ]
           }
         },
         {
