@@ -59,11 +59,11 @@ public class L3Algae2 extends Command {
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new WaitCommand(0.2),
                 new ParallelDeadlineGroup(
-                        new SimpleAlgae(() -> 90.0, m_algaeArmSubsystem),
+                        new SimpleAlgae(() -> 60.0, m_algaeArmSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
                 new SimpleAlgae(() -> 0.0,
-                        m_algaeArmSubsystem),
+                        m_algaeArmSubsystem).withDeadline(new WaitCommand(0.02)),
                 new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new InstantCommand(() -> m_elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
                         constElevator.MAX_ACCELERATION)),
