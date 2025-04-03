@@ -13,7 +13,9 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.Reset;
 import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
+import frc.robot.commands.SimpleControl.SimpleAlgaeTimeout;
 import frc.robot.commands.SimpleControl.SimpleElevator;
+import frc.robot.commands.SimpleControl.SimpleElevatorTimeout;
 import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
@@ -49,8 +51,9 @@ public class L3Algae1 extends Command {
         return new SequentialCommandGroup(
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new ParallelCommandGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)));
+                        new SimpleElevatorTimeout(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
+                        new SimpleAlgaeTimeout(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM,
+                                m_algaeArmSubsystem)));
     }
 
     public Command stage2() {
@@ -58,17 +61,15 @@ public class L3Algae1 extends Command {
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem),
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
-                        new SimpleAlgae(() -> 60.0, m_algaeArmSubsystem),
+                        new SimpleAlgaeTimeout(() -> 60.0, m_algaeArmSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
-                new SimpleAlgae(() -> 0.0,
-                        m_algaeArmSubsystem).withDeadline(new WaitCommand(0.02)),
+                new SimpleAlgaeTimeout(() -> 0.0, 0.02, m_algaeArmSubsystem),
                 new IntakeCommand(() -> constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new InstantCommand(() -> m_elevatorSubsystem.setConstraints(constElevator.MAX_VELOCITY,
                         constElevator.MAX_ACCELERATION)),
-                new SimpleAlgae(() -> constEndEffector.algaePivot.REST_ANGLE, m_algaeArmSubsystem)
-                        .withDeadline(new WaitCommand(0.02)),
-                new SimpleElevator(() -> constElevator.L3, m_elevatorSubsystem),
+                new SimpleAlgaeTimeout(() -> constEndEffector.algaePivot.REST_ANGLE, 0.02, m_algaeArmSubsystem),
+                new SimpleElevatorTimeout(() -> constElevator.L3, m_elevatorSubsystem),
                 new SimpleRoller(() -> constEndEffector.rollerSpeeds.L23, m_coralRollerSubsystem),
                 new Reset(m_elevatorSubsystem, m_coralRollerSubsystem, m_algaeArmSubsystem));
 

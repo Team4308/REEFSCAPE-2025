@@ -7,7 +7,9 @@ import frc.robot.Constants.constEndEffector;
 import frc.robot.Constants.constElevator;
 import frc.robot.commands.Reset;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
+import frc.robot.commands.SimpleControl.SimpleAlgaeTimeout;
 import frc.robot.commands.SimpleControl.SimpleElevator;
+import frc.robot.commands.SimpleControl.SimpleElevatorTimeout;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
 
@@ -17,7 +19,8 @@ public class L3A1Stage1 extends SequentialCommandGroup {
         addCommands(
                 new Reset(m_elevatorSubsystem, m_rollerSubsystem, m_algaeArmSubsystem),
                 new ParallelCommandGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)));
+                        new SimpleElevatorTimeout(() -> constElevator.ALGAE1_PREMOVE, m_elevatorSubsystem),
+                        new SimpleAlgaeTimeout(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM,
+                                m_algaeArmSubsystem)));
     }
 }

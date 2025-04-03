@@ -12,7 +12,9 @@ import frc.robot.Constants.constElevator;
 import frc.robot.commands.Reset;
 import frc.robot.commands.DefaultControl.DefaultRoller;
 import frc.robot.commands.SimpleControl.SimpleAlgae;
+import frc.robot.commands.SimpleControl.SimpleAlgaeTimeout;
 import frc.robot.commands.SimpleControl.SimpleElevator;
+import frc.robot.commands.SimpleControl.SimpleElevatorTimeout;
 import frc.robot.commands.SimpleControl.SimpleRoller;
 import frc.robot.subsystems.AlgaeArmSubsystem;
 import frc.robot.subsystems.CoralRollerSubsystem;
@@ -49,8 +51,9 @@ public class Algae2PreMove extends Command {
     private Command stage1() {
         return new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE, m_elevatorSubsystem),
-                        new SimpleAlgae(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM, m_algaeArmSubsystem)),
+                        new SimpleElevatorTimeout(() -> constElevator.ALGAE2_PREMOVE, m_elevatorSubsystem),
+                        new SimpleAlgaeTimeout(() -> constEndEffector.algaePivot.REMOVAL_ANGLE_BOTTOM,
+                                m_algaeArmSubsystem)),
                 new InstantCommand(() -> stateFinished = true));
     }
 
@@ -58,7 +61,8 @@ public class Algae2PreMove extends Command {
         return new SequentialCommandGroup(
                 new SimpleRoller(() -> -constEndEffector.rollerSpeeds.DEFAULT_CORAL, m_coralRollerSubsystem),
                 new ParallelDeadlineGroup(
-                        new SimpleElevator(() -> constElevator.ALGAE2_PREMOVE + 1.5 * constElevator.ALGAE_DISTANCE,
+                        new SimpleElevatorTimeout(
+                                () -> constElevator.ALGAE2_PREMOVE + 1.5 * constElevator.ALGAE_DISTANCE,
                                 m_elevatorSubsystem),
                         new DefaultRoller(() -> constEndEffector.rollerSpeeds.ALGAE_REMOVAL_BOTTOM,
                                 m_coralRollerSubsystem)),
