@@ -408,6 +408,8 @@ public class SwerveSubsystem extends SubsystemBase {
             getHeading()),
         new GoalEndState(0.0, pose.getRotation()));
     path.preventFlipping = true;
+    Logger.recordOutput("Swerve/Path Goal", pose);
+    Logger.recordOutput("Swerve/PID output", ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState));
     return AutoBuilder.followPath(path)
         .andThen(run(() -> swerveDrive.drive(ALIGN_CONTROLLER.calculateRobotRelativeSpeeds(getPose(), goalState))));
 
