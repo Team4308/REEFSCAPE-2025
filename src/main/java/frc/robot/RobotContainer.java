@@ -242,6 +242,9 @@ public class RobotContainer {
                                 .onTrue(new L3Algae2(m_ElevatorSubsystem, m_CoralRollerSubsystem,
                                                 m_AlgaeArmSubsystem));
 
+                operator.Back.onTrue(new InstantCommand(() -> m_ElevatorSubsystem.setOffset(true)));
+                operator.Back.onFalse(new InstantCommand(() -> m_ElevatorSubsystem.setOffset(false)));
+
                 /*
                  * L2A3
                  * shoot, spin to remove
@@ -255,8 +258,6 @@ public class RobotContainer {
                 operator.povDown.onTrue(m_ElevatorSubsystem.goToLevel(1));
                 operator.povLeft.onTrue(m_ElevatorSubsystem.goToLevel(2));
 
-                operator.LeftStickButton.whileTrue(drivebase.updateClosestStationPose()
-                                .andThen(drivebase.driveToPose(() -> drivebase.nearestPoseToLeftReef)));
                 operator.RightStickButton.onTrue(new SimpleAlgae(() -> 30.0, m_AlgaeArmSubsystem));
         }
 

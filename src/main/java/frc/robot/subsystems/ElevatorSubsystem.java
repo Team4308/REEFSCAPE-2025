@@ -29,6 +29,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   private DigitalInput bottomLimitSwitch;
   private double encoderOffset;
   public double totalVoltage;
+  public double offset = 0;
 
   private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(
@@ -67,7 +68,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   private double calculateVoltage() {
-    double pidOutput = constElevator.PID_CONTROLLER.calculate(getPositionInMeters(), targetPosition);
+    double pidOutput = constElevator.PID_CONTROLLER.calculate(getPositionInMeters(), targetPosition + offset);
 
     double feedforwardVoltage = constElevator.FEEDFORWARD
         .calculate(constElevator.PID_CONTROLLER.getSetpoint().velocity);
@@ -185,6 +186,14 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void stopControllers() {
     rightMotorLeader.set(0.0);
     leftMotorFollower.set(0.0);
+  }
+
+  public void setOffset(boolean coralStuck) {
+    if (coralStuck) {
+      offset = Units.inchesToMeters(2.132);
+    } else {
+      offset = 0;
+    }
   }
 
   public void resetSensors() {
