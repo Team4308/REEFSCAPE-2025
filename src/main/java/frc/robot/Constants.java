@@ -137,7 +137,7 @@ public final class Constants {
 
             // Controllers
             public static final ProfiledPIDController PID_CONTROLLER = new ProfiledPIDController(0.01, 0.0, 0.0,
-                    new TrapezoidProfile.Constraints(720, 1440)); // degrees
+                    new TrapezoidProfile.Constraints(1080, 2160)); // degrees
             public static final ArmFeedforward FEEDFORWARD = new ArmFeedforward(0.135, 0.153, 0.0052, 0.0);
 
             // Angles (degrees)
@@ -149,7 +149,7 @@ public final class Constants {
         }
 
         public static class rollerSpeeds { // m/s
-            public static final double L1 = 3;
+            public static final double L1 = 10;
             public static final double L23 = 25;
 
             public static final double DEFAULT_CORAL = 15;

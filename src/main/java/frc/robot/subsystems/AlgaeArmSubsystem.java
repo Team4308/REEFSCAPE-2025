@@ -69,6 +69,7 @@ public class AlgaeArmSubsystem extends LogSubsystem {
         totalVoltage = DoubleUtils.clamp(totalVoltage, -12, 12);
         algaeMotor.setVoltage(totalVoltage);
 
+        Logger.recordOutput("Subsystems/Algae/Setpoint Angle", constEndEffector.algaePivot.PID_CONTROLLER.getSetpoint().position);
         Logger.recordOutput("Subsystems/Algae/Target Angle", targetAngle);
         Logger.recordOutput("Subsystems/Algae/Current Angle", getAlgaePosition());
         Logger.recordOutput("Subsystems/Algae/Is At Angle", isAtPosition());
