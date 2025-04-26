@@ -363,6 +363,20 @@ public class SwerveSubsystem extends SubsystemBase {
     return new PathPlannerAuto(pathName);
   }
 
+  public Command alignToAlgae() {
+    return run(() -> {
+
+      double change = swerveDrive.getPose().getRotation().getDegrees();
+
+      change -= vision.getObjectOffset();
+      System.out.println(change);
+
+      drive(getTargetSpeeds(0,
+          0,
+          Rotation2d.fromDegrees(change)));
+    });
+  }
+
   public Command driveToPose(Supplier<Pose2d> pose) {
     return defer(() -> driveToPose(pose.get()));
   }

@@ -58,6 +58,8 @@ public class Vision {
   private Supplier<Pose2d> currentPose;
   private Field2d field2d;
 
+  PhotonCamera objCamera = new PhotonCamera("COLOR CAM");
+
   /**
    * Constructor for the Vision class.
    *
@@ -128,6 +130,29 @@ public class Vision {
       }
     }
 
+  }
+
+  public double getObjectOffset() {
+    double cameraheight = 26;
+
+    var results = objCamera.getLatestResult();
+
+    // var result = objCamera.getLatestResult();
+    // var target = result.getBestTarget();
+    var target = results.getBestTarget();
+    if (target == null) {
+      return 0.0;
+    }
+    double pitch = target.getPitch() - 30;
+    double yaw = target.getYaw();
+
+    double distance = 0;
+
+    // System.out.print(yaw);
+    // System.out.print(", ");
+    // System.out.println(pitch);
+
+    return yaw;
   }
 
   /**

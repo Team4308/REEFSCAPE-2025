@@ -191,6 +191,8 @@ public class RobotContainer {
                 driver.LB.onTrue((Commands.runOnce(drivebase::zeroGyro)));
                 driver.RB.whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
 
+                driver.Start.whileTrue(drivebase.alignToAlgae());
+
                 if (RobotBase.isSimulation()) {
                         drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocityKeyboard);
                 } else {
